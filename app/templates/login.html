@@ -1,0 +1,58 @@
+﻿{% extends "layout.html" %}
+{% block title %}Вход - AI Developer Portal{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Вход в личный кабинет</h2>
+        <form id="loginForm" @submit.prevent="login">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" v-model="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" v-model="password" required>
+            </div>
+            <button type="submit" class="btn-primary">Войти</button>
+        </form>
+        <p class="auth-link">Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+    </div>
+</div>
+<script>
+const { createApp } = Vue;
+createApp({
+    data() {
+        return {
+            email: '',
+            password: ''
+        };
+    },
+    methods: {
+        async login() {
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: this.email,
+                        password: this.password
+                    })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.access_token);
+                    window.location.href = '/dashboard';
+                } else {
+                    const error = await response.json();
+                    alert('Ошибка: ' + error.detail);
+                }
+            } catch (error) {
+                alert('Ошибка сети: ' + error.message);
+            }
+        }
+    }
+}).mount('#loginForm');
+</script>
+{% endblock %}

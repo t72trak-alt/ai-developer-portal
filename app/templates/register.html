@@ -1,0 +1,69 @@
+﻿{% extends "layout.html" %}
+{% block title %}Регистрация - AI Developer Portal{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Регистрация</h2>
+        <form id="registerForm" @submit.prevent="register">
+            <div class="form-group">
+                <label for="name">Имя:</label>
+                <input type="text" id="name" v-model="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" v-model="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" v-model="password" required>
+            </div>
+            <div class="form-group">
+                <label for="task">Какую задачу хотите решить? (необязательно):</label>
+                <textarea id="task" v-model="task" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Зарегистрироваться</button>
+        </form>
+        <p class="auth-link">Уже есть аккаунт? <a href="/login">Войти</a></p>
+    </div>
+</div>
+<script>
+const { createApp } = Vue;
+createApp({
+    data() {
+        return {
+            name: '',
+            email: '',
+            password: '',
+            task: ''
+        };
+    },
+    methods: {
+        async register() {
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: this.name,
+                        email: this.email,
+                        password: this.password,
+                        task: this.task
+                    })
+                });
+                if (response.ok) {
+                    alert('Регистрация успешна! Теперь войдите в систему.');
+                    window.location.href = '/login';
+                } else {
+                    const error = await response.json();
+                    alert('Ошибка: ' + error.detail);
+                }
+            } catch (error) {
+                alert('Ошибка сети: ' + error.message);
+            }
+        }
+    }
+}).mount('#registerForm');
+</script>
+{% endblock %}

@@ -1,0 +1,27 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}Главная - AI Developer Portal{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Front end & Back end разработка ИИ-решений под ключ</h1>
+        <p class="subtitle">Разрабатываю технические системы и вижу их бизнес-ценность.</p>
+        <div class="hero-buttons">
+            <a href="#services" class="btn-primary">Выбрать услугу</a>
+            <a href="/register" class="btn-outline">Обсудить вашу задачу</a>
+        </div>
+    </div>
+</section>
+
+<section id="services">
+    <h2>Услуги</h2>
+    <div class="service-card">
+        <h3>🎯 Промпт-инжиниринг</h3>
+        <ul>
+            <li>Создание и оптимизация промптов</li>
+            <li>Интеграция с ChatGPT, Claude, Gemini</li>
+        </ul>
+    </div>
+</section>
+{% endblock %}
