@@ -46,18 +46,18 @@ createApp({
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        name: this.name,
                         email: this.email,
-                        password: this.password,
-                        task: this.task
+                        name: this.name,
+                        password: this.password
                     })
                 });
                 if (response.ok) {
-                    alert('Регистрация успешна! Теперь войдите в систему.');
+                    const result = await response.json();
+                    alert('Регистрация успешна! Ваш ID: ' + result.user_id);
                     window.location.href = '/login';
                 } else {
                     const error = await response.json();
-                    alert('Ошибка: ' + error.detail);
+                    alert('Ошибка: ' + (error.detail || error.error || 'Неизвестная ошибка'));
                 }
             } catch (error) {
                 alert('Ошибка сети: ' + error.message);

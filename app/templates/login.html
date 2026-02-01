@@ -41,12 +41,16 @@ createApp({
                     })
                 });
                 if (response.ok) {
-                    const data = await response.json();
-                    localStorage.setItem('token', data.access_token);
-                    window.location.href = '/dashboard';
+                    const result = await response.json();
+                    // Сохраняем данные в localStorage
+                    localStorage.setItem('token', 'demo-token'); // Пока заглушка
+                    localStorage.setItem('user_id', result.user_id);
+                    localStorage.setItem('user_name', this.email);
+                    alert('Вход успешен!');
+                    window.location.href = '/dashboard'; // Будем создавать
                 } else {
                     const error = await response.json();
-                    alert('Ошибка: ' + error.detail);
+                    alert('Ошибка: ' + (error.detail || error.error || 'Неизвестная ошибка'));
                 }
             } catch (error) {
                 alert('Ошибка сети: ' + error.message);
