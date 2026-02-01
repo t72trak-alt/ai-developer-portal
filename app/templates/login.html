@@ -1,10 +1,10 @@
 ﻿{% extends "layout.html" %}
 {% block title %}Вход - AI Developer Portal{% endblock %}
 {% block content %}
-<div class="auth-container">
+<div class="auth-container" id="login-app">
     <div class="auth-card">
         <h2>Вход в личный кабинет</h2>
-        <form id="loginForm" @submit.prevent="login">
+        <form id="loginForm" @submit.prevent="handleSubmit">
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" v-model="email" required>
@@ -24,39 +24,55 @@ createApp({
     data() {
         return {
             email: '',
-            password: ''
+            password: '',
+            message: '',
+            messageType: '',
+            isLoading: false
         };
     },
     methods: {
-        async login() {
+        async handleSubmit(event) {
+            event.preventDefault();
+            this.isLoading = true;
+            this.message = '';
+            this.messageType = '';
             try {
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         email: this.email,
                         password: this.password
                     })
                 });
-                if (response.ok) {
-                    const result = await response.json();
-                    // Сохраняем данные в localStorage
-                    localStorage.setItem('token', 'demo-token'); // Пока заглушка
-                    localStorage.setItem('user_id', result.user_id);
-                    localStorage.setItem('user_name', this.email);
-                    alert('Вход успешен!');
-                    window.location.href = '/dashboard'; // Будем создавать
+                const data = await response.json();
+                if (response.ok && data.access_token) {
+                    this.message = 'Вход успешен! Переход в личный кабинет...';
+                    this.messageType = 'success';
+                    // Сохраняем токен
+                    localStorage.setItem('access_token', data.access_token);
+                    localStorage.setItem('user_email', this.email);
+                    // Переход через 1.5 секунды
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1500);
                 } else {
-                    const error = await response.json();
-                    alert('Ошибка: ' + (error.detail || error.error || 'Неизвестная ошибка'));
+                    this.message = data.detail || 'Ошибка входа';
+                    this.messageType = 'error';
                 }
             } catch (error) {
-                alert('Ошибка сети: ' + error.message);
+                this.message = 'Ошибка сети или сервера';
+                this.messageType = 'error';
+                console.error('Login error:', error);
+            } finally {
+                this.isLoading = false;
             }
         }
     }
-}).mount('#loginForm');
+}).mount('#login-app');
 </script>
 {% endblock %}
+
+

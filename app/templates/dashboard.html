@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет - AI Developer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">AI Developer</a>
+            <div class="nav-links">
+                <a href="/">Главная</a>
+                <a href="/dashboard">Личный кабинет</a>
+                <button onclick="logout()" class="btn-logout">Выйти</button>
+            </div>
+        </div>
+    </nav>
+    <main class="container">
+        <h1>Личный кабинет</h1>
+        <div id="user-data">Загрузка...</div>
+    </main>
+    <script>
+        async function loadUserData() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+            try {
+                const response = await fetch('/api/auth/me', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('user-data').innerHTML = `
+                        <p><strong>Email:</strong> ${data.email}</p>
+                        <p><strong>Имя:</strong> ${data.name}</p>
+                        <p><strong>Дата регистрации:</strong> ${new Date(data.created_at).toLocaleDateString('ru-RU')}</p>
+                        <button onclick="logout()" class="btn-secondary">Выйти</button>
+                    `;
+                } else {
+                    document.getElementById('user-data').innerHTML = '<p>Ошибка загрузки данных</p>';
+                }
+            } catch (error) {
+                document.getElementById('user-data').innerHTML = '<p>Ошибка сети</p>';
+                console.error('Error:', error);
+            }
+        }
+        function logout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user_email');
+            window.location.href = '/';
+        }
+        // Загружаем данные при открытии страницы
+        document.addEventListener('DOMContentLoaded', loadUserData);
+    </script>
+</body>
+</html>

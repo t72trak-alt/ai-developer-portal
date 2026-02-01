@@ -1,10 +1,10 @@
 ﻿{% extends "layout.html" %}
 {% block title %}Регистрация - AI Developer Portal{% endblock %}
 {% block content %}
-<div class="auth-container" id="register-app">
+<div class="auth-container">
     <div class="auth-card">
         <h2>Регистрация</h2>
-        <form id="registerForm" @submit.prevent="handleSubmit">
+        <form id="registerForm" @submit.prevent="register">
             <div class="form-group">
                 <label for="name">Имя:</label>
                 <input type="text" id="name" v-model="name" required>
@@ -31,26 +31,19 @@ const { createApp } = Vue;
 createApp({
     data() {
         return {
-            email: '',
             name: '',
+            email: '',
             password: '',
-            task: '',
-            message: '',
-            messageType: '',
-            isLoading: false
+            task: ''
         };
     },
     methods: {
-        async handleSubmit(event) {
-            event.preventDefault();
-            this.isLoading = true;
-            this.message = '';
-            this.messageType = '';
+        async register() {
             try {
                 const response = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         email: this.email,
@@ -58,34 +51,19 @@ createApp({
                         password: this.password
                     })
                 });
-                const data = await response.json();
                 if (response.ok) {
-                    this.message = 'Регистрация успешна! Переход на страницу входа...';
-                    this.messageType = 'success';
-                    // Очищаем форму
-                    this.email = '';
-                    this.name = '';
-                    this.password = '';
-                    this.task = '';
-                    // Переход через 2 секунды
-                    setTimeout(() => {
-                        window.location.href = '/login';
-                    }, 2000);
+                    const result = await response.json();
+                    alert('Регистрация успешна! Ваш ID: ' + result.user_id);
+                    window.location.href = '/login';
                 } else {
-                    this.message = data.detail || 'Ошибка регистрации';
-                    this.messageType = 'error';
+                    const error = await response.json();
+                    alert('Ошибка: ' + (error.detail || error.error || 'Неизвестная ошибка'));
                 }
             } catch (error) {
-                this.message = 'Ошибка сети или сервера';
-                this.messageType = 'error';
-                console.error('Registration error:', error);
-            } finally {
-                this.isLoading = false;
+                alert('Ошибка сети: ' + error.message);
             }
         }
     }
-}).mount('#register-app');
+}).mount('#registerForm');
 </script>
 {% endblock %}
-
-
