@@ -2,7 +2,7 @@
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models import User
+from app.models import User, ClientDetails  # <--- ДОБАВЛЕН ClientDetails
 import jwt
 from datetime import datetime, timedelta
 import hashlib
@@ -38,7 +38,7 @@ def verify_password(password: str, hashed_password: str, salt: str) -> bool:
 
 def create_access_token(user_id: int):
     payload = {
-        "sub": str(user_id),  # ID пользователя, а не email
+        "sub": str(user_id),  # ID пользователя
         "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
@@ -49,10 +49,12 @@ async def register(
     register_data: RegisterRequest,
     db: Session = Depends(get_db)
 ):
+    # Проверяем, существует ли пользователь
     existing_user = db.query(User).filter(User.email == register_data.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email уже зарегистрирован")
     
+    # Создаем пользователя
     hashed_password, salt = hash_password(register_data.password)
     new_user = User(
         email=register_data.email,
@@ -63,6 +65,12 @@ async def register(
         created_at=datetime.utcnow()
     )
     db.add(new_user)
+    db.flush()  # Чтобы получить ID пользователя
+    
+    # АВТОМАТИЧЕСКИ СОЗДАЕМ ПУСТЫЕ РЕКВИЗИТЫ
+    client_details = ClientDetails(user_id=new_user.id)
+    db.add(client_details)
+    
     db.commit()
     db.refresh(new_user)
     
@@ -90,7 +98,7 @@ async def login(
     # Создаём токен с ID пользователя
     access_token = create_access_token(db_user.id)
     
-    # Устанавливаем cookie (httponly=False для доступа из JS)
+    # Устанавливаем cookie
     response.set_cookie(
         key="access_token",
         value=access_token,

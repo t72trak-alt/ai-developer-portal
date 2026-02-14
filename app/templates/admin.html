@@ -124,6 +124,221 @@
             50% { transform: scale(1.1); color: #8b5cf6; }
             100% { transform: scale(1); }
         }
+
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 24px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #000000 !important;
+            background-color: #ffffff !important;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            ring: 2px solid #93c5fd;
+            background-color: #ffffff !important;
+        }
+        
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #9ca3af !important;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        
+        .action-btn {
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-btn.edit {
+            background-color: #e5e7eb;
+            color: #4b5563;
+        }
+        
+        .action-btn.edit:hover {
+            background-color: #d1d5db;
+        }
+        
+        .action-btn.delete {
+            background-color: #fee2e2;
+            color: #ef4444;
+        }
+        
+        .action-btn.delete:hover {
+            background-color: #fecaca;
+        }
+        
+        .badge {
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge.admin {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        
+        .badge.user {
+            background-color: #e5e7eb;
+            color: #4b5563;
+        }
+
+        /* Выпадающий список пользователей */
+        .user-list-dropdown {
+            position: absolute;
+            z-index: 50;
+            width: 250px;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-top: 4px;
+        }
+        
+        .user-list-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+            transition: all 0.2s;
+        }
+        
+        .user-list-item:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .user-list-item .name {
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .user-list-item .email {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Стили для карточки клиента */
+        .client-card-section {
+            background-color: #f9fafb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .client-card-section h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .details-item {
+            font-size: 14px;
+        }
+        
+        .details-item .label {
+            color: #6b7280;
+            margin-right: 8px;
+        }
+        
+        .details-item .value {
+            color: #1f2937;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -135,6 +350,9 @@
             </div>
             <div class="flex items-center space-x-4">
                 <span id="admin-email" class="font-medium">Загрузка...</span>
+                <a href="/" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition flex items-center">
+                    <span class="mr-2">🏠</span> Главная
+                </a>
                 <a href="/dashboard" class="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded transition">В личный кабинет</a>
                 <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition">Выход</button>
             </div>
@@ -148,20 +366,17 @@
                 <button onclick="loadTab('users')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-users">
                     <span class="mr-2 text-gray-700">👤</span> <span class="text-gray-800">Пользователи</span>
                 </button>
+                <button onclick="loadTab('payments')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-payments">
+                    <span class="mr-2 text-gray-700">💰</span> <span class="text-gray-800">Платежи</span>
+                </button>
                 <button onclick="loadTab('projects')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-projects">
                     <span class="mr-2 text-gray-700">📁</span> <span class="text-gray-800">Проекты</span>
                 </button>
-                <button onclick="loadTab('services')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-services">
-                    <span class="mr-2 text-gray-700">🔧</span> <span class="text-gray-800">Услуги</span>
+                <button onclick="loadTab('work-materials')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-work-materials">
+                    <span class="mr-2 text-gray-700">⚙️</span> <span class="text-gray-800">Рабочие материалы</span>
                 </button>
-                <button onclick="loadTab('transactions')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-transactions">
-                    <span class="mr-2 text-gray-700">💰</span> <span class="text-gray-800">Платежи</span>
-                </button>
-                <button onclick="loadTab('statistics')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-statistics">
-                    <span class="mr-2 text-gray-700">📈</span> <span class="text-gray-800">Статистика</span>
-                </button>
-                <button onclick="loadTab('settings')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-settings">
-                    <span class="mr-2 text-gray-700">⚙️</span> <span class="text-gray-800">Настройки</span>
+                <button onclick="loadTab('archive')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-archive">
+                    <span class="mr-2 text-gray-700">📦</span> <span class="text-gray-800">Архив</span>
                 </button>
             </div>
             
@@ -217,11 +432,7 @@
             </div>
 
             <div id="content-area" class="mt-6">
-                <div class="text-center py-10 text-gray-500">
-                    <div class="text-4xl mb-4">👈</div>
-                    <p class="text-xl">Выберите раздел в левом меню</p>
-                    <p class="text-sm mt-2">Здесь будет отображаться содержимое выбранной вкладки</p>
-                </div>
+                <!-- Контент будет загружаться сюда -->
             </div>
         </div>
         
@@ -281,6 +492,199 @@
         </div>
     </div>
     
+    <!-- Модальное окно добавления/редактирования пользователя -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title" class="text-2xl font-bold mb-4">Добавить пользователя</h2>
+            <form id="user-form" onsubmit="saveUser(event)">
+                <input type="hidden" id="user-id">
+                <div class="form-group">
+                    <label for="user-name">Имя</label>
+                    <input type="text" id="user-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-email">Email</label>
+                    <input type="email" id="user-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-password">Пароль</label>
+                    <input type="password" id="user-password" placeholder="Оставьте пустым, если не меняете">
+                </div>
+                <div class="form-group">
+                    <label for="user-is-admin">Роль</label>
+                    <select id="user-is-admin">
+                        <option value="false">Пользователь</option>
+                        <option value="true">Администратор</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения удаления -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">Подтверждение удаления</h2>
+            <p class="mb-6">Вы уверены, что хотите удалить пользователя <span id="delete-user-name" class="font-bold"></span>?</p>
+            <div class="flex justify-end space-x-2">
+                <button onclick="closeDeleteModal()" class="btn btn-secondary">Отмена</button>
+                <button onclick="confirmDelete()" class="btn btn-danger">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ВЫБОРА ПОЛЬЗОВАТЕЛЯ -->
+    <div id="user-select-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">👤 Выберите клиента</h3>
+                <button onclick="closeUserSelectModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            
+            <div class="mb-4">
+                <input type="text" id="user-search" placeholder="Поиск по имени или email..." 
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       onkeyup="filterUserSelectList()">
+            </div>
+            
+            <div id="user-select-list" class="max-h-96 overflow-y-auto space-y-2">
+                <div class="text-center py-4 text-gray-500">Загрузка пользователей...</div>
+            </div>
+            
+            <div class="flex justify-end mt-4">
+                <button onclick="closeUserSelectModal()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО КАРТОЧКИ КЛИЕНТА -->
+    <div id="client-card-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800" id="client-card-title">👤 Личная карточка клиента</h3>
+                <button onclick="closeClientCardModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            
+            <div id="client-card-content" class="space-y-6">
+                <div class="text-center py-8 text-gray-500">Загрузка данных клиента...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ РЕКВИЗИТОВ -->
+    <div id="client-details-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">📝 Редактирование реквизитов</h3>
+                <button onclick="closeClientDetailsModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            
+            <form id="client-details-form" onsubmit="saveClientDetails(event)">
+                <input type="hidden" id="details-user-id">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Левая колонка -->
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-gray-700 border-b pb-2">Юридическая информация</h4>
+                        
+                        <div class="form-group">
+                            <label for="company-name">🏢 Название компании</label>
+                            <input type="text" id="company-name" class="w-full p-2 border rounded">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="legal-address">📍 Юридический адрес</label>
+                            <textarea id="legal-address" rows="2" class="w-full p-2 border rounded"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="actual-address">📍 Фактический адрес</label>
+                            <textarea id="actual-address" rows="2" class="w-full p-2 border rounded"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-phone">📞 Контактный телефон</label>
+                            <input type="text" id="contact-phone" class="w-full p-2 border rounded">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-email">📧 Контактный email</label>
+                            <input type="email" id="contact-email" class="w-full p-2 border rounded">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="messenger-contact">💬 Контакт в мессенджере</label>
+                            <input type="text" id="messenger-contact" class="w-full p-2 border rounded" placeholder="Telegram, WhatsApp...">
+                        </div>
+                        
+                        <h4 class="font-bold text-gray-700 border-b pb-2 mt-4">Налоговые реквизиты</h4>
+                        
+                        <div class="form-group">
+                            <label for="inn">🏦 ИНН</label>
+                            <input type="text" id="inn" class="w-full p-2 border rounded">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="kpp">🏦 КПП</label>
+                            <input type="text" id="kpp" class="w-full p-2 border rounded">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ogrn">🏦 ОГРН</label>
+                            <input type="text" id="ogrn" class="w-full p-2 border rounded">
+                        </div>
+                    </div>
+                    
+                    <!-- Правая колонка -->
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-gray-700 border-b pb-2">Банковские реквизиты</h4>
+                        
+                        <div class="form-group">
+                            <label for="bank-name">💳 Банк</label>
+                            <input type="text" id="bank-name" class="w-full p-2 border rounded">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bik">💳 БИК</label>
+                            <input type="text" id="bik" class="w-full p-2 border rounded">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="checking-account">💳 Расчетный счет</label>
+                            <input type="text" id="checking-account" class="w-full p-2 border rounded">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="correspondent-account">💳 Корреспондентский счет</label>
+                            <input type="text" id="correspondent-account" class="w-full p-2 border rounded">
+                        </div>
+                        
+                        <h4 class="font-bold text-gray-700 border-b pb-2 mt-4">Руководитель</h4>
+                        
+                        <div class="form-group">
+                            <label for="director-name">👤 ФИО руководителя</label>
+                            <input type="text" id="director-name" class="w-full p-2 border rounded">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="director-basis">📄 Действует на основании</label>
+                            <input type="text" id="director-basis" class="w-full p-2 border rounded" value="Устава">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-2 mt-6 pt-4 border-t">
+                    <button type="button" onclick="closeClientDetailsModal()" class="btn btn-secondary">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <footer class="bg-gray-800 text-white p-4 mt-4">
         <div class="container mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-center">
@@ -305,6 +709,8 @@
         let editingContentDiv = null;
         let originalMessageContent = '';
         const MAX_RECONNECT_ATTEMPTS = 10;
+        let currentUsers = [];
+        let userToDelete = null;
 
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         document.addEventListener('DOMContentLoaded', function() {
@@ -357,8 +763,8 @@
         function initializeAdminPanel() {
             console.log('%c🚀 ЗАПУСК АДМИН-ПАНЕЛИ', 'background: #2563eb; color: white;');
             
-            const usersTab = document.getElementById('tab-users');
-            if (usersTab) usersTab.classList.add('active-tab');
+            // Загружаем раздел "Пользователи" сразу при старте
+            loadTab('users');
             
             updateAdminEmail();
             loadQuickStats();
@@ -448,14 +854,12 @@
             }
         }
 
-        // ===== НОВАЯ ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ СТАТИСТИКИ СООБЩЕНИЙ =====
         function updateMessageStats() {
             const statsMessages = document.getElementById('stats-messages');
             if (statsMessages) {
                 let currentCount = parseInt(statsMessages.textContent) || 0;
                 statsMessages.textContent = currentCount + 1;
                 
-                // Добавляем анимацию для визуального подтверждения
                 statsMessages.classList.add('stat-highlight');
                 setTimeout(() => {
                     statsMessages.classList.remove('stat-highlight');
@@ -463,7 +867,6 @@
                 
                 logToConsole('📊 Статистика сообщений обновлена: ' + (currentCount + 1));
                 
-                // Дополнительно синхронизируем с сервером для точности
                 setTimeout(() => {
                     fetch('/api/chat/stats/total')
                         .then(response => response.json())
@@ -504,20 +907,17 @@
                     case 'users':
                         await loadUsersTab(token);
                         break;
+                    case 'payments':
+                        await loadPaymentsTab(token);
+                        break;
                     case 'projects':
                         await loadProjectsTab(token);
                         break;
-                    case 'services':
-                        await loadServicesTab(token);
+                    case 'work-materials':
+                        await loadWorkMaterialsTab(token);
                         break;
-                    case 'transactions':
-                        await loadTransactionsTab(token);
-                        break;
-                    case 'statistics':
-                        await loadStatisticsTab(token);
-                        break;
-                    case 'settings':
-                        await loadSettingsTab(token);
+                    case 'archive':
+                        await loadArchiveTab(token);
                         break;
                     default:
                         document.getElementById('content-area').innerHTML = '<p class="text-red-500">Неизвестная вкладка</p>';
@@ -543,7 +943,311 @@
             }
         }
 
-        // ========== ФУНКЦИИ ДЛЯ РАБОТЫ С ЧАТОМ ==========
+        // ========== РАЗДЕЛ ПОЛЬЗОВАТЕЛЕЙ ==========
+        async function loadUsersTab(token) {
+            try {
+                const response = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                currentUsers = data.users || [];
+                
+                let tableRows = '';
+                
+                if (currentUsers.length === 0) {
+                    tableRows = `
+                        <tr>
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                                Нет пользователей
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    currentUsers.forEach(user => {
+                        const createdDate = user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Н/Д';
+                        const roleBadge = user.is_admin 
+                            ? '<span class="badge admin">Администратор</span>' 
+                            : '<span class="badge user">Пользователь</span>';
+                        
+                        tableRows += `
+                            <tr>
+                                <td class="px-4 py-3 text-black">${user.id}</td>
+                                <td class="px-4 py-3 font-medium text-black">${user.name || 'Без имени'}</td>
+                                <td class="px-4 py-3 text-black">${user.email}</td>
+                                <td class="px-4 py-3">${roleBadge}</td>
+                                <td class="px-4 py-3 text-black">${createdDate}</td>
+                                <td class="px-4 py-3">
+                                    <button onclick="editUser(${user.id})" class="action-btn edit" title="Редактировать">
+                                        ✏️
+                                    </button>
+                                    <button onclick="deleteUser(${user.id})" class="action-btn delete" title="Удалить">
+                                        🗑️
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                const content = `
+                    <div class="bg-white rounded-2xl shadow-sm p-6">
+                        <!-- Заголовок по центру -->
+                        <h2 class="text-2xl font-bold text-black text-center mb-8">Панель управления пользователями</h2>
+                        
+                        <!-- Три кнопки равноудалены по центру -->
+                        <div class="flex justify-center items-center space-x-6 mb-8">
+                            <!-- Кнопка "Список пользователей" с выпадающим списком -->
+                            <div class="relative">
+                                <button onclick="toggleUserListDropdown()" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-xl transition-colors flex items-center justify-center min-w-[200px]">
+                                    <span class="mr-2">📋</span> Список пользователей
+                                </button>
+                                <div id="user-list-dropdown" class="user-list-dropdown hidden">
+                                    <div class="p-2 text-gray-500 text-center">Загрузка...</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Кнопка "Личная карточка клиента" -->
+                            <button onclick="openUserSelectModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition-colors flex items-center justify-center min-w-[200px]">
+                                <span class="mr-2">🆔</span> Личная карточка клиента
+                            </button>
+                            
+                            <!-- Кнопка "Добавить пользователя" -->
+                            <button onclick="showAddUserModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl transition-colors flex items-center justify-center min-w-[200px]">
+                                <span class="mr-2">➕</span> Добавить пользователя
+                            </button>
+                        </div>
+                        
+                        <!-- Таблица пользователей -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full data-table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-black">ID</th>
+                                        <th class="text-black">Имя</th>
+                                        <th class="text-black">Email</th>
+                                        <th class="text-black">Роль</th>
+                                        <th class="text-black">Дата регистрации</th>
+                                        <th class="text-black">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRows}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('content-area').innerHTML = content;
+                
+                // Загружаем список для выпадающего меню
+                loadUserListDropdownContent();
+                
+            } catch (error) {
+                console.error('Ошибка загрузки пользователей:', error);
+                document.getElementById('content-area').innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                        <h3 class="text-red-800 font-bold text-lg mb-2">⚠️ Ошибка загрузки пользователей</h3>
+                        <p class="text-red-600 mb-4">${error.message}</p>
+                        <button onclick="loadUsersTab('${token}')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition">
+                            Попробовать снова
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Функции для выпадающего списка пользователей
+        function toggleUserListDropdown() {
+            const dropdown = document.getElementById('user-list-dropdown');
+            if (dropdown.classList.contains('hidden')) {
+                dropdown.classList.remove('hidden');
+            } else {
+                dropdown.classList.add('hidden');
+            }
+        }
+
+        async function loadUserListDropdownContent() {
+            const dropdown = document.getElementById('user-list-dropdown');
+            if (!dropdown) return;
+            
+            dropdown.innerHTML = '<div class="p-2 text-gray-500 text-center">Загрузка...</div>';
+            
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                const users = data.users || [];
+                
+                if (users.length === 0) {
+                    dropdown.innerHTML = '<div class="p-2 text-gray-500 text-center">Нет пользователей</div>';
+                    return;
+                }
+                
+                let html = '';
+                users.forEach(user => {
+                    html += `
+                        <div onclick="selectUserFromList(${user.id})" class="user-list-item">
+                            <div class="name">${user.name || 'Без имени'}</div>
+                            <div class="email">${user.email}</div>
+                        </div>
+                    `;
+                });
+                
+                dropdown.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Ошибка загрузки списка пользователей:', error);
+                dropdown.innerHTML = '<div class="p-2 text-red-500 text-center">Ошибка загрузки</div>';
+            }
+        }
+
+        function selectUserFromList(userId) {
+            document.getElementById('user-list-dropdown').classList.add('hidden');
+            const user = currentUsers.find(u => u.id === userId);
+            if (user) {
+                // Открываем карточку клиента
+                selectUserForClientCard(user.id, user.name || 'Без имени', user.email);
+            }
+        }
+
+        function showAddUserModal() {
+            document.getElementById('modal-title').textContent = 'Добавить пользователя';
+            document.getElementById('user-id').value = '';
+            document.getElementById('user-name').value = '';
+            document.getElementById('user-email').value = '';
+            document.getElementById('user-password').value = '';
+            document.getElementById('user-password').required = true;
+            document.getElementById('user-is-admin').value = 'false';
+            document.getElementById('user-modal').classList.add('active');
+        }
+
+        function editUser(userId) {
+            const user = currentUsers.find(u => u.id === userId);
+            if (!user) return;
+            
+            document.getElementById('modal-title').textContent = 'Редактировать пользователя';
+            document.getElementById('user-id').value = user.id;
+            document.getElementById('user-name').value = user.name || '';
+            document.getElementById('user-email').value = user.email || '';
+            document.getElementById('user-password').value = '';
+            document.getElementById('user-password').required = false;
+            document.getElementById('user-is-admin').value = user.is_admin ? 'true' : 'false';
+            document.getElementById('user-modal').classList.add('active');
+        }
+
+        async function saveUser(event) {
+            event.preventDefault();
+            
+            const userId = document.getElementById('user-id').value;
+            const name = document.getElementById('user-name').value;
+            const email = document.getElementById('user-email').value;
+            const password = document.getElementById('user-password').value;
+            const isAdmin = document.getElementById('user-is-admin').value === 'true';
+            
+            const token = localStorage.getItem('access_token');
+            
+            try {
+                let response;
+                
+                if (userId) {
+                    // Обновление пользователя
+                    response = await fetch(`/api/admin/users/${userId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            password: password || undefined,
+                            is_admin: isAdmin
+                        })
+                    });
+                } else {
+                    // Создание нового пользователя
+                    response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            password: password
+                        })
+                    });
+                }
+                
+                if (response.ok) {
+                    showNotification(userId ? '✅ Пользователь обновлён' : '✅ Пользователь создан', 'success');
+                    closeModal();
+                    loadUsersTab(token);
+                    loadQuickStats();
+                } else {
+                    const error = await response.json();
+                    showNotification('❌ Ошибка: ' + (error.detail || 'Неизвестная ошибка'), 'error');
+                }
+                
+            } catch (error) {
+                console.error('Ошибка сохранения пользователя:', error);
+                showNotification('❌ Ошибка при сохранении', 'error');
+            }
+        }
+
+        function deleteUser(userId) {
+            const user = currentUsers.find(u => u.id === userId);
+            if (!user) return;
+            
+            userToDelete = userId;
+            document.getElementById('delete-user-name').textContent = user.name || user.email;
+            document.getElementById('delete-modal').classList.add('active');
+        }
+
+        function confirmDelete() {
+            if (!userToDelete) return;
+            
+            const token = localStorage.getItem('access_token');
+            
+            fetch(`/api/admin/users/${userToDelete}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(response => {
+                if (response.ok) {
+                    showNotification('✅ Пользователь удалён', 'success');
+                    closeDeleteModal();
+                    loadUsersTab(token);
+                    loadQuickStats();
+                } else {
+                    showNotification('❌ Ошибка при удалении', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка удаления:', error);
+                showNotification('❌ Ошибка при удалении', 'error');
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('user-modal').classList.remove('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.remove('active');
+            userToDelete = null;
+        }
+
+        // ========== ФУНКЦИИ ДЛЯ ЧАТА ==========
         function loadUserDropdown() {
             const dropdown = document.getElementById('user-dropdown');
             if (!dropdown) return;
@@ -648,7 +1352,7 @@
                         `;
                     } else {
                         messages.forEach(msg => {
-                            const isAdmin = msg.sender_id === 0;
+                            const isAdmin = msg.sender_id === 1;
                             const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             const bubbleClass = isAdmin ? 'bg-blue-100 text-blue-800' : 'bg-gray-200 text-gray-800';
                             const align = isAdmin ? 'justify-end' : 'justify-start';
@@ -702,7 +1406,6 @@
                 const messagesContainer = document.getElementById('chat-messages-container');
                 const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
-                // Создаем элемент сообщения
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'flex justify-end mb-3';
                 messageDiv.innerHTML = `
@@ -718,7 +1421,6 @@
                 input.value = '';
                 logToConsole('📤 Отправлено сообщение пользователю ' + activeChatUser.name);
                 
-                // ОБНОВЛЯЕМ СТАТИСТИКУ ПОСЛЕ ОТПРАВКИ
                 updateMessageStats();
             } else {
                 alert('WebSocket не подключен. Перезагрузите страницу.');
@@ -804,21 +1506,21 @@
                                 const messagesContainer = document.getElementById('chat-messages-container');
                                 const time = new Date(data.timestamp || data.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                                 
-                                messagesContainer.innerHTML += `
-                                    <div class="flex justify-start mb-3">
-                                        <div class="max-w-xs md:max-w-md lg:max-w-lg bg-gray-200 text-gray-800 rounded-lg p-3">
-                                            <div class="message-content">${data.content}</div>
-                                            <div class="text-xs opacity-70 mt-1 text-right">${time}</div>
-                                        </div>
+                                const messageDiv = document.createElement('div');
+                                messageDiv.className = 'flex justify-start mb-3';
+                                messageDiv.innerHTML = `
+                                    <div class="max-w-xs md:max-w-md lg:max-w-lg bg-gray-200 text-gray-800 rounded-lg p-3">
+                                        <div class="message-content">${data.content}</div>
+                                        <div class="text-xs opacity-70 mt-1 text-right">${time}</div>
                                     </div>
                                 `;
                                 
+                                messagesContainer.appendChild(messageDiv);
                                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
                                 logToConsole('📩 Новое сообщение от ' + activeChatUser.name);
                                 showNotification(`Новое сообщение от ${activeChatUser.name}`, 'info');
                             }
                             
-                            // ОБНОВЛЯЕМ СТАТИСТИКУ ПРИ ПОЛУЧЕНИИ НОВОГО СООБЩЕНИЯ
                             updateMessageStats();
                         }
                     } catch (error) {
@@ -831,20 +1533,18 @@
             }
         }
 
-        // ========== ФУНКЦИЯ РЕДАКТИРОВАНИЯ СООБЩЕНИЯ ==========
+        // ========== РЕДАКТИРОВАНИЕ СООБЩЕНИЙ ==========
         function editLastMessage() {
             if (!activeChatUser) {
                 showNotification('Сначала выберите пользователя в чате', 'warning');
                 return;
             }
             
-            // Если уже в режиме редактирования, выходим из него
             if (editMode) {
                 cancelEdit();
                 return;
             }
             
-            // Находим последнее сообщение администратора
             const messagesContainer = document.getElementById('chat-messages-container');
             const adminMessages = messagesContainer.querySelectorAll('.bg-blue-100');
             
@@ -853,27 +1553,21 @@
                 return;
             }
             
-            // Берем последнее сообщение администратора
             editingMessageDiv = adminMessages[adminMessages.length - 1];
             editingContentDiv = editingMessageDiv.querySelector('.message-content');
             
             if (!editingContentDiv) return;
             
             originalMessageContent = editingContentDiv.textContent;
-            
-            // Входим в режим редактирования
             editMode = true;
             
-            // Подсвечиваем редактируемое сообщение
             editingMessageDiv.classList.add('message-edit-mode');
             
-            // Создаем поле для редактирования
             const editTextarea = document.createElement('textarea');
             editTextarea.value = originalMessageContent;
             editTextarea.className = 'edit-textarea';
             editTextarea.rows = 3;
             
-            // Создаем контейнер для кнопок
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'edit-buttons';
             buttonContainer.innerHTML = `
@@ -881,15 +1575,12 @@
                 <button onclick="cancelEdit()" class="edit-cancel-btn">❌ Отмена</button>
             `;
             
-            // Заменяем содержимое на поле редактирования и кнопки
             editingContentDiv.innerHTML = '';
             editingContentDiv.appendChild(editTextarea);
             editingContentDiv.appendChild(buttonContainer);
             
-            // Устанавливаем фокус на поле ввода
             editTextarea.focus();
             
-            // Меняем текст кнопки
             const editButton = document.querySelector('button[onclick="editLastMessage()"]');
             editButton.innerHTML = '❌ Отмена';
             
@@ -910,16 +1601,13 @@
                 return;
             }
             
-            // Обновляем текст сообщения
             const oldMessage = originalMessageContent;
             editingContentDiv.innerHTML = newMessage;
             
-            // Убираем подсветку
             if (editingMessageDiv) {
                 editingMessageDiv.classList.remove('message-edit-mode');
             }
             
-            // Отправляем уведомление через WebSocket о редактировании
             if (adminWebSocket && adminWebSocket.readyState === WebSocket.OPEN) {
                 const editData = {
                     type: 'edit_message',
@@ -931,23 +1619,18 @@
                 adminWebSocket.send(JSON.stringify(editData));
             }
             
-            // Выходим из режима редактирования
             exitEditMode();
             
-            showNotification('Сообщение исправлено', 'success');
+            showNotification('✅ Сообщение исправлено', 'success');
             logToConsole('✅ Сообщение исправлено: "' + oldMessage + '" -> "' + newMessage + '"');
         }
 
         function cancelEdit() {
             if (!editingContentDiv || !editingMessageDiv) return;
             
-            // Восстанавливаем оригинальное сообщение
             editingContentDiv.innerHTML = originalMessageContent;
-            
-            // Убираем подсветку
             editingMessageDiv.classList.remove('message-edit-mode');
             
-            // Выходим из режима редактирования
             exitEditMode();
             
             showNotification('Редактирование отменено', 'info');
@@ -960,7 +1643,6 @@
             editingContentDiv = null;
             originalMessageContent = '';
             
-            // Восстанавливаем текст кнопки
             const editButton = document.querySelector('button[onclick="editLastMessage()"]');
             editButton.innerHTML = '✏️ Редактировать сообщение';
         }
@@ -987,7 +1669,6 @@
                 logToConsole('🧪 Тестовое сообщение отправлено');
                 showNotification('Тест WebSocket выполнен', 'success');
                 
-                // Обновляем статистику после тестового сообщения
                 updateMessageStats();
             } else {
                 logToConsole('⚠️ WebSocket не подключен');
@@ -1050,48 +1731,640 @@
             }, 5000);
         }
 
-        // ========== ЗАГЛУШКИ ==========
-        async function loadUsersTab(token) {
-            const response = await fetch('/api/admin/users', {
-                headers: { 'Authorization': `Bearer ${token}` }
+        // ========== ФУНКЦИИ ДЛЯ ЛИЧНОЙ КАРТОЧКИ КЛИЕНТА ==========
+        
+        function openUserSelectModal() {
+            const modal = document.getElementById('user-select-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                loadUserSelectList();
+            }
+        }
+
+        function closeUserSelectModal() {
+            const modal = document.getElementById('user-select-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        async function loadUserSelectList() {
+            const listContainer = document.getElementById('user-select-list');
+            if (!listContainer) return;
+            
+            listContainer.innerHTML = '<div class="text-center py-4 text-gray-500">Загрузка пользователей...</div>';
+            
+            try {
+                const token = localStorage.getItem('access_token');
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                const response = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Ошибка загрузки пользователей');
+                
+                const data = await response.json();
+                const users = data.users || [];
+                
+                if (users.length === 0) {
+                    listContainer.innerHTML = '<div class="text-center py-4 text-gray-500">Нет зарегистрированных пользователей</div>';
+                    return;
+                }
+                
+                let html = '';
+                users.forEach(user => {
+                    const safeName = (user.name || 'Без имени').replace(/'/g, "\\'");
+                    const safeEmail = user.email.replace(/'/g, "\\'");
+                    html += `
+                        <div class="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition"
+                             onclick="selectUserForClientCard(${user.id}, '${safeName}', '${safeEmail}')">
+                            <div class="font-medium text-gray-800">${user.name || 'Без имени'}</div>
+                            <div class="text-sm text-gray-600">${user.email}</div>
+                            <div class="text-xs mt-1">
+                                <span class="px-2 py-1 rounded-full ${user.is_admin ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}">
+                                    ${user.is_admin ? 'Администратор' : 'Пользователь'}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                listContainer.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Ошибка загрузки пользователей:', error);
+                listContainer.innerHTML = '<div class="text-center py-4 text-red-500">Ошибка загрузки. Попробуйте позже.</div>';
+            }
+        }
+
+        function filterUserSelectList() {
+            const searchText = document.getElementById('user-search')?.value.toLowerCase() || '';
+            const items = document.querySelectorAll('#user-select-list > div');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchText)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
             });
-            const data = await response.json();
-            document.getElementById('content-area').innerHTML = '<div class="p-4">Раздел пользователей (в разработке)</div>';
         }
+
+        async function selectUserForClientCard(userId, userName, userEmail) {
+            closeUserSelectModal();
+            
+            const modal = document.getElementById('client-card-modal');
+            const content = document.getElementById('client-card-content');
+            
+            if (modal && content) {
+                modal.classList.remove('hidden');
+                content.innerHTML = '<div class="text-center py-8 text-gray-500">Загрузка данных клиента...</div>';
+                
+                await loadClientCardData(userId, userName, userEmail);
+            }
+        }
+
+        async function loadClientCardData(userId, userName, userEmail) {
+            const content = document.getElementById('client-card-content');
+            if (!content) return;
+            
+            try {
+                const token = localStorage.getItem('access_token');
+                
+                // Загружаем реквизиты клиента
+                let clientDetails = {};
+                try {
+                    const detailsResponse = await fetch(`/api/admin/clients/${userId}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (detailsResponse.ok) {
+                        clientDetails = await detailsResponse.json();
+                    }
+                } catch (e) {
+                    console.log('Реквизиты не найдены, будут пустые');
+                }
+                
+                // Загружаем статистику клиента
+                let statistics = {
+                    total_messages: 0,
+                    total_projects: 0,
+                    total_transactions: 0,
+                    total_payments_sum: 0
+                };
+                try {
+                    const statsResponse = await fetch(`/api/admin/clients/${userId}/statistics`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (statsResponse.ok) {
+                        statistics = await statsResponse.json();
+                    }
+                } catch (e) {
+                    console.log('Статистика не загружена');
+                }
+                
+                // Загружаем последние сообщения
+                let messages = [];
+                try {
+                    const messagesResponse = await fetch(`/api/chat/history/${userId}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (messagesResponse.ok) {
+                        messages = await messagesResponse.json();
+                    }
+                } catch (e) {
+                    console.log('Сообщения не загружены');
+                }
+                
+                // Загружаем проекты клиента
+                let projects = [];
+                try {
+                    const projectsResponse = await fetch(`/api/admin/projects?user_id=${userId}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (projectsResponse.ok) {
+                        const projectsData = await projectsResponse.json();
+                        projects = projectsData.projects || [];
+                    }
+                } catch (e) {
+                    console.log('Проекты не загружены');
+                }
+                
+                // Формируем HTML для сообщений
+                const messagesHtml = messages.slice(0, 5).map(msg => {
+                    const time = new Date(msg.created_at).toLocaleString('ru-RU', {
+                        day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+                    });
+                    const sender = msg.sender_id == userId ? '👤 Клиент' : '👨‍💼 Админ';
+                    return `
+                        <div class="p-2 bg-white rounded border text-sm">
+                            <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                <span>${time}</span>
+                                <span>${sender}</span>
+                            </div>
+                            <div class="text-black">${msg.content}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Формируем HTML для проектов
+                const projectsHtml = projects.slice(0, 3).map(project => {
+                    const statusColors = {
+                        'pending': 'bg-yellow-100 text-yellow-800',
+                        'in_progress': 'bg-blue-100 text-blue-800',
+                        'completed': 'bg-green-100 text-green-800',
+                        'cancelled': 'bg-red-100 text-red-800'
+                    };
+                    const statusClass = statusColors[project.status] || 'bg-gray-100 text-gray-800';
+                    const statusText = {
+                        'pending': 'Ожидает',
+                        'in_progress': 'В работе',
+                        'completed': 'Завершён',
+                        'cancelled': 'Отменён'
+                    }[project.status] || project.status;
+                    
+                    return `
+                        <div class="p-2 bg-white rounded border flex justify-between items-center">
+                            <div>
+                                <div class="font-medium text-black">${project.title}</div>
+                                <div class="text-xs text-gray-600">${project.description || ''}</div>
+                            </div>
+                            <span class="px-2 py-1 ${statusClass} rounded-full text-xs">${statusText}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Формируем HTML для реквизитов - в один столбик
+                const detailsHtml = `
+                    <div class="space-y-2 text-sm">
+                        <div><span class="text-gray-600">🏢 Компания:</span> <span class="font-medium text-black ml-2">${clientDetails.company_name || '—'}</span></div>
+                        <div><span class="text-gray-600">📍 Юр. адрес:</span> <span class="font-medium text-black ml-2">${clientDetails.legal_address || '—'}</span></div>
+                        <div><span class="text-gray-600">📍 Факт. адрес:</span> <span class="font-medium text-black ml-2">${clientDetails.actual_address || '—'}</span></div>
+                        <div><span class="text-gray-600">📞 Телефон:</span> <span class="font-medium text-black ml-2">${clientDetails.contact_phone || '—'}</span></div>
+                        <div><span class="text-gray-600">📧 Email:</span> <span class="font-medium text-black ml-2">${clientDetails.contact_email || '—'}</span></div>
+                        <div><span class="text-gray-600">💬 Мессенджер:</span> <span class="font-medium text-black ml-2">${clientDetails.messenger_contact || '—'}</span></div>
+                        <div><span class="text-gray-600">🏦 ИНН:</span> <span class="font-medium text-black ml-2">${clientDetails.inn || '—'}</span></div>
+                        <div><span class="text-gray-600">🏦 КПП:</span> <span class="font-medium text-black ml-2">${clientDetails.kpp || '—'}</span></div>
+                        <div><span class="text-gray-600">🏦 ОГРН:</span> <span class="font-medium text-black ml-2">${clientDetails.ogrn || '—'}</span></div>
+                        <div><span class="text-gray-600">💳 Банк:</span> <span class="font-medium text-black ml-2">${clientDetails.bank_name || '—'}</span></div>
+                        <div><span class="text-gray-600">💳 БИК:</span> <span class="font-medium text-black ml-2">${clientDetails.bik || '—'}</span></div>
+                        <div><span class="text-gray-600">💳 Р/С:</span> <span class="font-medium text-black ml-2">${clientDetails.checking_account || '—'}</span></div>
+                        <div><span class="text-gray-600">💳 К/С:</span> <span class="font-medium text-black ml-2">${clientDetails.correspondent_account || '—'}</span></div>
+                        <div><span class="text-gray-600">👤 Руководитель:</span> <span class="font-medium text-black ml-2">${clientDetails.director_name || '—'}</span></div>
+                        <div><span class="text-gray-600">📄 Основание:</span> <span class="font-medium text-black ml-2">${clientDetails.director_basis || '—'}</span></div>
+                    </div>
+                `;
+                
+                // Финальный HTML карточки - кнопки вертикально слева
+                content.innerHTML = `
+                    <div class="grid grid-cols-3 gap-6">
+                        <!-- Левая колонка - Основная информация и кнопки -->
+                        <div class="col-span-1 space-y-4">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-bold text-gray-700 mb-3">👤 Основная информация</h4>
+                                <div class="space-y-2 text-sm">
+                                    <div><span class="text-gray-600">🆔 ID:</span> <span class="font-medium text-black">${userId}</span></div>
+                                    <div><span class="text-gray-600">👤 Имя:</span> <span class="font-medium text-black">${userName}</span></div>
+                                    <div><span class="text-gray-600">📧 Email:</span> <span class="font-medium text-black">${userEmail}</span></div>
+                                    <div><span class="text-gray-600">📅 Регистрация:</span> <span class="font-medium text-black">${new Date().toLocaleDateString()}</span></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-bold text-gray-700 mb-3">📊 Статистика</h4>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">💬 Сообщений:</span>
+                                        <span class="font-medium text-black">${statistics.total_messages}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">📁 Проектов:</span>
+                                        <span class="font-medium text-black">${statistics.total_projects}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">💰 Транзакций:</span>
+                                        <span class="font-medium text-black">${statistics.total_transactions}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">💳 Сумма:</span>
+                                        <span class="font-medium text-black">${statistics.total_payments_sum.toLocaleString()} ₽</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Кнопки вертикально: Реквизиты, Редактировать, Написать -->
+                            <div class="flex flex-col space-y-2">
+                                <button onclick="openClientDetailsModal(${userId})" 
+                                        class="w-full bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-sm flex items-center justify-center">
+                                    <span class="mr-2">📝</span> Реквизиты
+                                </button>
+                                <button onclick="editUser(${userId})" 
+                                        class="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm flex items-center justify-center">
+                                    <span class="mr-2">✏️</span> Редактировать
+                                </button>
+                                <button onclick="openChatWithUser(${userId}, '${userName.replace(/'/g, "\\'")}')" 
+                                        class="w-full bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm flex items-center justify-center">
+                                    <span class="mr-2">💬</span> Написать
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Правая колонка - Сообщения, проекты и реквизиты -->
+                        <div class="col-span-2 space-y-4">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="font-bold text-gray-700">💬 Последние сообщения</h4>
+                                    <button onclick="switchToChat('${userName.replace(/'/g, "\\'")}')" class="text-sm text-blue-600 hover:underline">
+                                        Все сообщения →
+                                    </button>
+                                </div>
+                                <div class="space-y-2 max-h-40 overflow-y-auto">
+                                    ${messagesHtml || '<div class="text-gray-500 text-sm">Нет сообщений</div>'}
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="font-bold text-gray-700">📁 Проекты клиента</h4>
+                                    <button onclick="switchToProjects('${userName.replace(/'/g, "\\'")}')" class="text-sm text-blue-600 hover:underline">
+                                        Все проекты →
+                                    </button>
+                                </div>
+                                <div class="space-y-2 max-h-40 overflow-y-auto">
+                                    ${projectsHtml || '<div class="text-gray-500 text-sm">Нет проектов</div>'}
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="font-bold text-gray-700">📁 Реквизиты клиента</h4>
+                                    <button onclick="openClientDetailsModal(${userId})" class="text-sm text-blue-600 hover:underline">
+                                        Редактировать →
+                                    </button>
+                                </div>
+                                ${detailsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                showNotification('✅ Данные клиента загружены', 'success');
+                
+            } catch (error) {
+                console.error('Ошибка загрузки данных клиента:', error);
+                content.innerHTML = '<div class="text-center py-8 text-red-500">Ошибка загрузки данных. Попробуйте позже.</div>';
+            }
+        }
+
+        function closeClientCardModal() {
+            const modal = document.getElementById('client-card-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function openChatWithUser(userId, userName) {
+            closeClientCardModal();
+            
+            // Выбираем пользователя в чате
+            selectUserForChat(userId, userName, '');
+            
+            // Прокручиваем к чату
+            document.getElementById('chat-section')?.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function switchToProjects(userName) {
+            closeClientCardModal();
+            loadTab('projects');
+            showNotification(`Проекты пользователя ${userName}`, 'info');
+        }
+
+        function switchToChat(userName) {
+            closeClientCardModal();
+            showNotification(`Чат с пользователем ${userName}`, 'info');
+        }
+
+        // ========== ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ РЕКВИЗИТОВ ==========
         
+        async function openClientDetailsModal(userId) {
+            const modal = document.getElementById('client-details-modal');
+            if (!modal) return;
+            
+            document.getElementById('details-user-id').value = userId;
+            
+            // Загружаем текущие реквизиты
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`/api/admin/clients/${userId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const details = await response.json();
+                    
+                    // Заполняем форму
+                    document.getElementById('company-name').value = details.company_name || '';
+                    document.getElementById('legal-address').value = details.legal_address || '';
+                    document.getElementById('actual-address').value = details.actual_address || '';
+                    document.getElementById('contact-phone').value = details.contact_phone || '';
+                    document.getElementById('contact-email').value = details.contact_email || '';
+                    document.getElementById('messenger-contact').value = details.messenger_contact || '';
+                    document.getElementById('inn').value = details.inn || '';
+                    document.getElementById('kpp').value = details.kpp || '';
+                    document.getElementById('ogrn').value = details.ogrn || '';
+                    document.getElementById('bank-name').value = details.bank_name || '';
+                    document.getElementById('bik').value = details.bik || '';
+                    document.getElementById('checking-account').value = details.checking_account || '';
+                    document.getElementById('correspondent-account').value = details.correspondent_account || '';
+                    document.getElementById('director-name').value = details.director_name || '';
+                    document.getElementById('director-basis').value = details.director_basis || 'Устава';
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки реквизитов:', error);
+            }
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeClientDetailsModal() {
+            const modal = document.getElementById('client-details-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        async function saveClientDetails(event) {
+            event.preventDefault();
+            
+            const userId = document.getElementById('details-user-id').value;
+            if (!userId) return;
+            
+            const detailsData = {
+                company_name: document.getElementById('company-name').value,
+                legal_address: document.getElementById('legal-address').value,
+                actual_address: document.getElementById('actual-address').value,
+                contact_phone: document.getElementById('contact-phone').value,
+                contact_email: document.getElementById('contact-email').value,
+                messenger_contact: document.getElementById('messenger-contact').value,
+                inn: document.getElementById('inn').value,
+                kpp: document.getElementById('kpp').value,
+                ogrn: document.getElementById('ogrn').value,
+                bank_name: document.getElementById('bank-name').value,
+                bik: document.getElementById('bik').value,
+                checking_account: document.getElementById('checking-account').value,
+                correspondent_account: document.getElementById('correspondent-account').value,
+                director_name: document.getElementById('director-name').value,
+                director_basis: document.getElementById('director-basis').value
+            };
+            
+            try {
+                const token = localStorage.getItem('access_token');
+                const response = await fetch(`/api/admin/clients/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(detailsData)
+                });
+                
+                if (response.ok) {
+                    showNotification('✅ Реквизиты сохранены', 'success');
+                    closeClientDetailsModal();
+                    
+                    // Обновляем карточку клиента, если она открыта
+                    const cardModal = document.getElementById('client-card-modal');
+                    if (!cardModal.classList.contains('hidden')) {
+                        const user = currentUsers.find(u => u.id == userId);
+                        if (user) {
+                            await loadClientCardData(userId, user.name || 'Без имени', user.email);
+                        }
+                    }
+                } else {
+                    const error = await response.json();
+                    showNotification('❌ Ошибка: ' + (error.detail || 'Неизвестная ошибка'), 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка сохранения реквизитов:', error);
+                showNotification('❌ Ошибка при сохранении', 'error');
+            }
+        }
+
+        // ========== ЗАГЛУШКИ ДЛЯ ОСТАЛЬНЫХ РАЗДЕЛОВ ==========
+        async function loadPaymentsTab(token) {
+            document.getElementById('content-area').innerHTML = `
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Управление платежами</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl">
+                            <p class="text-sm text-gray-600">Всего транзакций</p>
+                            <p class="text-2xl font-bold text-gray-800" id="total-transactions">0</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl">
+                            <p class="text-sm text-gray-600">Успешные платежи</p>
+                            <p class="text-2xl font-bold text-green-600" id="successful-transactions">0</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-yellow-50 to-amber-50 p-4 rounded-xl">
+                            <p class="text-sm text-gray-600">Ожидают</p>
+                            <p class="text-2xl font-bold text-yellow-600" id="pending-transactions">0</p>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">ID</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Пользователь</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Сумма</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Статус</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Дата</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-table-body" class="divide-y divide-gray-100">
+                                <tr>
+                                    <td colspan="6" class="px-4 py-8 text-center text-gray-500">Раздел в разработке</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
         async function loadProjectsTab(token) {
-            document.getElementById('content-area').innerHTML = '<div class="p-4">Раздел проектов (в разработке)</div>';
+            document.getElementById('content-area').innerHTML = `
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Управление проектами</h2>
+                    <div class="mb-4">
+                        <button onclick="showNotification('Функция в разработке', 'warning')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl transition-colors">
+                            + Новый проект
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">ID</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Название</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Описание</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Пользователь</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Статус</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr>
+                                    <td colspan="6" class="px-4 py-8 text-center text-gray-500">Раздел в разработке</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
         }
-        
-        async function loadServicesTab(token) {
-            document.getElementById('content-area').innerHTML = '<div class="p-4">Раздел услуг (в разработке)</div>';
+
+        async function loadWorkMaterialsTab(token) {
+            document.getElementById('content-area').innerHTML = `
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Рабочие материалы</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-semibold text-gray-800">Документация API</h3>
+                                <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">PDF</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-3">Полная документация по API для разработчиков</p>
+                            <button onclick="showNotification('Функция в разработке', 'warning')" class="text-blue-600 hover:text-blue-700 text-sm font-medium">Скачать →</button>
+                        </div>
+                        <div class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-semibold text-gray-800">Шаблоны проектов</h3>
+                                <span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">ZIP</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-3">Готовые шаблоны для быстрого старта</p>
+                            <button onclick="showNotification('Функция в разработке', 'warning')" class="text-blue-600 hover:text-blue-700 text-sm font-medium">Скачать →</button>
+                        </div>
+                        <div class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-semibold text-gray-800">Инструкции</h3>
+                                <span class="text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full">DOC</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-3">Пошаговые инструкции по работе с системой</p>
+                            <button onclick="showNotification('Функция в разработке', 'warning')" class="text-blue-600 hover:text-blue-700 text-sm font-medium">Скачать →</button>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
-        
-        async function loadTransactionsTab(token) {
-            document.getElementById('content-area').innerHTML = '<div class="p-4">Раздел платежей (в разработке)</div>';
+
+        async function loadArchiveTab(token) {
+            document.getElementById('content-area').innerHTML = `
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Архив проектов и услуг</h2>
+                    <div class="mb-4 flex space-x-2">
+                        <button onclick="showArchiveTab('projects')" class="archive-tab-btn px-4 py-2 bg-purple-600 text-white rounded-lg">Проекты</button>
+                        <button onclick="showArchiveTab('services')" class="archive-tab-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-lg">Услуги</button>
+                    </div>
+                    <div id="archive-projects" class="archive-tab">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Название</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Описание</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Статус</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Дата</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr>
+                                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">Раздел в разработке</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="archive-services" class="archive-tab hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Название</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Описание</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Цена</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Дата</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr>
+                                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">Раздел в разработке</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
-        
-        async function loadStatisticsTab(token) {
-            document.getElementById('content-area').innerHTML = '<div class="p-4">Раздел статистики (в разработке)</div>';
+
+        function showArchiveTab(tab) {
+            document.querySelectorAll('.archive-tab').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`archive-${tab}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.archive-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-purple-600', 'text-white');
         }
-        
-        async function loadSettingsTab(token) {
-            document.getElementById('content-area').innerHTML = '<div class="p-4">Раздел настроек (в разработке)</div>';
-        }
-        
-        function showAddUserForm() { showNotification('Функция в разработке', 'warning'); }
-        function editUser(id) { showNotification('Функция в разработке', 'warning'); }
-        function deleteUser(id) { showNotification('Функция в разработке', 'warning'); }
-        function showAddProjectForm() { showNotification('Функция в разработке', 'warning'); }
-        function editProject(id) { showNotification('Функция в разработке', 'warning'); }
-        function deleteProject(id) { showNotification('Функция в разработке', 'warning'); }
-        function showAddServiceForm() { showNotification('Функция в разработке', 'warning'); }
-        function editService(id) { showNotification('Функция в разработке', 'warning'); }
-        function deleteService(id) { showNotification('Функция в разработке', 'warning'); }
-        function loadTransactionsStats() { showNotification('Функция в разработке', 'warning'); }
-        function exportTransactions() { showNotification('Функция в разработке', 'warning'); }
-        function viewTransaction(id) { showNotification('Функция в разработке', 'warning'); }
-        function saveSettings() { showNotification('Функция в разработке', 'warning'); }
     </script>
 </body>
 </html>
