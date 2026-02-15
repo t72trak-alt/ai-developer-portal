@@ -422,3 +422,104 @@ async def get_admin_stats(
             "growth_rate": 0
         }
     }
+
+# ================ АРХИВ ПРОЕКТОВ (ДОБАВЛЕНО) ================
+@router.get("/archive/projects")
+async def get_archive_projects(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    category: Optional[str] = None
+):
+    """Получить проекты для архива
+    Категории: completed (выполненные), in_progress (в работе), pending (заявки)
+    """
+    check_admin(current_user)
+    
+    # Базовый запрос
+    query = db.query(models.Project)
+    
+    # Фильтр по категории
+    if category in ['completed', 'in_progress', 'pending']:
+        query = query.filter(models.Project.status == category)
+    
+    projects = query.order_by(models.Project.created_at.desc()).all()
+    
+    # Форматируем результат
+    result = []
+    for project in projects:
+        user = db.query(models.User).filter(models.User.id == project.user_id).first()
+        
+        # Русские названия категорий
+        category_names = {
+            'pending': 'Заявка',
+            'in_progress': 'В работе',
+            'completed': 'Выполнен',
+            'cancelled': 'Отменён'
+        }
+        
+        result.append({
+            "id": project.id,
+            "title": project.title,
+            "description": project.description,
+            "category": project.status,
+            "category_name": category_names.get(project.status, project.status),
+            "user_id": project.user_id,
+            "user_name": user.name if user else "Неизвестный",
+            "created_at": project.created_at.isoformat() if project.created_at else None
+        })
+    
+    return {
+        "status": "success",
+        "count": len(result),
+        "projects": result
+    }
+
+@router.get("/archive/stats")
+async def get_archive_stats(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Получить статистику по категориям архива"""
+    check_admin(current_user)
+    
+    stats = {
+        "pending": db.query(models.Project).filter(models.Project.status == 'pending').count(),
+        "in_progress": db.query(models.Project).filter(models.Project.status == 'in_progress').count(),
+        "completed": db.query(models.Project).filter(models.Project.status == 'completed').count(),
+        "cancelled": db.query(models.Project).filter(models.Project.status == 'cancelled').count()
+    }
+    stats["total"] = sum(stats.values())
+    
+    return {
+        "status": "success",
+        "stats": stats
+    }
+
+@router.put("/archive/projects/{project_id}/category")
+async def change_project_category(
+    project_id: int,
+    category_data: dict,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Изменить категорию проекта в архиве"""
+    check_admin(current_user)
+    
+    project = db.query(models.Project).filter(models.Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Проект не найден")
+    
+    new_category = category_data.get("category")
+    if new_category not in ['pending', 'in_progress', 'completed', 'cancelled']:
+        raise HTTPException(status_code=400, detail="Некорректная категория")
+    
+    project.status = new_category
+    if hasattr(project, 'updated_at'):
+        project.updated_at = datetime.utcnow()
+    
+    db.commit()
+    
+    return {
+        "status": "success",
+        "message": f"Проект перемещён в категорию {new_category}"
+    }
