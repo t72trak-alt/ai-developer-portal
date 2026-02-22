@@ -351,7 +351,7 @@
             overflow-y: auto;
         }
         .contracts-table-scroll {
-            min-width: 2400px;
+            min-width: 2200px;
         }
         .contracts-table {
             width: 100%;
@@ -427,46 +427,6 @@
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 20px;
-        }
-
-        /* Стили для кнопок действий с договорами */
-        .contract-action-btn {
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 36px;
-        }
-        .contract-action-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .contract-action-btn.edit { background-color: #e5e7eb; color: #4b5563; }
-        .contract-action-btn.edit:hover { background-color: #d1d5db; }
-        .contract-action-btn.view { background-color: #dbeafe; color: #1e40af; }
-        .contract-action-btn.view:hover { background-color: #bfdbfe; }
-        .contract-action-btn.download { background-color: #f3e8ff; color: #6b21a8; }
-        .contract-action-btn.download:hover { background-color: #e9d5ff; }
-
-        /* Стили для модального окна выбора формата */
-        #format-select-modal {
-            animation: fadeIn 0.2s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .format-option {
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-        .format-option:hover {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
-            transform: translateY(-2px);
         }
 
         /* Стили для интерактивной таблицы проектов */
@@ -710,7 +670,7 @@
                 </div>
                 <div class="form-group">
                     <label for="user-password">Пароль</label>
-                    <input type="password" id="user-password" placeholder="Оставьте пустым, если не меняете" required>
+                    <input type="password" id="user-password" placeholder="Оставьте пустым, если не меняете">
                 </div>
                 <div class="form-group">
                     <label for="user-is-admin">Роль</label>
@@ -1040,42 +1000,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ВЫБОРА ФОРМАТА ФАЙЛА -->
-    <div id="format-select-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800">Выберите формат файла</h3>
-                <button onclick="closeFormatModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-            </div>
-            <p id="format-contract-info" class="text-gray-600 mb-4"></p>
-            <div class="grid grid-cols-2 gap-3 mb-6">
-                <button id="format-txt" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
-                    <span class="text-2xl mb-1">📄</span>
-                    <span class="font-medium">TXT</span>
-                    <span class="text-xs text-gray-500">Текстовый файл</span>
-                </button>
-                <button id="format-docx" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
-                    <span class="text-2xl mb-1">📝</span>
-                    <span class="font-medium">DOCX</span>
-                    <span class="text-xs text-gray-500">Word документ</span>
-                </button>
-                <button id="format-pdf" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
-                    <span class="text-2xl mb-1">📕</span>
-                    <span class="font-medium">PDF</span>
-                    <span class="text-xs text-gray-500">PDF документ</span>
-                </button>
-                <button id="format-xlsx" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
-                    <span class="text-2xl mb-1">📊</span>
-                    <span class="font-medium">XLSX</span>
-                    <span class="text-xs text-gray-500">Excel таблица</span>
-                </button>
-            </div>
-            <div class="flex justify-end">
-                <button onclick="closeFormatModal()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition">Отмена</button>
-            </div>
-        </div>
-    </div>
-
     <footer class="bg-gray-800 text-white p-4 mt-4">
         <div class="container mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-center">
@@ -1109,11 +1033,6 @@
         let currentClientEmail = '';
         let clientCardRefreshInterval = null;
         let currentProjects = [];
-        
-        // Переменные для модального окна выбора формата
-        let currentContractId = null;
-        let currentContractNumber = '';
-        let currentAction = '';
 
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         document.addEventListener('DOMContentLoaded', function() {
@@ -1199,107 +1118,43 @@
 
         async function loadQuickStats() {
             console.log('📊 Загрузка быстрой статистики...');
-            const token = localStorage.getItem('access_token');
-            
-            if (!token) {
-                console.error('❌ Нет токена для загрузки статистики');
-                return;
-            }
-
             try {
-                // Загружаем пользователей
+                const token = localStorage.getItem('access_token');
+                try {
+                    const response = await fetch('/api/admin/stats', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        document.getElementById('stats-users').textContent = data.users || 0;
+                        document.getElementById('stats-projects').textContent = data.projects || 0;
+                        document.getElementById('stats-services').textContent = data.services || 0;
+                        document.getElementById('stats-messages').textContent = data.messages || 0;
+                        document.getElementById('stats-transactions').textContent = data.transactions || 0;
+                        logToConsole(`📊 Статистика: ${data.users} пользователей, ${data.projects} проектов, ${data.services} услуг, ${data.messages} сообщений`);
+                        return;
+                    }
+                } catch(e) { 
+                    console.log('API статистики недоступно, используем локальные данные');
+                }
+                
                 try {
                     const usersRes = await fetch('/api/admin/users', {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     if (usersRes.ok) {
                         const usersData = await usersRes.json();
-                        document.getElementById('stats-users').textContent = usersData.count || usersData.users?.length || 0;
-                    } else {
-                        console.error('Ошибка загрузки пользователей:', usersRes.status);
+                        document.getElementById('stats-users').textContent = usersData.count || 0;
                     }
-                } catch(e) { 
-                    console.log('Ошибка загрузки пользователей:', e);
-                }
+                } catch(e) { console.log('Ошибка загрузки пользователей:', e); }
                 
-                // Загружаем проекты
-                try {
-                    const projectsRes = await fetch('/api/admin/projects', {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    if (projectsRes.ok) {
-                        const projectsData = await projectsRes.json();
-                        document.getElementById('stats-projects').textContent = projectsData.count || projectsData.projects?.length || 0;
-                    }
-                } catch(e) { 
-                    console.log('Ошибка загрузки проектов:', e);
-                }
-                
-                // Загружаем услуги
-                try {
-                    const servicesRes = await fetch('/api/services/', {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    if (servicesRes.ok) {
-                        const servicesData = await servicesRes.json();
-                        document.getElementById('stats-services').textContent = servicesData.count || servicesData.length || 0;
-                    }
-                } catch(e) { 
-                    console.log('Ошибка загрузки услуг:', e);
-                }
-                
-                // Загружаем сообщения
                 try {
                     const messagesRes = await fetch('/api/chat/stats/total');
                     if (messagesRes.ok) {
                         const messagesData = await messagesRes.json();
                         document.getElementById('stats-messages').textContent = messagesData.total || 0;
-                    } else {
-                        // Если не работает, пробуем получить историю для всех пользователей
-                        let totalMessages = 0;
-                        const usersRes = await fetch('/api/admin/users', {
-                            headers: { 'Authorization': `Bearer ${token}` }
-                        });
-                        if (usersRes.ok) {
-                            const usersData = await usersRes.json();
-                            const users = usersData.users || [];
-                            
-                            for (const user of users) {
-                                try {
-                                    const historyRes = await fetch(`/api/chat/history/${user.id}`, {
-                                        headers: { 'Authorization': `Bearer ${token}` }
-                                    });
-                                    if (historyRes.ok) {
-                                        const history = await historyRes.json();
-                                        totalMessages += history.length || 0;
-                                    }
-                                } catch (e) {
-                                    console.log(`Ошибка загрузки истории для пользователя ${user.id}:`, e);
-                                }
-                            }
-                        }
-                        document.getElementById('stats-messages').textContent = totalMessages || 0;
                     }
-                } catch(e) { 
-                    console.log('Ошибка загрузки сообщений:', e);
-                    const messagesCount = document.querySelectorAll('#chat-messages-container .message-content').length;
-                    document.getElementById('stats-messages').textContent = messagesCount || 0;
-                }
-                
-                // Загружаем транзакции
-                try {
-                    const transactionsRes = await fetch('/api/admin/transactions', {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    if (transactionsRes.ok) {
-                        const transactionsData = await transactionsRes.json();
-                        document.getElementById('stats-transactions').textContent = transactionsData.count || transactionsData.length || 0;
-                    }
-                } catch(e) { 
-                    console.log('Ошибка загрузки транзакций:', e);
-                }
-                
-                logToConsole('📊 Статистика загружена');
+                } catch(e) { console.log('Ошибка загрузки сообщений:', e); }
                 
             } catch (error) {
                 console.error('❌ Ошибка загрузки статистики:', error);
@@ -1317,13 +1172,10 @@
                     statsMessages.classList.remove('stat-highlight');
                 }, 500);
             }
-            
             setTimeout(() => {
                 loadQuickStats();
             }, 500);
-            
             if (currentClientId && !document.getElementById('client-card-modal').classList.contains('hidden')) {
-                console.log('🔄 Обновление карточки клиента после получения сообщения');
                 loadClientCardData(currentClientId, currentClientName, currentClientEmail);
             }
         }
@@ -1603,33 +1455,17 @@
             event.preventDefault();
             
             const userId = document.getElementById('user-id').value;
-            const name = document.getElementById('user-name').value.trim();
-            const email = document.getElementById('user-email').value.trim();
+            const name = document.getElementById('user-name').value;
+            const email = document.getElementById('user-email').value;
             const password = document.getElementById('user-password').value;
             const isAdmin = document.getElementById('user-is-admin').value === 'true';
             
             const token = localStorage.getItem('access_token');
             
-            // Валидация
-            if (!name || !email) {
-                showNotification('❌ Имя и Email обязательны для заполнения', 'error');
-                return;
-            }
-            
-            if (!userId && !password) {
-                showNotification('❌ Пароль обязателен для нового пользователя', 'error');
-                return;
-            }
-            
-            console.log('📝 Сохраняем пользователя:', { userId, name, email, isAdmin });
-            
             try {
                 let response;
-                let responseData;
                 
                 if (userId) {
-                    // Редактирование существующего пользователя
-                    console.log('🔄 Обновление пользователя ID:', userId);
                     response = await fetch(`/api/admin/users/${userId}`, {
                         method: 'PUT',
                         headers: {
@@ -1644,13 +1480,9 @@
                         })
                     });
                 } else {
-                    // Создание нового пользователя
-                    console.log('➕ Создание нового пользователя');
                     response = await fetch('/api/auth/register', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             name: name,
                             email: email,
@@ -1659,47 +1491,19 @@
                     });
                 }
                 
-                // Получаем ответ в любом случае
-                const responseText = await response.text();
-                console.log('📨 Ответ сервера (сырой):', responseText);
-                
-                try {
-                    responseData = JSON.parse(responseText);
-                } catch (e) {
-                    responseData = { detail: responseText };
-                }
-                
                 if (response.ok) {
-                    showNotification(
-                        userId ? '✅ Пользователь успешно обновлён' : '✅ Пользователь успешно создан',
-                        'success'
-                    );
+                    showNotification(userId ? '✅ Пользователь обновлён' : '✅ Пользователь создан', 'success');
                     closeModal();
-                    
-                    // Очищаем форму
-                    document.getElementById('user-id').value = '';
-                    document.getElementById('user-name').value = '';
-                    document.getElementById('user-email').value = '';
-                    document.getElementById('user-password').value = '';
-                    document.getElementById('user-is-admin').value = 'false';
-                    
-                    // Перезагружаем список пользователей
-                    await loadUsersTab(token);
-                    await loadQuickStats();
-                    
-                    logToConsole(`✅ Пользователь ${email} успешно ${userId ? 'обновлён' : 'создан'}`);
+                    loadUsersTab(token);
+                    loadQuickStats();
                 } else {
-                    // Обработка ошибок
-                    const errorMsg = responseData.detail || responseData.message || 'Неизвестная ошибка';
-                    console.error('❌ Ошибка сервера:', errorMsg);
-                    showNotification(`❌ Ошибка: ${errorMsg}`, 'error');
-                    logToConsole(`❌ Ошибка при сохранении пользователя: ${errorMsg}`);
+                    const error = await response.json();
+                    showNotification('❌ Ошибка: ' + (error.detail || 'Неизвестная ошибка'), 'error');
                 }
                 
             } catch (error) {
-                console.error('❌ Ошибка сохранения пользователя:', error);
-                showNotification(`❌ Ошибка при сохранении: ${error.message}`, 'error');
-                logToConsole(`❌ Критическая ошибка: ${error.message}`);
+                console.error('Ошибка сохранения пользователя:', error);
+                showNotification('❌ Ошибка при сохранении', 'error');
             }
         }
 
@@ -1922,9 +1726,7 @@
                 
                 updateMessageStats();
                 
-                if (currentClientId && currentClientId === activeChatUser.id && 
-                    !document.getElementById('client-card-modal').classList.contains('hidden')) {
-                    console.log('🔄 Обновление карточки клиента после отправки сообщения');
+                if (currentClientId && !document.getElementById('client-card-modal').classList.contains('hidden')) {
                     loadClientCardData(currentClientId, currentClientName, currentClientEmail);
                 }
             } else {
@@ -2708,8 +2510,7 @@
                             typeName: 'На оказание услуг',
                             amount: 150000,
                             status: 'signed',
-                            statusName: 'Подписан',
-                            file_path: '/static/contracts/ДОГ-2025-001.txt'
+                            statusName: 'Подписан'
                         },
                         {
                             id: 2,
@@ -2719,8 +2520,7 @@
                             typeName: 'Разработка ПО',
                             amount: 450000,
                             status: 'in_progress',
-                            statusName: 'В работе',
-                            file_path: '/static/contracts/ДОГ-2025-042.txt'
+                            statusName: 'В работе'
                         }
                     ];
                     
@@ -2744,11 +2544,9 @@
                                     <span class="status-badge ${statusClass}">${contract.statusName}</span>
                                 </td>
                                 <td class="px-4 py-3">
-                                    <div class="flex space-x-2">
-                                        <button onclick="editContract(${contract.id})" class="contract-action-btn edit" title="Редактировать">✏️</button>
-                                        <button onclick="viewContract(${contract.id})" class="contract-action-btn view" title="Просмотр">👁️</button>
-                                        <button onclick="downloadContract(${contract.id})" class="contract-action-btn download" title="Скачать">⬇️</button>
-                                    </div>
+                                    <button onclick="editContract(${contract.id})" class="text-blue-600 hover:text-blue-800 mr-2" title="Редактировать">✏️</button>
+                                    <button onclick="viewContract(${contract.id})" class="text-green-600 hover:text-green-800 mr-2" title="Просмотр">👁️</button>
+                                    <button onclick="downloadContract(${contract.id})" class="text-purple-600 hover:text-purple-800" title="Скачать">⬇️</button>
                                 </td>
                             </tr>
                         `;
@@ -2785,90 +2583,16 @@
             modal.classList.remove('hidden');
         }
 
-        // ========== ФУНКЦИИ ДЛЯ РАБОТЫ С ФАЙЛАМИ ДОГОВОРОВ ==========
-        
         function editContract(contractId) {
-            logToConsole(`✏️ Редактирование договора ID ${contractId}`);
-            
-            // Получаем данные договора из мок-данных
-            const mockContracts = [
-                { id: 1, number: 'ДОГ-2025-001', date: '2025-01-15', type: 'service', amount: 150000, description: 'Разработка веб-портала', status: 'signed', expiry: '2026-01-14' },
-                { id: 2, number: 'ДОГ-2025-042', date: '2025-02-10', type: 'development', amount: 450000, description: 'Мобильное приложение', status: 'in_progress', expiry: '2025-08-09' }
-            ];
-            
-            const contract = mockContracts.find(c => c.id === contractId);
-            
-            if (contract) {
-                // Заполняем форму редактирования
-                document.getElementById('contract-id').value = contract.id;
-                document.getElementById('contract-number').value = contract.number;
-                document.getElementById('contract-date').value = contract.date;
-                document.getElementById('contract-type').value = contract.type;
-                document.getElementById('contract-amount').value = contract.amount;
-                document.getElementById('contract-description').value = contract.description;
-                document.getElementById('contract-status').value = contract.status;
-                document.getElementById('contract-expiry').value = contract.expiry;
-                
-                // Открываем модальное окно
-                const modal = document.getElementById('contract-edit-modal');
-                if (modal) {
-                    modal.classList.remove('hidden');
-                }
-                
-                showNotification(`✏️ Редактирование договора ${contract.number}`, 'info');
-            } else {
-                showNotification('❌ Договор не найден', 'error');
-            }
+            showNotification('Редактирование договора (в разработке)', 'info');
         }
 
         function viewContract(contractId) {
-            logToConsole(`👁️ Открытие договора ID ${contractId}`);
-            
-            // Получаем информацию о договоре
-            fetch(`/api/contracts/info/${contractId}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Договор не найден');
-                    return response.json();
-                })
-                .then(contract => {
-                    showFormatModal(contractId, contract.number, 'view');
-                })
-                .catch(error => {
-                    console.error('Ошибка получения информации о договоре:', error);
-                    // Если не удалось получить инфо, показываем модальное окно с номером по умолчанию
-                    showFormatModal(contractId, `ДОГ-${contractId}`, 'view');
-                });
+            showNotification('Просмотр договора (в разработке)', 'info');
         }
 
         function downloadContract(contractId) {
-            logToConsole(`⬇️ Скачивание договора ID ${contractId}`);
-            
-            // Получаем информацию о договоре
-            fetch(`/api/contracts/info/${contractId}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Договор не найден');
-                    return response.json();
-                })
-                .then(contract => {
-                    showFormatModal(contractId, contract.number, 'download');
-                })
-                .catch(error => {
-                    console.error('Ошибка получения информации о договоре:', error);
-                    // Если не удалось получить инфо, показываем модальное окно с номером по умолчанию
-                    showFormatModal(contractId, `ДОГ-${contractId}`, 'download');
-                });
-        }
-
-        // Вспомогательная функция для создания шаблона договора
-        function createContractTemplate(contractId) {
-            showNotification('📄 Создание шаблона договора...', 'info');
-            logToConsole(`📄 Создание шаблона для договора ID ${contractId}`);
-            
-            // Здесь будет вызов API для генерации шаблона
-            setTimeout(() => {
-                showNotification('✅ Шаблон создан. Обновите страницу.', 'success');
-                logToConsole(`✅ Шаблон для договора ID ${contractId} создан`);
-            }, 1500);
+            showNotification('Скачивание договора (в разработке)', 'info');
         }
 
         function closeContractEditModal() {
@@ -2880,62 +2604,8 @@
 
         function saveContract(event) {
             event.preventDefault();
-            
-            const contractId = document.getElementById('contract-id').value;
-            const contractNumber = document.getElementById('contract-number').value;
-            
-            showNotification(`✅ Договор ${contractNumber} сохранён`, 'success');
-            logToConsole(`✅ Договор ID ${contractId || 'новый'} сохранён`);
-            
+            showNotification('Сохранение договора (в разработке)', 'info');
             closeContractEditModal();
-        }
-
-        // ========== ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА ВЫБОРА ФОРМАТА ==========
-        
-        function showFormatModal(contractId, contractNumber, action) {
-            currentContractId = contractId;
-            currentContractNumber = contractNumber;
-            currentAction = action;
-            
-            const modal = document.getElementById('format-select-modal');
-            const infoEl = document.getElementById('format-contract-info');
-            
-            infoEl.textContent = `Договор №${contractNumber}`;
-            modal.classList.remove('hidden');
-            
-            // Назначаем обработчики на кнопки
-            document.getElementById('format-txt').onclick = () => handleFormatSelect('txt');
-            document.getElementById('format-docx').onclick = () => handleFormatSelect('docx');
-            document.getElementById('format-pdf').onclick = () => handleFormatSelect('pdf');
-            document.getElementById('format-xlsx').onclick = () => handleFormatSelect('xlsx');
-        }
-
-        function closeFormatModal() {
-            const modal = document.getElementById('format-select-modal');
-            modal.classList.add('hidden');
-        }
-
-        function handleFormatSelect(format) {
-            closeFormatModal();
-            
-            const fileUrl = `/api/contracts/file/${currentContractId}?format=${format}`;
-            
-            if (currentAction === 'view') {
-                // Просмотр - открываем в новой вкладке
-                window.open(fileUrl, '_blank');
-                showNotification(`📄 Открытие в формате ${format.toUpperCase()}`, 'success');
-            } else if (currentAction === 'download') {
-                // Скачивание
-                const link = document.createElement('a');
-                link.href = fileUrl;
-                link.download = '';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showNotification(`⬇️ Скачивание в формате ${format.toUpperCase()}`, 'success');
-            }
-            
-            logToConsole(`📄 Действие ${currentAction} для договора ID ${currentContractId} в формате ${format}`);
         }
 
         // ========== ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ РЕКВИЗИТОВ ==========
@@ -3398,7 +3068,7 @@
             event.target.classList.add('bg-purple-600', 'text-white');
         }
 
-        // ========== ФУНКЦИЯ ДЛЯ ДОГОВОРОВ С 11 СТОЛБЦАМИ ==========
+        // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ ДОГОВОРОВ С НОВЫМ СТОЛБЦОМ ==========
         async function loadContractsTab(token) {
             logToConsole('📄 Загрузка раздела договоров...');
             
@@ -3416,7 +3086,7 @@
                     filterOptions += `<option value="${user.id}">${user.name || 'Без имени'} (${user.email})</option>`;
                 });
                 
-                // Заглушка с данными для демонстрации (11 столбцов) - ИСПРАВЛЕНО: .txt вместо .docx
+                // Заглушка с данными для демонстрации (11 столбцов)
                 const mockContracts = [
                     {
                         id: 1,
@@ -3430,8 +3100,7 @@
                         amount: 450000,
                         status_percent: 75,
                         current_task: 'Интеграция с CRM',
-                        status: 'active',
-                        file_path: '/static/contracts/ДОГ-2025-001.txt'
+                        status: 'active'
                     },
                     {
                         id: 2,
@@ -3445,8 +3114,7 @@
                         amount: 780000,
                         status_percent: 30,
                         current_task: 'Проектирование базы данных',
-                        status: 'active',
-                        file_path: '/static/contracts/ДОГ-2025-042.txt'
+                        status: 'active'
                     },
                     {
                         id: 3,
@@ -3460,8 +3128,7 @@
                         amount: 320000,
                         status_percent: 100,
                         current_task: 'Завершен',
-                        status: 'completed',
-                        file_path: '/static/contracts/ДОГ-2024-128.txt'
+                        status: 'completed'
                     },
                     {
                         id: 4,
@@ -3475,8 +3142,7 @@
                         amount: 180000,
                         status_percent: 15,
                         current_task: 'Аудит текущего состояния',
-                        status: 'draft',
-                        file_path: '/static/contracts/ДОГ-2025-089.txt'
+                        status: 'draft'
                     },
                     {
                         id: 5,
@@ -3490,8 +3156,7 @@
                         amount: 950000,
                         status_percent: 100,
                         current_task: 'Завершен',
-                        status: 'completed',
-                        file_path: '/static/contracts/ДОГ-2024-256.txt'
+                        status: 'completed'
                     },
                     {
                         id: 6,
@@ -3505,12 +3170,11 @@
                         amount: 1250000,
                         status_percent: 10,
                         current_task: 'Сбор требований',
-                        status: 'draft',
-                        file_path: '/static/contracts/ДОГ-2025-103.txt'
+                        status: 'draft'
                     }
                 ];
                 
-                // Формируем строки таблицы (11 столбцов + действия)
+                // Формируем строки таблицы (11 столбцов)
                 let tableRows = '';
                 mockContracts.forEach(contract => {
                     const statusClass = {
@@ -3570,13 +3234,6 @@
                                     <span class="expand-icon">🔽</span>
                                 </div>
                             </td>
-                            <td class="px-4 py-3">
-                                <div class="flex space-x-2">
-                                    <button onclick="editContract(${contract.id})" class="contract-action-btn edit" title="Редактировать">✏️</button>
-                                    <button onclick="viewContract(${contract.id})" class="contract-action-btn view" title="Просмотр">👁️</button>
-                                    <button onclick="downloadContract(${contract.id})" class="contract-action-btn download" title="Скачать">⬇️</button>
-                                </div>
-                            </td>
                         </tr>
                     `;
                 });
@@ -3618,7 +3275,6 @@
                                             <th>Полученная оплата</th>
                                             <th>Статус</th>
                                             <th>Текущая задача</th>
-                                            <th>Действия</th>
                                         </tr>
                                     </thead>
                                     <tbody id="contracts-table-body">
@@ -3667,3 +3323,6 @@
     </script>
 </body>
 </html>
+
+
+
