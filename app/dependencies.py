@@ -1,20 +1,20 @@
-п»їfrom fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-import jwt
+from jose import jwt
 from datetime import datetime
 from typing import Optional
 from app.database import get_db
 from app.models import User
 
-# РРјРїРѕСЂС‚РёСЂСѓРµРј СЃРµРєСЂРµС‚РЅС‹Р№ РєР»СЋС‡ РёР· main СЃ РѕР±СЂР°Р±РѕС‚РєРѕР№ РѕС€РёР±РєРё
+# Импортируем секретный ключ из main с обработкой ошибки
 try:
     from app.main import SECRET_KEY, ALGORITHM
 except ImportError:
-    # Р—РЅР°С‡РµРЅРёСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, РµСЃР»Рё РЅРµ СѓРґР°Р»РѕСЃСЊ РёРјРїРѕСЂС‚РёСЂРѕРІР°С‚СЊ
+    # Значения по умолчанию, если не удалось импортировать
     SECRET_KEY = "your-super-secret-jwt-key-change-this-in-production"
     ALGORITHM = "HS256"
-    print("вљ пёЏ dependencies.py: РСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ Р·РЅР°С‡РµРЅРёСЏ SECRET_KEY/ALGORITHM РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ")
+    print("?? dependencies.py: Используются значения SECRET_KEY/ALGORITHM по умолчанию")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 
@@ -23,34 +23,34 @@ async def get_current_user(
     token: Optional[str] = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ):
-    """РџРѕР»СѓС‡РёС‚СЊ С‚РµРєСѓС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР· С‚РѕРєРµРЅР°"""
+    """Получить текущего пользователя из токена"""
     
-    # 1. РџСЂРѕР±СѓРµРј РІР·СЏС‚СЊ С‚РѕРєРµРЅ РёР· Depends (OAuth2PasswordBearer)
+    # 1. Пробуем взять токен из Depends (OAuth2PasswordBearer)
     access_token = token
     
-    # 2. Р•СЃР»Рё РЅРµС‚, РїСЂРѕР±СѓРµРј РёР· Р·Р°РіРѕР»РѕРІРєР° Authorization
+    # 2. Если нет, пробуем из заголовка Authorization
     if not access_token and request:
         auth_header = request.headers.get("Authorization")
         if auth_header and auth_header.startswith("Bearer "):
             access_token = auth_header.replace("Bearer ", "")
     
-    # 3. Р•СЃР»Рё РЅРµС‚, РїСЂРѕР±СѓРµРј РёР· cookies
+    # 3. Если нет, пробуем из cookies
     if not access_token and request:
         access_token = request.cookies.get("access_token")
     
-    # 4. Р•СЃР»Рё РЅРµС‚, РїСЂРѕР±СѓРµРј РёР· query string (РґР»СЏ WebSocket)
+    # 4. Если нет, пробуем из query string (для WebSocket)
     if not access_token and request:
         access_token = request.query_params.get("token")
     
-    # 5. Р•СЃР»Рё РЅРµС‚ С‚РѕРєРµРЅР° - РѕС€РёР±РєР°
+    # 5. Если нет токена - ошибка
     if not access_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="РќРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ: С‚РѕРєРµРЅ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚",
+            detail="Не авторизован: токен отсутствует",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # 6. Р”РµРєРѕРґРёСЂСѓРµРј С‚РѕРєРµРЅ
+    # 6. Декодируем токен
     try:
         payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("sub")
@@ -58,30 +58,30 @@ async def get_current_user(
         if user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="РќРµРґРµР№СЃС‚РІРёС‚РµР»СЊРЅС‹Р№ С‚РѕРєРµРЅ: РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ sub",
+                detail="Недействительный токен: отсутствует sub",
                 headers={"WWW-Authenticate": "Bearer"},
             )
             
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="РўРѕРєРµРЅ РёСЃС‚РµРє",
+            detail="Токен истек",
             headers={"WWW-Authenticate": "Bearer"},
         )
     except jwt.InvalidTokenError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"РќРµРґРµР№СЃС‚РІРёС‚РµР»СЊРЅС‹Р№ С‚РѕРєРµРЅ: {str(e)}",
+            detail=f"Недействительный токен: {str(e)}",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # 7. РџРѕР»СѓС‡Р°РµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР· Р‘Р” РїРѕ ID
+    # 7. Получаем пользователя из БД по ID
     try:
         user_id_int = int(user_id)
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="РќРµРґРµР№СЃС‚РІРёС‚РµР»СЊРЅС‹Р№ С‚РѕРєРµРЅ: РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ",
+            detail="Недействительный токен: некорректный ID пользователя",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
@@ -90,7 +90,7 @@ async def get_current_user(
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ",
+            detail="Пользователь не найден",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
@@ -99,12 +99,12 @@ async def get_current_user(
 async def get_current_admin_user(
     current_user: User = Depends(get_current_user)
 ):
-    """РџРѕР»СѓС‡РёС‚СЊ С‚РµРєСѓС‰РµРіРѕ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР°"""
+    """Получить текущего администратора"""
     
     if not current_user.is_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="РўСЂРµР±СѓСЋС‚СЃСЏ РїСЂР°РІР° Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР°"
+            detail="Требуются права администратора"
         )
     
     return current_user
