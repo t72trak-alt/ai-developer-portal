@@ -7,14 +7,9 @@ from typing import Optional
 from app.database import get_db
 from app.models import User
 
-# Импортируем секретный ключ из main с обработкой ошибки
-try:
-    from app.main import SECRET_KEY, ALGORITHM
-except ImportError:
-    # Значения по умолчанию, если не удалось импортировать
-    SECRET_KEY = "your-super-secret-jwt-key-change-this-in-production"
-    ALGORITHM = "HS256"
-    print("?? dependencies.py: Используются значения SECRET_KEY/ALGORITHM по умолчанию")
+# Прямое определение SECRET_KEY и ALGORITHM (без импорта из main)
+SECRET_KEY = "your-super-secret-jwt-key-change-this-in-production"
+ALGORITHM = "HS256"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 
