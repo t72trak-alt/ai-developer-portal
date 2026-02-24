@@ -1,0 +1,99 @@
+﻿/* =========================================== */
+/* ЭКСТРЕННОЕ ИСПРАВЛЕНИЕ ЧАТА - chat-fix.css */
+/* Дата: 10.02.2026 */
+/* Проблема: невидимый текст в поле ввода */
+/* =========================================== */
+/* 1. ПОЛЕ ВВОДА - ВСЕГДА ЧЕРНЫЙ ТЕКСТ */
+#message-input,
+#chat-input,
+.chat-input,
+.message-input,
+.support-chat textarea,
+.right-panel textarea,
+.chat-box textarea,
+.chat-area textarea,
+textarea[placeholder="Введите сообщение..."] {
+    /* Основные свойства */
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    background-color: #ffffff !important;
+    background: white !important;
+    opacity: 1 !important;
+    font-weight: 400 !important;
+    /* Борьба с наследованием */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 14px !important;
+    /* Границы и отступы */
+    border: 1px solid #cccccc !important;
+    border-radius: 6px !important;
+    padding: 10px 12px !important;
+    /* Сброс всех потенциально вредных свойств */
+    text-shadow: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+/* 2. При фокусе - еще четче */
+#message-input:focus,
+#chat-input:focus,
+.chat-input:focus,
+textarea:focus {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    background-color: #ffffff !important;
+    border-color: #3b82f6 !important;
+    outline: 2px solid #3b82f6 !important;
+    outline-offset: 2px !important;
+}
+/* 3. Placeholder - видимый */
+#message-input::placeholder,
+textarea::placeholder {
+    color: #666666 !important;
+    opacity: 1 !important;
+    font-style: italic !important;
+}
+/* 4. При наведении */
+#message-input:hover,
+textarea:hover {
+    background-color: #f8f9fa !important;
+}
+/* 5. Для всех дочерних элементов (на всякий случай) */
+#message-input *,
+.chat-input *,
+textarea * {
+    color: #000000 !important;
+    opacity: 1 !important;
+}
+/* 6. Борьба с Tailwind классами прозрачности */
+.text-transparent,
+.opacity-0,
+.opacity-50,
+.text-white\/0,
+.text-white\/50 {
+    color: #000000 !important;
+    opacity: 1 !important;
+}
+/* 7. Текст уже отправленных сообщений */
+.chat-message,
+.message-item,
+.message-bubble,
+.message-content {
+    color: #000000 !important;
+    background-color: #f1f5f9 !important;
+}
+/* 8. Важное правило для всех элементов формы */
+input, textarea, select {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+}
+/* 9. Ядерное решение - переопределить все */
+* {
+    color: inherit;
+}
+/* 10. Специально для WebKit браузеров */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    #message-input,
+    textarea {
+        -webkit-text-fill-color: #000000 !important;
+        color: #000000 !important;
+    }
+}

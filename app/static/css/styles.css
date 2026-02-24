@@ -1,0 +1,32 @@
+﻿/* ЧЕРНЫЙ ТЕКСТ В ЧАТЕ */
+.chat-area * {
+    color: black !important;
+}
+
+.support-chat * {
+    color: black !important;
+}
+
+.chat-section * {
+    color: black !important;
+}
+
+.chat-box * {
+    color: black !important;
+}
+
+.right-panel * {
+    color: black !important;
+}
+
+.right-column * {
+    color: black !important;
+}
+
+/* ОЧЕНЬ ВАЖНО: ПРЯМОЕ УКАЗАНИЕ ДЛЯ ПОЛЯ ВВОДА */
+#message-input {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    border: 1px solid #ccc !important;
+    padding: 10px !important;
+    font-size: 14px !important
