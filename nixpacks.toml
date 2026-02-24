@@ -1,10 +1,11 @@
 ﻿[phases.setup]
-nixPkgs = ["python311", "uvicorn"]
+nixPkgs = ["python311", "uvicorn", "bash"]
 [phases.install]
 cmds = [
     "pip install --upgrade pip",
     "pip install PyJWT==2.8.0",
-    "pip install -r requirements.txt"
+    "pip install -r requirements.txt",
+    "chmod +x start.sh"
 ]
 [start]
-cmd = "uvicorn app.main:app --host 0.0.0.0 --port \"
+cmd = "./start.sh"
