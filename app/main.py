@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 from app.database import get_db
 from app.models import User
 from app.routers import auth, chat, projects, admin, services, stats, payments
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import WebSocket, WebSocketDisconnect
 import os
 import urllib.parse
 
@@ -19,7 +21,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 # ===================================
 
 # ========== CORS для WebSocket ==========
-from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -29,13 +30,6 @@ app.add_middleware(
     expose_headers=["*"],
 )
 # ========================================
-
-def create_access_token(data: dict):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
 
 # ========== ПОДКЛЮЧЕНИЕ РОУТЕРОВ ==========
 app.include_router(auth.router)      # /api/auth/*
@@ -434,9 +428,6 @@ async def contacts_page(request: Request):
     return templates.TemplateResponse("contacts.html", {"request": request})
 
 # ========== WebSocket для тестирования ==========
-from fastapi import WebSocket, WebSocketDisconnect
-from datetime import datetime
-
 @app.websocket("/test-ws")
 async def test_websocket(websocket: WebSocket):
     """
