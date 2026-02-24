@@ -66,6 +66,13 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # Базовый класс для моделей
 Base = declarative_base()
 
+# !!! ВАЖНО: СОЗДАЁМ ТАБЛИЦЫ АВТОМАТИЧЕСКИ !!!
+# Импортируем модели, чтобы они были зарегистрированы в Base
+from app.models import User, Message, ClientDetails, Project, Transaction, Payment
+# Создаём все таблицы, если их ещё нет
+Base.metadata.create_all(bind=engine)
+print("✅ Таблицы БД созданы/проверены")
+
 print("="*60 + "\n")
 
 # Функция для получения сессии БД
