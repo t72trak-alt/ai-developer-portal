@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException
+﻿from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse, JSONResponse
@@ -6,14 +6,12 @@ from jose import jwt
 from datetime import datetime, timedelta
 from app.database import get_db
 from app.models import User
-from app.routers import auth, chat, projects, admin, services, stats, payments  # Добавлен payments
+from app.routers import auth, chat, projects, admin, services, stats, payments
 from app.dependencies import get_current_user
 import os
 import mimetypes
 import urllib.parse
-
 app = FastAPI(title="AI Developer Portal", version="1.0")
-
 # ========== CORS для WebSocket ==========
 from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(
@@ -25,18 +23,15 @@ app.add_middleware(
     expose_headers=["*"],
 )
 # ========================================
-
 SECRET_KEY = "your-super-secret-jwt-key-change-this-in-production"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
-
 # ========== ПОДКЛЮЧЕНИЕ РОУТЕРОВ ==========
 app.include_router(auth.router)      # /api/auth/*
 app.include_router(chat.router)       # /api/chat/*
@@ -44,14 +39,11 @@ app.include_router(projects.router)   # /api/projects/*
 app.include_router(admin.router)      # /api/admin/*
 app.include_router(services.router)   # /api/services/*
 app.include_router(stats.router)      # /api/stats/*
-app.include_router(payments.router)   # /api/payments/*  <-- ДОБАВЛЕНО
+app.include_router(payments.router)   # /api/payments/*
 # ==========================================
-
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
-
 # ========== ЭНДПОЙНТЫ ДЛЯ РАБОТЫ С ФАЙЛАМИ ДОГОВОРОВ ==========
-
 # База данных договоров с информацией о доступных форматах
 CONTRACTS_DB = {
     1: {
@@ -115,43 +107,36 @@ CONTRACTS_DB = {
         "available_formats": ["txt", "docx", "pdf", "xlsx"]
     }
 }
-
 @app.get("/api/contracts/list")
 async def get_contracts_list():
-    """Получить список всех договоров"""
+    \"\"\"Получить список всех договоров\"\"\"
     return list(CONTRACTS_DB.values())
-
 @app.get("/api/contracts/info/{contract_id}")
 async def get_contract_info(contract_id: int):
-    """Получить информацию о конкретном договоре"""
+    \"\"\"Получить информацию о конкретном договоре\"\"\"
     if contract_id not in CONTRACTS_DB:
         raise HTTPException(status_code=404, detail="Contract not found")
     return CONTRACTS_DB[contract_id]
-
 @app.get("/api/contracts/file/{contract_id}")
 async def get_contract_file(contract_id: int, format: str = None):
-    """
+    \"\"\"
     Эндпоинт для получения файла договора
     - contract_id: ID договора
     - format: желаемый формат (txt, docx, pdf, xlsx) - если не указан, вернёт оригинал
     Файлы открываются в РОДНОМ ФОРМАТЕ (Word, PDF, Excel)
-    """
+    \"\"\"
     print(f"=== ЗАПРОС ФАЙЛА: contract_id={contract_id}, format={format} ===")
-    
     if contract_id not in CONTRACTS_DB:
         print(f"❌ Договор {contract_id} не найден в БД")
         raise HTTPException(status_code=404, detail="Contract not found")
-    
     contract = CONTRACTS_DB[contract_id]
     print(f"✅ Договор найден: {contract['number']}")
-    
     # Определяем какой файл отдавать
     if format and format in contract["available_formats"]:
         # Формируем имя файла в запрошенном формате
         base_name = contract["original_file"].replace('.txt', '')
         filename = f"{base_name}.{format}"
         print(f"🔍 Ищем файл в формате {format}: {filename}")
-        
         possible_paths = [
             os.path.join("app", "static", "contracts", filename),
             os.path.join("static", "contracts", filename)
@@ -164,17 +149,14 @@ async def get_contract_file(contract_id: int, format: str = None):
             os.path.join("app", "static", "contracts", filename),
             os.path.join("static", "contracts", filename)
         ]
-    
     # Ищем файл
     for file_path in possible_paths:
         print(f"  Проверяем путь: {file_path}")
         if os.path.exists(file_path):
             print(f"✅ Файл НАЙДЕН: {file_path}")
             print(f"  Размер файла: {os.path.getsize(file_path)} байт")
-            
             # Определяем media type на основе расширения для родного формата
             ext = os.path.splitext(file_path)[1].lower()
-            
             # Правильные MIME-типы для каждого формата
             media_types = {
                 '.txt': 'text/plain; charset=utf-8',
@@ -183,18 +165,14 @@ async def get_contract_file(contract_id: int, format: str = None):
                 '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             }
             media_type = media_types.get(ext, 'application/octet-stream')
-            
             # Для всех файлов используем inline (открытие в браузере/приложении)
             disposition = 'inline'
-            
             # Кодируем имя файла для корректной обработки русских символов
             filename_display = os.path.basename(file_path)
             filename_encoded = urllib.parse.quote(filename_display)
-            
             print(f"📤 Отправляем файл: {filename_display}")
             print(f"  Media type: {media_type} (родной формат)")
             print(f"  Disposition: {disposition} (открытие в приложении)")
-            
             # Возвращаем файл с правильными заголовками
             return FileResponse(
                 path=file_path,
@@ -204,44 +182,35 @@ async def get_contract_file(contract_id: int, format: str = None):
                     "Content-Disposition": f"{disposition}; filename*=UTF-8''{filename_encoded}"
                 }
             )
-    
     # Если файл не найден
     print(f"❌ Файл НЕ НАЙДЕН ни по одному пути")
     raise HTTPException(status_code=404, detail=f"File not found for contract {contract_id} in format {format or 'original'}")
-
 @app.get("/api/contracts/formats/{contract_id}")
 async def get_available_formats(contract_id: int):
-    """Получить список доступных форматов для договора"""
+    \"\"\"Получить список доступных форматов для договора\"\"\"
     if contract_id not in CONTRACTS_DB:
         raise HTTPException(status_code=404, detail="Contract not found")
-    
     # Проверяем, какие форматы реально существуют
     contract = CONTRACTS_DB[contract_id]
     available_formats = []
-    
     for format in contract["available_formats"]:
         base_name = contract["original_file"].replace('.txt', '')
         filename = f"{base_name}.{format}"
-        
         # Проверяем в разных папках
         possible_paths = [
             os.path.join("app", "static", "contracts", filename),
             os.path.join("static", "contracts", filename)
         ]
-        
         for path in possible_paths:
             if os.path.exists(path):
                 available_formats.append(format)
                 break
-    
     return {
         "contract_id": contract_id,
         "contract_number": contract["number"],
         "available_formats": available_formats
     }
-
 # ============================================================
-
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     services_list = [
@@ -301,15 +270,12 @@ async def read_root(request: Request):
         "services": services_list,
         "portfolio": portfolio
     })
-
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
-
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
-
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     try:
@@ -320,27 +286,21 @@ async def dashboard(request: Request):
             auth_header = request.headers.get("Authorization")
             if auth_header and auth_header.startswith("Bearer "):
                 token = auth_header.replace("Bearer ", "")
-        
         if not token:
             # Нет токена - редирект на логин
             return RedirectResponse(url="/login")
-        
         # Декодируем токен вручную
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             user_id = payload.get("sub")
-            
             if not user_id:
                 return RedirectResponse(url="/login")
-            
             # Получаем пользователя из БД
             db = next(get_db())
             user = db.query(User).filter(User.id == int(user_id)).first()
             db.close()
-            
             if not user:
                 return RedirectResponse(url="/login")
-            
             # Всё хорошо - показываем личный кабинет
             return templates.TemplateResponse("dashboard.html", {
                 "request": request,
@@ -351,17 +311,14 @@ async def dashboard(request: Request):
                     "is_admin": user.is_admin
                 }
             })
-            
         except jwt.InvalidTokenError:
             return RedirectResponse(url="/login")
         except Exception as e:
             print(f"Ошибка в dashboard: {e}")
             return RedirectResponse(url="/login")
-            
     except Exception as e:
         print(f"Критическая ошибка в dashboard: {e}")
         return RedirectResponse(url="/login")
-
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_page(request: Request):
     try:
@@ -372,30 +329,23 @@ async def admin_page(request: Request):
             auth_header = request.headers.get("Authorization")
             if auth_header and auth_header.startswith("Bearer "):
                 token = auth_header.replace("Bearer ", "")
-        
         if not token:
             # Нет токена - редирект на логин
             return RedirectResponse(url="/login")
-        
         # Декодируем токен вручную
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             user_id = payload.get("sub")
-            
             if not user_id:
                 return RedirectResponse(url="/login")
-            
             # Получаем пользователя из БД
             db = next(get_db())
             user = db.query(User).filter(User.id == int(user_id)).first()
             db.close()
-            
             if not user:
                 return RedirectResponse(url="/login")
-            
             if not user.is_admin:
                 return RedirectResponse(url="/dashboard")
-            
             # Всё хорошо - показываем админку
             return templates.TemplateResponse("admin.html", {
                 "request": request,
@@ -411,37 +361,30 @@ async def admin_page(request: Request):
         except Exception as e:
             print(f"Ошибка в admin_page: {e}")
             return RedirectResponse(url="/login")
-            
     except Exception as e:
         print(f"Критическая ошибка в admin_page: {e}")
         return RedirectResponse(url="/login")
-
 @app.get("/test-api")
 async def test_api():
     return {"message": "API работает", "status": "ok"}
-
 # Дополнительные страницы
 @app.get("/services", response_class=HTMLResponse)
 async def services_page(request: Request):
     return templates.TemplateResponse("services.html", {"request": request})
-
 @app.get("/pricing", response_class=HTMLResponse)
 async def pricing_page(request: Request):
     return templates.TemplateResponse("pricing.html", {"request": request})
-
 @app.get("/contacts", response_class=HTMLResponse)
 async def contacts_page(request: Request):
     return templates.TemplateResponse("contacts.html", {"request": request})
-
 # ========== WebSocket для тестирования ==========
 from fastapi import WebSocket, WebSocketDisconnect
 from datetime import datetime
-
 @app.websocket("/test-ws")
 async def test_websocket(websocket: WebSocket):
-    """
+    \"\"\"
     Простой тестовый WebSocket endpoint
-    """
+    \"\"\"
     await websocket.accept()
     try:
         # Отправляем приветственное сообщение
@@ -461,15 +404,13 @@ async def test_websocket(websocket: WebSocket):
             })
     except WebSocketDisconnect:
         print("Клиент отключился от тестового WebSocket")
-
 @app.get("/ws-test")
 async def websocket_test_page(request: Request):
-    """
+    \"\"\"
     Страница для тестирования WebSocket
-    """
+    \"\"\"
     return templates.TemplateResponse("websocket_test.html", {"request": request})
 # =================================================
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", host="0.0.0.0", port=8080, reload=True)
