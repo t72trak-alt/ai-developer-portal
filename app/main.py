@@ -1,18 +1,22 @@
 ﻿from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from jose import jwt
 from datetime import datetime, timedelta
 from app.database import get_db
 from app.models import User
 from app.routers import auth, chat, projects, admin, services, stats, payments
-from app.dependencies import get_current_user
 import os
-import mimetypes
 import urllib.parse
 
 app = FastAPI(title="AI Developer Portal", version="1.0")
+
+# ========== JWT НАСТРОЙКИ ==========
+SECRET_KEY = "your-super-secret-jwt-key-change-this-in-production"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+# ===================================
 
 # ========== CORS для WebSocket ==========
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,10 +29,6 @@ app.add_middleware(
     expose_headers=["*"],
 )
 # ========================================
-
-SECRET_KEY = "your-super-secret-jwt-key-change-this-in-production"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 def create_access_token(data: dict):
     to_encode = data.copy()
