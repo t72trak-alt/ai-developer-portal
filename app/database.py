@@ -10,55 +10,69 @@ print("\n" + "="*60)
 print("🔍 ДИАГНОСТИКА ПОДКЛЮЧЕНИЯ К БД")
 print("="*60)
 
-# Текущая рабочая директория
-current_dir = os.getcwd()
-print(f"📁 Текущая рабочая директория: {current_dir}")
-
-# Путь к этому файлу (database.py)
-current_file = os.path.abspath(__file__)
-print(f"📁 Этот файл: {current_file}")
-
-# Определяем абсолютный путь к БД (ищем app.db в корне проекта)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-print(f"📁 BASE_DIR (корень проекта): {BASE_DIR}")
-
-# Проверяем наличие app.db в разных местах
-possible_paths = [
-    os.path.join(BASE_DIR, "app.db"),
-    os.path.join(current_dir, "app.db"),
-    os.path.abspath("app.db")
-]
-
-for i, path in enumerate(possible_paths):
-    exists = os.path.exists(path)
-    print(f"📁 Вариант {i+1}: {path} - {'✅ СУЩЕСТВУЕТ' if exists else '❌ НЕТ'}")
-
-# Используем первый существующий путь
-DB_PATH = None
-for path in possible_paths:
-    if os.path.exists(path):
-        DB_PATH = path
-        print(f"✅ ВЫБРАН: {DB_PATH}")
-        break
-
-if not DB_PATH:
-    DB_PATH = possible_paths[0]  # По умолчанию первый вариант
-    print(f"⚠️ Ни один файл не найден, создадим: {DB_PATH}")
-
-# Получаем URL БД из переменных окружения или используем найденный путь
+# Получаем URL БД из переменных окружения (приоритет!)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-if not DATABASE_URL:
+# Если есть DATABASE_URL и это PostgreSQL — используем его
+if DATABASE_URL and DATABASE_URL.startswith("postgresql"):
+    print("✅ Используется PostgreSQL (Neon.tech)")
+    print(f"📁 DATABASE_URL: {DATABASE_URL.split('@')[0].split(':')[0]}...@{DATABASE_URL.split('@')[-1]}")
+    
+    engine = create_engine(
+        DATABASE_URL,
+        pool_size=5,
+        max_overflow=10,
+        pool_pre_ping=True
+    )
+    
+else:
+    # Если нет DATABASE_URL — используем SQLite (локальная разработка)
+    print("⚠️ DATABASE_URL не найден, используем SQLite")
+    
+    # Текущая рабочая директория
+    current_dir = os.getcwd()
+    print(f"📁 Текущая рабочая директория: {current_dir}")
+    
+    # Путь к этому файлу (database.py)
+    current_file = os.path.abspath(__file__)
+    print(f"📁 Этот файл: {current_file}")
+    
+    # Определяем абсолютный путь к БД (ищем app.db в корне проекта)
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    print(f"📁 BASE_DIR (корень проекта): {BASE_DIR}")
+    
+    # Проверяем наличие app.db в разных местах
+    possible_paths = [
+        os.path.join(BASE_DIR, "app.db"),
+        os.path.join(current_dir, "app.db"),
+        os.path.abspath("app.db")
+    ]
+    
+    for i, path in enumerate(possible_paths):
+        exists = os.path.exists(path)
+        print(f"📁 Вариант {i+1}: {path} - {'✅ СУЩЕСТВУЕТ' if exists else '❌ НЕТ'}")
+    
+    # Используем первый существующий путь
+    DB_PATH = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            DB_PATH = path
+            print(f"✅ ВЫБРАН: {DB_PATH}")
+            break
+    
+    if not DB_PATH:
+        DB_PATH = possible_paths[0]  # По умолчанию первый вариант
+        print(f"⚠️ Ни один файл не найден, создадим: {DB_PATH}")
+    
+    # Формируем URL для SQLite
     DATABASE_URL = f"sqlite:///{DB_PATH}"
     print(f"📁 ИТОГОВЫЙ ПУТЬ К БД: {DB_PATH}")
     print(f"📁 DATABASE_URL: {DATABASE_URL}")
-
-# Создаем движок SQLAlchemy
-engine = create_engine(
-    DATABASE_URL,
-    # Для SQLite нужно добавить connect_args
-    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
-)
+    
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={"check_same_thread": False}
+    )
 
 # Создаем фабрику сессий
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
