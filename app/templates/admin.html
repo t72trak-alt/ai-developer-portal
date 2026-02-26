@@ -1688,6 +1688,7 @@
             try {
                 const token = localStorage.getItem('access_token');
                 
+                // ИСПРАВЛЕНО: добавили await для всех асинхронных функций
                 switch(tabName) {
                     case 'users':
                         await loadUsersTab(token);
