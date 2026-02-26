@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Панель администратора - AI Developer Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/static/css/style.css">
@@ -534,6 +534,331 @@
             font-size: 11px;
             font-weight: 500;
             transition: all 0.2s;
+        }
+
+        /* ===== АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ===== */
+        @media (max-width: 1200px) {
+            .container.mx-auto.flex {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            
+            .chat-panel {
+                width: 100%;
+                margin-top: 20px;
+            }
+            
+            .nav > div {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav .flex.items-center.space-x-4 {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav a, .nav button {
+                margin: 5px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Навигация */
+            nav .container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            nav .flex.items-center.space-x-4 {
+                flex-direction: column;
+                width: 100%;
+                align-items: flex-start;
+                margin-top: 10px;
+            }
+            
+            nav a, nav button {
+                width: 100%;
+                text-align: center;
+                margin: 5px 0;
+            }
+            
+            /* Контейнер */
+            .container {
+                padding: 10px;
+            }
+            
+            /* Панель разработчика */
+            .grid.grid-cols-1.md\:grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Кнопки во вкладках */
+            .flex.justify-center.items-center.space-x-6 {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .flex.justify-center.items-center.space-x-6 button {
+                width: 100%;
+                min-width: auto;
+                margin: 5px 0;
+            }
+            
+            /* Таблицы */
+            .data-table {
+                font-size: 14px;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 8px 6px;
+            }
+            
+            .action-btn {
+                padding: 8px 10px;
+                margin: 2px;
+                font-size: 14px;
+            }
+            
+            /* Карточка клиента в модальном окне */
+            #client-card-modal .grid.grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            #client-card-modal .col-span-1,
+            #client-card-modal .col-span-2 {
+                grid-column: span 1;
+            }
+            
+            #client-card-modal .space-y-4 > div {
+                padding: 12px;
+            }
+            
+            #client-card-modal h3 {
+                font-size: 18px;
+            }
+            
+            #client-card-modal button {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            /* Модальные окна */
+            .modal-content {
+                width: 95%;
+                padding: 16px;
+                max-height: 85vh;
+            }
+            
+            .grid.grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Чат */
+            #chat-window {
+                height: 500px;
+            }
+            
+            #chat-messages-container {
+                max-height: 300px;
+            }
+            
+            .flex.space-x-2.mb-2.items-stretch {
+                flex-direction: column;
+            }
+            
+            textarea#chat-input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            button[onclick="sendAdminMessage()"] {
+                width: 100%;
+            }
+            
+            /* Вкладки в карточке клиента */
+            .flex.flex-wrap.-mb-px.text-sm.font-medium.text-center {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 5px;
+            }
+            
+            .flex.flex-wrap.-mb-px.text-sm.font-medium.text-center li {
+                display: inline-block;
+                float: none;
+            }
+            
+            /* Статистика */
+            .grid.grid-cols-1.md\:grid-cols-3.gap-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Фильтр договоров */
+            .filter-section .flex.items-center.gap-4 {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .filter-section select {
+                width: 100%;
+                max-width: none;
+            }
+            
+            /* Кнопки действий с договорами */
+            .contract-action-btn {
+                padding: 8px 12px;
+                font-size: 16px;
+            }
+            
+            /* Прогресс-бар */
+            .progress-bar-container {
+                width: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Очень маленькие экраны */
+            nav h1 {
+                font-size: 18px;
+            }
+            
+            .sidebar h2 {
+                font-size: 16px;
+            }
+            
+            .stat-card {
+                padding: 12px;
+            }
+            
+            .data-table {
+                font-size: 12px;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 6px 4px;
+            }
+            
+            .badge {
+                font-size: 10px;
+                padding: 3px 6px;
+            }
+            
+            .action-btn {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+            
+            .project-actions button {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+            
+            .project-folder-btn {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+            
+            .status-selector {
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+            
+            /* Модальные окна */
+            #client-card-modal .text-2xl {
+                font-size: 20px;
+            }
+            
+            #client-card-modal .p-6 {
+                padding: 12px;
+            }
+            
+            .client-tab-btn {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Формы */
+            .form-group label {
+                font-size: 14px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 10px;
+                font-size: 16px; /* Предотвращает зум на iOS */
+            }
+            
+            /* Кнопки */
+            .btn {
+                padding: 10px 16px;
+                font-size: 16px;
+            }
+            
+            /* Выпадающий список пользователей */
+            .user-list-dropdown {
+                width: 100%;
+                position: static;
+                margin-top: 10px;
+            }
+            
+            /* Дебаг-панель */
+            #dev-console {
+                font-size: 11px;
+                height: 150px;
+            }
+            
+            /* Футер */
+            footer .flex.flex-col.md\:flex-row {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+
+        /* Альбомная ориентация на телефонах */
+        @media (max-height: 500px) and (orientation: landscape) {
+            #chat-window {
+                height: 300px;
+            }
+            
+            #chat-messages-container {
+                max-height: 200px;
+            }
+            
+            .modal-content {
+                max-height: 80vh;
+            }
+        }
+
+        /* Улучшения для touch-устройств */
+        @media (hover: none) and (pointer: coarse) {
+            button, 
+            .action-btn, 
+            .contract-action-btn,
+            .btn,
+            select,
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            textarea {
+                min-height: 44px; /* Минимальный размер для касания */
+            }
+            
+            .project-cell,
+            .contract-cell {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
         }
     </style>
 </head>

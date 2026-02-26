@@ -1,3 +1,4 @@
+@"
 * {
     margin: 0;
     padding: 0;
@@ -23,12 +24,29 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
 }
 .logo {
     font-size: 1.8rem;
     font-weight: bold;
     color: #60a5fa;
     text-decoration: none;
+}
+/* Бургер-меню */
+.burger-menu {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1001;
+}
+.burger-menu span {
+    width: 25px;
+    height: 3px;
+    background-color: #60a5fa;
+    margin: 2px 0;
+    transition: 0.3s;
+    border-radius: 3px;
 }
 .nav-links {
     display: flex;
@@ -42,6 +60,19 @@ nav {
 }
 .nav-links a:hover {
     color: #60a5fa;
+}
+.btn-logout {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+.btn-logout:hover {
+    background: #dc2626;
 }
 /* Кнопки */
 .btn-primary, .btn-secondary, .btn-outline, .btn-large, .btn-small {
@@ -276,30 +307,14 @@ footer {
 .auth-link a:hover {
     text-decoration: underline;
 }
-/* Адаптивность */
-@media (max-width: 768px) {
-    .nav-links {
-        display: none; /* Позже добавим бургер-меню */
-    }
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-    section {
-        padding: 3rem 1rem;
-    }
-    .hero-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-}
-
-/* РЈР»СѓС‡С€РµРЅРЅС‹Р№ СЃС‚РёР»СЊ РґР»СЏ С‡Р°С‚Р° */
+/* Стили для чата */
 .chat-container {
     background: #1a1a2e;
     border-radius: 15px;
     border: 1px solid #3498db;
     box-shadow: 0 5px 20px rgba(52, 152, 219, 0.3);
     overflow: hidden;
+    margin: 20px 0;
 }
 .chat-header {
     background: linear-gradient(90deg, #2980b9, #2c3e50);
@@ -308,6 +323,8 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 .user-status {
     display: flex;
@@ -352,6 +369,7 @@ footer {
     margin-bottom: 15px;
     max-width: 80%;
     clear: both;
+    word-wrap: break-word;
 }
 .message.sent {
     float: right;
@@ -387,6 +405,7 @@ footer {
     border-top: 1px solid #2c3e50;
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
 }
 .chat-input {
     flex: 1;
@@ -396,6 +415,7 @@ footer {
     border-radius: 25px;
     color: white;
     font-size: 14px;
+    min-width: 200px;
 }
 .chat-input:focus {
     outline: none;
@@ -410,6 +430,7 @@ footer {
     cursor: pointer;
     font-weight: bold;
     transition: transform 0.2s;
+    white-space: nowrap;
 }
 .send-button:hover {
     transform: translateY(-2px);
@@ -417,6 +438,12 @@ footer {
 }
 .send-button:active {
     transform: translateY(0);
+}
+.send-button:disabled {
+    background: #666;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 .notification {
     position: fixed;
@@ -479,3 +506,165 @@ footer {
     0%, 60%, 100% { transform: translateY(0); }
     30% { transform: translateY(-5px); }
 }
+/* Стили для карточки пользователя */
+.user-card {
+    background: #1a1a2e;
+    border: 1px solid #3498db;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+}
+.user-card h3 {
+    color: #60a5fa;
+    margin-bottom: 15px;
+}
+.user-info p {
+    margin: 10px 0;
+    padding: 8px 0;
+    border-bottom: 1px solid #2c3e50;
+}
+.btn-admin {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #ff6b35;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+.btn-admin:hover {
+    background: #ff5722;
+}
+/* Основной контейнер */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+/* АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ */
+@media (max-width: 768px) {
+    /* Навигация */
+    .burger-menu {
+        display: flex;
+    }
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #1e293b;
+        flex-direction: column;
+        padding: 20px;
+        gap: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        border-top: 1px solid #334155;
+    }
+    .nav-links.active {
+        display: flex;
+    }
+    .nav-links a, .nav-links button {
+        width: 100%;
+        text-align: center;
+    }
+    .btn-logout {
+        width: 100%;
+    }
+    
+    /* Герой-секция */
+    .hero {
+        padding: 4rem 1rem;
+    }
+    .hero h1 {
+        font-size: 2rem;
+    }
+    .subtitle {
+        font-size: 1.1rem;
+    }
+    
+    /* Секции */
+    section {
+        padding: 3rem 1rem;
+    }
+    h2 {
+        font-size: 2rem;
+    }
+    
+    /* Карточки */
+    .service-card, .portfolio-card, .task-card {
+        padding: 1.5rem;
+    }
+    
+    /* Формы */
+    .auth-card {
+        padding: 2rem;
+    }
+    
+    /* Чат */
+    .chat-container {
+        margin: 10px 0;
+    }
+    .chat-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .message {
+        max-width: 90%;
+    }
+    .chat-input-container {
+        flex-direction: column;
+    }
+    .chat-input {
+        width: 100%;
+    }
+    .send-button {
+        width: 100%;
+    }
+    
+    /* Футер */
+    footer {
+        padding: 2rem 1rem 1rem;
+    }
+    .footer-container {
+        gap: 2rem;
+    }
+    
+    /* Карточка пользователя */
+    .user-card {
+        padding: 15px;
+    }
+    .user-info p {
+        font-size: 14px;
+    }
+}
+@media (max-width: 480px) {
+    /* Очень маленькие экраны (телефоны) */
+    .logo {
+        font-size: 1.5rem;
+    }
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    .btn-primary, .btn-secondary, .btn-outline {
+        width: 100%;
+        text-align: center;
+    }
+    .chat-messages {
+        height: 300px;
+    }
+    .message {
+        max-width: 95%;
+        font-size: 14px;
+    }
+    .auth-card {
+        padding: 1.5rem;
+    }
+}
+" | Set-Content -Path "C:\Users\Пользователь\Desktop\Front end & Back end 3\app\static\css\style.css" -Encoding UTF8

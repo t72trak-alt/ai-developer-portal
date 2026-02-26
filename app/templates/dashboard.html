@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Личный кабинет - AI Developer</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
@@ -116,12 +116,287 @@
             background: #666;
             cursor: not-allowed;
         }
+
+        /* Стили для бургер-меню */
+        .burger-menu {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 1001;
+        }
+        
+        .burger-menu span {
+            width: 25px;
+            height: 3px;
+            background-color: #60a5fa;
+            margin: 2px 0;
+            transition: 0.3s;
+            border-radius: 3px;
+        }
+        
+        .burger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .burger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .burger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* ===== АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ===== */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-wrap: wrap;
+            }
+            
+            .burger-menu {
+                display: flex;
+            }
+            
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #1e293b;
+                flex-direction: column;
+                padding: 20px;
+                gap: 15px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+                border-top: 1px solid #334155;
+                z-index: 1000;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links a, .nav-links button {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .btn-logout {
+                width: 100%;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .chat-container {
+                margin-top: 15px;
+                padding: 15px;
+            }
+            
+            .chat-messages {
+                height: 400px; /* Выше на мобильных для удобства */
+            }
+            
+            .message {
+                max-width: 90%; /* Шире на мобильных */
+                font-size: 15px; /* Чуть крупнее для чтения */
+                padding: 12px;
+            }
+            
+            .chat-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .chat-header button {
+                align-self: flex-end;
+                margin-top: 5px;
+            }
+            
+            .user-status {
+                margin-top: 5px;
+            }
+            
+            .chat-input-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .chat-input-container input {
+                width: 100%;
+                padding: 14px; /* Больше область касания */
+                font-size: 16px; /* Предотвращает зум на iOS */
+            }
+            
+            .send-button {
+                width: 100%;
+                padding: 14px 20px;
+                font-size: 16px;
+            }
+            
+            .user-card {
+                padding: 15px;
+            }
+            
+            .user-info p {
+                font-size: 15px;
+                padding: 10px 0;
+            }
+            
+            .btn-admin {
+                width: 100%;
+                text-align: center;
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            
+            .debug-panel {
+                font-size: 11px;
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Очень маленькие телефоны */
+            .chat-container {
+                padding: 10px;
+                margin-top: 10px;
+            }
+            
+            .chat-messages {
+                height: 350px;
+                padding: 8px;
+            }
+            
+            .message {
+                max-width: 95%;
+                font-size: 14px;
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+            
+            .message-time {
+                font-size: 10px;
+            }
+            
+            .chat-header {
+                padding-bottom: 8px;
+            }
+            
+            .chat-header strong {
+                font-size: 16px;
+            }
+            
+            .user-status small {
+                font-size: 12px;
+            }
+            
+            .user-card {
+                padding: 12px;
+            }
+            
+            .user-info p {
+                font-size: 14px;
+                padding: 8px 0;
+            }
+            
+            .user-card h3 {
+                font-size: 1.1rem;
+                margin-bottom: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+            }
+            
+            .chat-input-container input {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            .send-button {
+                padding: 12px 16px;
+                font-size: 15px;
+            }
+            
+            .status-indicator {
+                width: 8px;
+                height: 8px;
+            }
+            
+            .debug-panel {
+                font-size: 10px;
+                padding: 6px;
+            }
+        }
+
+        /* Для очень маленьких экранов */
+        @media (max-width: 360px) {
+            .chat-messages {
+                height: 300px;
+            }
+            
+            .message {
+                max-width: 100%;
+                font-size: 13px;
+            }
+            
+            .user-info p {
+                font-size: 13px;
+            }
+            
+            .btn-admin {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+        }
+
+        /* Альбомная ориентация на телефонах */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .chat-messages {
+                height: 200px;
+            }
+            
+            .user-card {
+                margin-bottom: 15px;
+            }
+            
+            .chat-container {
+                margin-top: 10px;
+            }
+            
+            .chat-header {
+                margin-bottom: 8px;
+            }
+            
+            .chat-input-container input,
+            .send-button {
+                padding: 8px 12px;
+            }
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
             <a href="/" class="logo">AI Developer</a>
+            
+            <!-- Бургер-меню для мобильных -->
+            <div class="burger-menu" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
             <div class="nav-links">
                 <a href="/">Главная</a>
                 <a href="/dashboard">Личный кабинет</a>
@@ -174,6 +449,44 @@
         </div>
         
         <script>
+        // Функция для бургер-меню
+        function toggleMenu() {
+            const burger = document.querySelector('.burger-menu');
+            const nav = document.querySelector('.nav-links');
+            burger.classList.toggle('active');
+            nav.classList.toggle('active');
+        }
+        
+        // Закрываем меню при клике на ссылку
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-links a, .nav-links button');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    const burger = document.querySelector('.burger-menu');
+                    const nav = document.querySelector('.nav-links');
+                    if (burger && nav && burger.classList.contains('active')) {
+                        burger.classList.remove('active');
+                        nav.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Закрываем меню при клике вне навигации
+            document.addEventListener('click', function(event) {
+                const burger = document.querySelector('.burger-menu');
+                const nav = document.querySelector('.nav-links');
+                const navContainer = document.querySelector('.nav-container');
+                
+                if (burger && nav && navContainer && !navContainer.contains(event.target) && nav.classList.contains('active')) {
+                    burger.classList.remove('active');
+                    nav.classList.remove('active');
+                }
+            });
+            
+            connectWebSocket();
+            loadChatHistory();
+        });
+        
         function logout() {
             if (ws) {
                 ws.close();
@@ -192,6 +505,7 @@
         let debugEnabled = false;
         let messageCounter = 0;
         let messageIds = new Set(); // Множество для хранения ID полученных сообщений
+        let lastMessageId = null; // ID последнего полученного сообщения
         
         function debugLog(msg) {
             if (!debugEnabled) return;
@@ -232,11 +546,6 @@
             }
         }
         
-        document.addEventListener('DOMContentLoaded', function() {
-            connectWebSocket();
-            loadChatHistory();
-        });
-        
         function connectWebSocket() {
             updateStatus('connecting', 'Подключение...');
             
@@ -269,9 +578,19 @@
                         addMessageToChat(data.content, false, 'system');
                         debugLog('📨 Системное: ' + data.content);
                     } 
+                    else if (data.type === 'ping') {
+                        // Отвечаем на ping
+                        ws.send(JSON.stringify({type: 'pong'}));
+                        debugLog('📨 Получен ping, отправлен pong');
+                    }
                     else if (data.type === 'message' || data.type === 'new_message') {
+                        // Извлекаем данные сообщения
                         const messageData = data.message || data;
-                        const messageId = messageData.id || messageData.message_id || Date.now();
+                        
+                        // Генерируем уникальный ID для сообщения
+                        const messageId = messageData.message_id || 
+                                         messageData.id || 
+                                         `${messageData.sender_id}_${messageData.timestamp || Date.now()}_${messageData.content.substring(0, 20)}`;
                         
                         // Проверяем, не было ли уже это сообщение
                         if (messageIds.has(messageId)) {
@@ -282,8 +601,17 @@
                         // Добавляем ID в множество
                         messageIds.add(messageId);
                         
+                        // Определяем, своё ли это сообщение
                         const isOwnMessage = messageData.sender_id == userId;
-                        addMessageToChat(messageData.content, isOwnMessage, 'message', messageData.timestamp);
+                        
+                        // Добавляем сообщение в чат
+                        addMessageToChat(
+                            messageData.content, 
+                            isOwnMessage, 
+                            'message', 
+                            messageData.created_at || messageData.timestamp
+                        );
+                        
                         debugLog(`📨 ${isOwnMessage ? 'Своё' : 'От админа'}: ${messageData.content.substring(0, 30)}`);
                     }
                 } catch (error) {
@@ -322,6 +650,9 @@
             // Отправляем сообщение
             ws.send(JSON.stringify(messageData));
             debugLog('📤 Отправлено: ' + message.substring(0, 30));
+            
+            // НЕ добавляем сообщение в чат сразу, ждем подтверждения от сервера
+            // Это предотвратит дублирование
             
             // Очищаем поле ввода
             input.value = '';
