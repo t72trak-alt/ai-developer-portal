@@ -13,6 +13,34 @@ logger = logging.getLogger(__name__)
 # Загружаем переменные из .env (для локальной разработки)
 load_dotenv()
 
+# ========== ЖЁСТКАЯ ДИАГНОСТИКА ==========
+print("\n" + "!"*60)
+print("!!! ЖЁСТКАЯ ДИАГНОСТИКА ПЕРЕМЕННЫХ !!!")
+print("!"*60)
+
+# Проверяем через разные методы
+print("\n1. ЧЕРЕЗ os.environ.get():")
+print(f"DATABASE_URL: {os.environ.get('DATABASE_URL')}")
+print(f"NEON_DATABASE_URL: {os.environ.get('NEON_DATABASE_URL')}")
+
+print("\n2. ЧЕРЕЗ os.getenv():")
+print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
+print(f"NEON_DATABASE_URL: {os.getenv('NEON_DATABASE_URL')}")
+
+print("\n3. ВСЕ ПЕРЕМЕННЫЕ (первые 20):")
+count = 0
+for key, value in os.environ.items():
+    if count < 20:
+        print(f"  {key}={value[:30] if value else ''}...")
+    count += 1
+
+print("\n4. ПРОВЕРКА НАЛИЧИЯ КЛЮЧЕЙ:")
+print(f"'DATABASE_URL' in os.environ: {'DATABASE_URL' in os.environ}")
+print(f"'NEON_DATABASE_URL' in os.environ: {'NEON_DATABASE_URL' in os.environ}")
+
+print("!"*60 + "\n")
+# ==========================================
+
 print("\n" + "="*60)
 print("🔍 ДИАГНОСТИКА ПОДКЛЮЧЕНИЯ К БД")
 print("="*60)
