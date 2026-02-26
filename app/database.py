@@ -1,10 +1,21 @@
-﻿from sqlalchemy import create_engine, text
+﻿import sys
+import os
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import os
-import sys
 from dotenv import load_dotenv
 import logging
+
+# === АВАРИЙНАЯ ДИАГНОСТИКА (пишет прямо в stderr) ===
+print("🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴", file=sys.stderr)
+print("🔴 DATABASE.PY ЗАГРУЖЕН 🔴", file=sys.stderr)
+print("🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴", file=sys.stderr)
+print(f"🔴 Текущая директория: {os.getcwd()}", file=sys.stderr)
+print(f"🔴 Файл: {__file__}", file=sys.stderr)
+print(f"🔴 PID: {os.getpid()}", file=sys.stderr)
+print("🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴", file=sys.stderr)
+sys.stderr.flush()
+# ==================================================
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
