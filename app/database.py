@@ -14,45 +14,45 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 # ========== ЖЁСТКАЯ ДИАГНОСТИКА ==========
-print("\n" + "!"*60)
-print("!!! ЖЁСТКАЯ ДИАГНОСТИКА ПЕРЕМЕННЫХ !!!")
-print("!"*60)
+logger.info("!"*60)
+logger.info("!!! ЖЁСТКАЯ ДИАГНОСТИКА ПЕРЕМЕННЫХ !!!")
+logger.info("!"*60)
 
 # Проверяем через разные методы
-print("\n1. ЧЕРЕЗ os.environ.get():")
-print(f"DATABASE_URL: {os.environ.get('DATABASE_URL')}")
-print(f"NEON_DATABASE_URL: {os.environ.get('NEON_DATABASE_URL')}")
+logger.info("1. ЧЕРЕЗ os.environ.get():")
+logger.info(f"DATABASE_URL: {os.environ.get('DATABASE_URL')}")
+logger.info(f"NEON_DATABASE_URL: {os.environ.get('NEON_DATABASE_URL')}")
 
-print("\n2. ЧЕРЕЗ os.getenv():")
-print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
-print(f"NEON_DATABASE_URL: {os.getenv('NEON_DATABASE_URL')}")
+logger.info("2. ЧЕРЕЗ os.getenv():")
+logger.info(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
+logger.info(f"NEON_DATABASE_URL: {os.getenv('NEON_DATABASE_URL')}")
 
-print("\n3. ВСЕ ПЕРЕМЕННЫЕ (первые 20):")
+logger.info("3. ВСЕ ПЕРЕМЕННЫЕ (первые 20):")
 count = 0
 for key, value in os.environ.items():
     if count < 20:
-        print(f"  {key}={value[:30] if value else ''}...")
+        logger.info(f"  {key}={value[:30] if value else ''}...")
     count += 1
 
-print("\n4. ПРОВЕРКА НАЛИЧИЯ КЛЮЧЕЙ:")
-print(f"'DATABASE_URL' in os.environ: {'DATABASE_URL' in os.environ}")
-print(f"'NEON_DATABASE_URL' in os.environ: {'NEON_DATABASE_URL' in os.environ}")
+logger.info("4. ПРОВЕРКА НАЛИЧИЯ КЛЮЧЕЙ:")
+logger.info(f"'DATABASE_URL' in os.environ: {'DATABASE_URL' in os.environ}")
+logger.info(f"'NEON_DATABASE_URL' in os.environ: {'NEON_DATABASE_URL' in os.environ}")
 
-print("!"*60 + "\n")
+logger.info("!"*60)
 # ==========================================
 
-print("\n" + "="*60)
-print("🔍 ДИАГНОСТИКА ПОДКЛЮЧЕНИЯ К БД")
-print("="*60)
+logger.info("="*60)
+logger.info("🔍 ДИАГНОСТИКА ПОДКЛЮЧЕНИЯ К БД")
+logger.info("="*60)
 
 # Диагностика окружения
-print(f"📌 Python версия: {sys.version}")
-print(f"📌 Текущая директория: {os.getcwd()}")
-print(f"📌 Файл: {__file__}")
+logger.info(f"📌 Python версия: {sys.version}")
+logger.info(f"📌 Текущая директория: {os.getcwd()}")
+logger.info(f"📌 Файл: {__file__}")
 
 # Проверяем все переменные окружения (только имена, для безопасности)
 env_vars = [key for key in os.environ.keys() if not key.startswith('_')]
-print(f"📌 Доступные переменные окружения: {env_vars}")
+logger.info(f"📌 Доступные переменные окружения: {env_vars}")
 
 # Получаем URL БД из переменных окружения (приоритет!)
 # Сначала проверяем DATABASE_URL (стандартная для Railway)
@@ -62,12 +62,12 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL:
     DATABASE_URL = os.environ.get("NEON_DATABASE_URL")
     if DATABASE_URL:
-        print("✅ Найдена NEON_DATABASE_URL")
+        logger.info("✅ Найдена NEON_DATABASE_URL")
 
 if not DATABASE_URL:
     DATABASE_URL = os.environ.get("POSTGRES_URL")
     if DATABASE_URL:
-        print("✅ Найдена POSTGRES_URL")
+        logger.info("✅ Найдена POSTGRES_URL")
 
 if not DATABASE_URL:
     DATABASE_URL = os.getenv("DATABASE_URL")  # Пробуем через getenv как запасной вариант
@@ -83,19 +83,19 @@ if DATABASE_URL:
             masked_url = f"{credentials[0]}:***@{parts[1]}"
         else:
             masked_url = f"***@{parts[1]}"
-    print(f"✅ DATABASE_URL найдена: {masked_url}")
+    logger.info(f"✅ DATABASE_URL найдена: {masked_url}")
     
     # Проверяем протокол
     if DATABASE_URL.startswith("postgres://"):
-        print("⚠️ Обнаружен протокол postgres://, меняем на postgresql://")
+        logger.info("⚠️ Обнаружен протокол postgres://, меняем на postgresql://")
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-        print(f"✅ Исправлено на: {DATABASE_URL.split('@')[0].split(':')[0]}:***@{DATABASE_URL.split('@')[-1]}")
+        logger.info(f"✅ Исправлено на: {DATABASE_URL.split('@')[0].split(':')[0]}:***@{DATABASE_URL.split('@')[-1]}")
 else:
-    print("❌ DATABASE_URL НЕ НАЙДЕНА в окружении")
+    logger.info("❌ DATABASE_URL НЕ НАЙДЕНА в окружении")
 
 # Если есть DATABASE_URL и это PostgreSQL — используем его
 if DATABASE_URL and ("postgresql" in DATABASE_URL or "postgres" in DATABASE_URL):
-    print("✅ Используется PostgreSQL")
+    logger.info("✅ Используется PostgreSQL")
     
     # Добавляем sslmode=require если его нет (для Neon.tech)
     if "sslmode" not in DATABASE_URL:
@@ -103,7 +103,7 @@ if DATABASE_URL and ("postgresql" in DATABASE_URL or "postgres" in DATABASE_URL)
             DATABASE_URL += "&sslmode=require"
         else:
             DATABASE_URL += "?sslmode=require"
-        print("✅ Добавлен параметр sslmode=require")
+        logger.info("✅ Добавлен параметр sslmode=require")
     
     try:
         # Создаем engine для PostgreSQL
@@ -125,20 +125,20 @@ if DATABASE_URL and ("postgresql" in DATABASE_URL or "postgres" in DATABASE_URL)
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
             conn.commit()
-            print("✅ Подключение к PostgreSQL проверено (SELECT 1 успешен)")
+            logger.info("✅ Подключение к PostgreSQL проверено (SELECT 1 успешен)")
             
             # Получаем версию PostgreSQL
             result = conn.execute(text("SELECT version()"))
             version = result.scalar()
-            print(f"✅ PostgreSQL версия: {version[:50]}...")
+            logger.info(f"✅ PostgreSQL версия: {version[:50]}...")
             
     except Exception as e:
-        print(f"❌ Ошибка подключения к PostgreSQL: {e}")
-        print("⚠️ Переключаемся на SQLite как запасной вариант")
+        logger.info(f"❌ Ошибка подключения к PostgreSQL: {e}")
+        logger.info("⚠️ Переключаемся на SQLite как запасной вариант")
         DATABASE_URL = None  # Принудительно переключаемся на SQLite
         # Создаем engine для SQLite
         sqlite_path = "/app/app.db"
-        print(f"📁 Используем SQLite: {sqlite_path}")
+        logger.info(f"📁 Используем SQLite: {sqlite_path}")
         engine = create_engine(
             f"sqlite:///{sqlite_path}",
             connect_args={"check_same_thread": False}
@@ -146,19 +146,19 @@ if DATABASE_URL and ("postgresql" in DATABASE_URL or "postgres" in DATABASE_URL)
         
 else:
     # Если нет DATABASE_URL или ошибка — используем SQLite
-    print("⚠️ Используем SQLite (локальная разработка)")
+    logger.info("⚠️ Используем SQLite (локальная разработка)")
     
     # Текущая рабочая директория
     current_dir = os.getcwd()
-    print(f"📁 Текущая рабочая директория: {current_dir}")
+    logger.info(f"📁 Текущая рабочая директория: {current_dir}")
     
     # Путь к этому файлу (database.py)
     current_file = os.path.abspath(__file__)
-    print(f"📁 Этот файл: {current_file}")
+    logger.info(f"📁 Этот файл: {current_file}")
     
     # Определяем абсолютный путь к БД (ищем app.db в корне проекта)
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    print(f"📁 BASE_DIR (корень проекта): {BASE_DIR}")
+    logger.info(f"📁 BASE_DIR (корень проекта): {BASE_DIR}")
     
     # Проверяем наличие app.db в разных местах
     possible_paths = [
@@ -170,24 +170,24 @@ else:
     
     for i, path in enumerate(possible_paths):
         exists = os.path.exists(path)
-        print(f"📁 Вариант {i+1}: {path} - {'✅ СУЩЕСТВУЕТ' if exists else '❌ НЕТ'}")
+        logger.info(f"📁 Вариант {i+1}: {path} - {'✅ СУЩЕСТВУЕТ' if exists else '❌ НЕТ'}")
     
     # Используем первый существующий путь
     DB_PATH = None
     for path in possible_paths:
         if os.path.exists(path):
             DB_PATH = path
-            print(f"✅ ВЫБРАН: {DB_PATH}")
+            logger.info(f"✅ ВЫБРАН: {DB_PATH}")
             break
     
     if not DB_PATH:
         DB_PATH = possible_paths[0]  # По умолчанию первый вариант
-        print(f"⚠️ Ни один файл не найден, создадим: {DB_PATH}")
+        logger.info(f"⚠️ Ни один файл не найден, создадим: {DB_PATH}")
     
     # Формируем URL для SQLite
     DATABASE_URL = f"sqlite:///{DB_PATH}"
-    print(f"📁 ИТОГОВЫЙ ПУТЬ К БД: {DB_PATH}")
-    print(f"📁 DATABASE_URL: {DATABASE_URL}")
+    logger.info(f"📁 ИТОГОВЫЙ ПУТЬ К БД: {DB_PATH}")
+    logger.info(f"📁 DATABASE_URL: {DATABASE_URL}")
     
     engine = create_engine(
         DATABASE_URL,
@@ -200,22 +200,22 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # Базовый класс для моделей
 Base = declarative_base()
 
-print("="*60)
-print("🔄 СОЗДАНИЕ ТАБЛИЦ...")
-print("="*60)
+logger.info("="*60)
+logger.info("🔄 СОЗДАНИЕ ТАБЛИЦ...")
+logger.info("="*60)
 
 # ========== ДОБАВЛЕННЫЕ ФУНКЦИИ ==========
 
 def create_tables():
     """Создает все таблицы, если они не существуют"""
-    print("🔄 ВЫЗВАНА create_tables()")
+    logger.info("🔄 ВЫЗВАНА create_tables()")
     try:
         # Импортируем модели, чтобы они были зарегистрированы в Base
         from app.models import User, Message, ClientDetails, Project, Transaction, Payment
         
         # Создаём все таблицы, если их ещё нет
         Base.metadata.create_all(bind=engine)
-        print("✅ Таблицы БД созданы/проверены")
+        logger.info("✅ Таблицы БД созданы/проверены")
         
         # Дополнительная проверка для PostgreSQL
         if "postgresql" in str(engine.url):
@@ -227,17 +227,17 @@ def create_tables():
                     WHERE table_schema = 'public'
                 """))
                 tables = [row[0] for row in result]
-                print(f"📊 Таблицы в PostgreSQL: {tables}")
+                logger.info(f"📊 Таблицы в PostgreSQL: {tables}")
         return True
     except Exception as e:
-        print(f"❌ Ошибка при создании таблиц: {e}")
+        logger.info(f"❌ Ошибка при создании таблиц: {e}")
         import traceback
         traceback.print_exc()
         return False
 
 def check_connection():
     """Проверяет подключение к базе данных"""
-    print("🔄 ПРОВЕРКА ПОДКЛЮЧЕНИЯ К БД...")
+    logger.info("🔄 ПРОВЕРКА ПОДКЛЮЧЕНИЯ К БД...")
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
@@ -247,15 +247,15 @@ def check_connection():
             if "postgresql" in str(engine.url):
                 result = conn.execute(text("SELECT version()"))
                 version = result.scalar()
-                print(f"✅ PostgreSQL подключен: {version[:50]}...")
+                logger.info(f"✅ PostgreSQL подключен: {version[:50]}...")
             else:
                 result = conn.execute(text("SELECT sqlite_version()"))
                 version = result.scalar()
-                print(f"✅ SQLite подключен: версия {version}")
+                logger.info(f"✅ SQLite подключен: версия {version}")
             
             return True
     except Exception as e:
-        print(f"❌ Ошибка подключения к БД: {e}")
+        logger.info(f"❌ Ошибка подключения к БД: {e}")
         return False
 
 # ==========================================
@@ -267,7 +267,7 @@ try:
     
     # Создаём все таблицы, если их ещё нет
     Base.metadata.create_all(bind=engine)
-    print("✅ Таблицы БД созданы/проверены")
+    logger.info("✅ Таблицы БД созданы/проверены")
     
     # Дополнительная проверка для PostgreSQL
     if "postgresql" in str(engine.url):
@@ -279,14 +279,14 @@ try:
                 WHERE table_schema = 'public'
             """))
             tables = [row[0] for row in result]
-            print(f"📊 Таблицы в PostgreSQL: {tables}")
+            logger.info(f"📊 Таблицы в PostgreSQL: {tables}")
             
 except Exception as e:
-    print(f"❌ Ошибка при создании таблиц: {e}")
+    logger.info(f"❌ Ошибка при создании таблиц: {e}")
     import traceback
     traceback.print_exc()
 
-print("="*60 + "\n")
+logger.info("="*60 + "\n")
 
 # Функция для получения сессии БД
 def get_db():
@@ -303,5 +303,5 @@ def check_db_connection():
             conn.execute(text("SELECT 1"))
         return True
     except Exception as e:
-        print(f"❌ Ошибка подключения к БД: {e}")
+        logger.info(f"❌ Ошибка подключения к БД: {e}")
         return False
