@@ -108,6 +108,13 @@ if DATABASE_URL and ("postgresql" in DATABASE_URL or "postgres" in DATABASE_URL)
         print(f"❌ Ошибка подключения к PostgreSQL: {e}")
         print("⚠️ Переключаемся на SQLite как запасной вариант")
         DATABASE_URL = None  # Принудительно переключаемся на SQLite
+        # Создаем engine для SQLite
+        sqlite_path = "/app/app.db"
+        print(f"📁 Используем SQLite: {sqlite_path}")
+        engine = create_engine(
+            f"sqlite:///{sqlite_path}",
+            connect_args={"check_same_thread": False}
+        )
         
 else:
     # Если нет DATABASE_URL или ошибка — используем SQLite
@@ -169,6 +176,63 @@ print("="*60)
 print("🔄 СОЗДАНИЕ ТАБЛИЦ...")
 print("="*60)
 
+# ========== ДОБАВЛЕННЫЕ ФУНКЦИИ ==========
+
+def create_tables():
+    """Создает все таблицы, если они не существуют"""
+    print("🔄 ВЫЗВАНА create_tables()")
+    try:
+        # Импортируем модели, чтобы они были зарегистрированы в Base
+        from app.models import User, Message, ClientDetails, Project, Transaction, Payment
+        
+        # Создаём все таблицы, если их ещё нет
+        Base.metadata.create_all(bind=engine)
+        print("✅ Таблицы БД созданы/проверены")
+        
+        # Дополнительная проверка для PostgreSQL
+        if "postgresql" in str(engine.url):
+            with engine.connect() as conn:
+                # Проверяем, какие таблицы созданы
+                result = conn.execute(text("""
+                    SELECT table_name 
+                    FROM information_schema.tables 
+                    WHERE table_schema = 'public'
+                """))
+                tables = [row[0] for row in result]
+                print(f"📊 Таблицы в PostgreSQL: {tables}")
+        return True
+    except Exception as e:
+        print(f"❌ Ошибка при создании таблиц: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+def check_connection():
+    """Проверяет подключение к базе данных"""
+    print("🔄 ПРОВЕРКА ПОДКЛЮЧЕНИЯ К БД...")
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+            conn.commit()
+            
+            # Определяем тип БД
+            if "postgresql" in str(engine.url):
+                result = conn.execute(text("SELECT version()"))
+                version = result.scalar()
+                print(f"✅ PostgreSQL подключен: {version[:50]}...")
+            else:
+                result = conn.execute(text("SELECT sqlite_version()"))
+                version = result.scalar()
+                print(f"✅ SQLite подключен: версия {version}")
+            
+            return True
+    except Exception as e:
+        print(f"❌ Ошибка подключения к БД: {e}")
+        return False
+
+# ==========================================
+
+# Вызываем создание таблиц при импорте модуля
 try:
     # Импортируем модели, чтобы они были зарегистрированы в Base
     from app.models import User, Message, ClientDetails, Project, Transaction, Payment
