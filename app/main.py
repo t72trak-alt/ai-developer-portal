@@ -4,15 +4,47 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from jose import jwt
 from datetime import datetime, timedelta
-from app.database import get_db
+from app.database import get_db, create_tables, check_connection
 from app.models import User
 from app.routers import auth, chat, projects, admin, services, stats, payments
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import WebSocket, WebSocketDisconnect
 import os
 import urllib.parse
+import logging
+
+# Настройка логирования
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="AI Developer Portal", version="1.0")
+
+# ========== ДИАГНОСТИКА ПРИ ЗАПУСКЕ ==========
+@app.on_event("startup")
+async def startup_event():
+    """Действия при запуске приложения"""
+    logger.info("="*60)
+    logger.info("🚀 ЗАПУСК ПРИЛОЖЕНИЯ AI DEVELOPER PORTAL")
+    logger.info("="*60)
+    
+    # Проверяем подключение к БД
+    logger.info("🔍 ПРОВЕРКА ПОДКЛЮЧЕНИЯ К БАЗЕ ДАННЫХ...")
+    if check_connection():
+        logger.info("✅ Подключение к БД успешно")
+        
+        # Создаем таблицы
+        logger.info("🔄 СОЗДАНИЕ ТАБЛИЦ...")
+        try:
+            create_tables()
+            logger.info("✅ Таблицы созданы/проверены")
+        except Exception as e:
+            logger.error(f"❌ Ошибка при создании таблиц: {e}")
+    else:
+        logger.error("❌ ПРОБЛЕМА С ПОДКЛЮЧЕНИЕМ К БАЗЕ ДАННЫХ")
+    
+    logger.info("="*60)
+    logger.info("✅ ПРИЛОЖЕНИЕ ГОТОВО К РАБОТЕ")
+    logger.info("="*60)
 
 # ========== JWT НАСТРОЙКИ ==========
 SECRET_KEY = "your-super-secret-jwt-key-change-this-in-production"
