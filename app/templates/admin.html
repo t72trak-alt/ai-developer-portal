@@ -969,9 +969,322 @@
         </div>
     </div>
     
-    <!-- Модальные окна (без изменений) -->
-    <!-- ... (все модальные окна остаются без изменений) ... -->
-    
+    <!-- Модальные окна -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title" class="text-2xl font-bold mb-4">Добавить пользователя</h2>
+            <form id="user-form" onsubmit="saveUser(event)">
+                <input type="hidden" id="user-id">
+                <div class="form-group">
+                    <label for="user-name">Имя</label>
+                    <input type="text" id="user-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-email">Email</label>
+                    <input type="email" id="user-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-password">Пароль</label>
+                    <input type="password" id="user-password" placeholder="Оставьте пустым, если не меняете">
+                </div>
+                <div class="form-group">
+                    <label for="user-is-admin">Роль</label>
+                    <select id="user-is-admin">
+                        <option value="false">Пользователь</option>
+                        <option value="true">Администратор</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">Подтверждение удаления</h2>
+            <p class="mb-6">Вы уверены, что хотите удалить пользователя <span id="delete-user-name" class="font-bold"></span>?</p>
+            <div class="flex justify-end space-x-2">
+                <button onclick="closeDeleteModal()" class="btn btn-secondary">Отмена</button>
+                <button onclick="confirmDelete()" class="btn btn-danger">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="user-select-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">👤 Выберите клиента</h3>
+                <button onclick="closeUserSelectModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div class="mb-4">
+                <input type="text" id="user-search" placeholder="Поиск по имени или email..." 
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       onkeyup="filterUserSelectList()">
+            </div>
+            <div id="user-select-list" class="max-h-96 overflow-y-auto space-y-2">
+                <div class="text-center py-4 text-gray-500">Загрузка пользователей...</div>
+            </div>
+            <div class="flex justify-end mt-4">
+                <button onclick="closeUserSelectModal()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="client-card-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center hidden z-50 overflow-y-auto">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl my-8 mx-4 relative">
+            <div class="sticky top-0 z-30 bg-white rounded-t-xl border-b shadow-md">
+                <div class="flex justify-between items-center p-6">
+                    <h3 class="text-2xl font-bold text-gray-800" id="client-card-title">👤 Личная карточка клиента</h3>
+                    <button onclick="closeClientCardModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center shadow-sm">
+                        <span class="mr-2">✕</span> Выход
+                    </button>
+                </div>
+                <div class="border-t border-gray-200 px-6">
+                    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+                        <li class="mr-2">
+                            <button class="client-tab-btn inline-block p-4 border-b-2 border-blue-600 text-blue-600 active" id="tab-main-btn" onclick="switchClientTab('main')">📋 Основное</button>
+                        </li>
+                        <li class="mr-2">
+                            <button class="client-tab-btn inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300" id="tab-details-btn" onclick="switchClientTab('details')">📁 Реквизиты</button>
+                        </li>
+                        <li class="mr-2">
+                            <button class="client-tab-btn inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300" id="tab-projects-btn" onclick="switchClientTab('projects')">📊 Проекты</button>
+                        </li>
+                        <li class="mr-2">
+                            <button class="client-tab-btn inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300" id="tab-messages-btn" onclick="switchClientTab('messages')">💬 Сообщения</button>
+                        </li>
+                        <li class="mr-2">
+                            <button class="client-tab-btn inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300" id="tab-contracts-btn" onclick="switchClientTab('contracts')">📄 Договоры</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="client-card-content" class="p-6 max-h-[70vh] overflow-y-auto">
+                <div class="text-center py-8 text-gray-500">Загрузка данных клиента...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="client-details-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+            <div class="flex justify-between items-center p-4 border-b bg-white sticky top-0 z-10 -mt-6 -mx-6 mb-6 px-6">
+                <h3 class="text-2xl font-bold text-gray-800">📝 Редактирование реквизитов</h3>
+                <button onclick="closeClientDetailsModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center">
+                    <span class="mr-2">✕</span> Выход
+                </button>
+            </div>
+            <form id="client-details-form" onsubmit="saveClientDetails(event)">
+                <input type="hidden" id="details-user-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-gray-700 border-b pb-2">Юридическая информация</h4>
+                        <div class="form-group">
+                            <label for="company-name">🏢 Название компании</label>
+                            <input type="text" id="company-name" class="w-full p-2 border rounded">
+                        </div>
+                        <div class="form-group">
+                            <label for="legal-address">📍 Юридический адрес</label>
+                            <textarea id="legal-address" rows="2" class="w-full p-2 border rounded"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="actual-address">📍 Фактический адрес</label>
+                            <textarea id="actual-address" rows="2" class="w-full p-2 border rounded"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-phone">📞 Контактный телефон</label>
+                            <input type="text" id="contact-phone" class="w-full p-2 border rounded">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">📧 Контактный email</label>
+                            <input type="email" id="contact-email" class="w-full p-2 border rounded">
+                        </div>
+                        <div class="form-group">
+                            <label for="messenger-contact">💬 Контакт в мессенджере</label>
+                            <input type="text" id="messenger-contact" class="w-full p-2 border rounded" placeholder="Telegram, WhatsApp...">
+                        </div>
+                        <h4 class="font-bold text-gray-700 border-b pb-2 mt-4">Налоговые реквизиты</h4>
+                        <div class="form-group">
+                            <label for="inn">🏦 ИНН</label>
+                            <input type="text" id="inn" class="w-full p-2 border rounded">
+                        </div>
+                        <div class="form-group">
+                            <label for="kpp">🏦 КПП</label>
+                            <input type="text" id="kpp" class="w-full p-2 border rounded">
+                        </div>
+                        <div class="form-group">
+                            <label for="ogrn">🏦 ОГРН</label>
+                            <input type="text" id="ogrn" class="w-full p-2 border rounded">
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-gray-700 border-b pb-2">Банковские реквизиты</h4>
+                        <div class="form-group">
+                            <label for="bank-name">💳 Банк</label>
+                            <input type="text" id="bank-name" class="w-full p-2 border rounded">
+                        </div>
+                        <div class="form-group">
+                            <label for="bik">💳 БИК</label>
+                            <input type="text" id="bik" class="w-full p-2 border rounded">
+                        </div>
+                        <div class="form-group">
+                            <label for="checking-account">💳 Расчетный счет</label>
+                            <input type="text" id="checking-account" class="w-full p-2 border rounded">
+                        </div>
+                        <div class="form-group">
+                            <label for="correspondent-account">💳 Корреспондентский счет</label>
+                            <input type="text" id="correspondent-account" class="w-full p-2 border rounded">
+                        </div>
+                        <h4 class="font-bold text-gray-700 border-b pb-2 mt-4">Руководитель</h4>
+                        <div class="form-group">
+                            <label for="director-name">👤 ФИО руководителя</label>
+                            <input type="text" id="director-name" class="w-full p-2 border rounded">
+                        </div>
+                        <div class="form-group">
+                            <label for="director-basis">📄 Действует на основании</label>
+                            <input type="text" id="director-basis" class="w-full p-2 border rounded" value="Устава">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 mt-6 pt-4 border-t">
+                    <button type="button" onclick="closeClientDetailsModal()" class="btn btn-secondary">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="contracts-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6">
+            <div class="flex justify-between items-center p-4 border-b bg-white sticky top-0 z-10 -mt-6 -mx-6 mb-6 px-6">
+                <h3 class="text-2xl font-bold text-gray-800">📄 Договоры клиента</h3>
+                <button onclick="closeContractsModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center">
+                    <span class="mr-2">✕</span> Выход
+                </button>
+            </div>
+            <div class="mb-4 flex justify-between items-center">
+                <div>
+                    <span id="contracts-client-name" class="font-medium text-lg"></span>
+                </div>
+                <button onclick="createNewContract()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
+                    <span class="mr-2">➕</span> Новый договор
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="contracts-table">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3">№ договора</th>
+                            <th class="px-4 py-3">Дата</th>
+                            <th class="px-4 py-3">Тип</th>
+                            <th class="px-4 py-3">Сумма</th>
+                            <th class="px-4 py-3">Статус</th>
+                            <th class="px-4 py-3">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contracts-table-body">
+                        <tr>
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">Загрузка договоров...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="contract-edit-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+            <div class="flex justify-between items-center p-4 border-b bg-white sticky top-0 z-10 -mt-6 -mx-6 mb-6 px-6">
+                <h3 class="text-2xl font-bold text-gray-800">📄 Редактирование договора</h3>
+                <button onclick="closeContractEditModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center">
+                    <span class="mr-2">✕</span> Выход
+                </button>
+            </div>
+            <form id="contract-form" onsubmit="saveContract(event)" class="space-y-4">
+                <input type="hidden" id="contract-id">
+                <input type="hidden" id="contract-user-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="contract-number" class="block text-sm font-medium text-gray-700 mb-1">Номер договора</label>
+                        <input type="text" id="contract-number" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contract-date" class="block text-sm font-medium text-gray-700 mb-1">Дата договора</label>
+                        <input type="date" id="contract-date" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contract-type" class="block text-sm font-medium text-gray-700 mb-1">Тип договора</label>
+                        <select id="contract-type" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="service">На оказание услуг</option>
+                            <option value="development">Разработка ПО</option>
+                            <option value="nda">NDA</option>
+                            <option value="maintenance">Абонентское обслуживание</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="contract-amount" class="block text-sm font-medium text-gray-700 mb-1">Сумма</label>
+                        <input type="number" id="contract-amount" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="form-group col-span-2">
+                        <label for="contract-description" class="block text-sm font-medium text-gray-700 mb-1">Описание</label>
+                        <textarea id="contract-description" rows="3" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="contract-status" class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
+                        <select id="contract-status" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="draft">Черновик</option>
+                            <option value="sent">Отправлен</option>
+                            <option value="signed">Подписан</option>
+                            <option value="completed">Завершён</option>
+                            <option value="cancelled">Расторгнут</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="contract-expiry" class="block text-sm font-medium text-gray-700 mb-1">Срок действия</label>
+                        <input type="date" id="contract-expiry" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 mt-6 pt-4 border-t">
+                    <button type="button" onclick="closeContractEditModal()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Отмена</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="format-select-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Выберите формат файла</h3>
+                <button onclick="closeFormatModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <p id="format-contract-info" class="text-gray-600 mb-4"></p>
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <button id="format-txt" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
+                    <span class="text-2xl mb-1">📄</span>
+                    <span class="font-medium">TXT</span>
+                </button>
+                <button id="format-docx" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
+                    <span class="text-2xl mb-1">📝</span>
+                    <span class="font-medium">DOCX</span>
+                </button>
+                <button id="format-pdf" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
+                    <span class="text-2xl mb-1">📕</span>
+                    <span class="font-medium">PDF</span>
+                </button>
+                <button id="format-xlsx" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
+                    <span class="text-2xl mb-1">📊</span>
+                    <span class="font-medium">XLSX</span>
+                </button>
+            </div>
+            <div class="flex justify-end">
+                <button onclick="closeFormatModal()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Отмена</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="bg-gray-800 text-white p-4 mt-4">
         <div class="container mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-center">
@@ -1005,6 +1318,9 @@
         let currentClientEmail = '';
         let clientCardRefreshInterval = null;
         let currentProjects = [];
+        
+        // Множество для отслеживания отправленных сообщений (предотвращение дублирования)
+        let pendingMessages = new Set();
         
         // Переменные для модального окна выбора формата
         let currentContractId = null;
@@ -1159,8 +1475,6 @@
                     if (!isMobileDevice()) return;
                     
                     console.log('Клик по вкладке:', this);
-                    // Не вызываем showMobilePanel здесь, так как loadTab уже вызовет его
-                    // Просто убеждаемся, что панель покажется после загрузки
                     setTimeout(() => showMobilePanel('content'), 200);
                 });
             });
@@ -1201,6 +1515,180 @@
                 initMobilePanels();
             }
         });
+
+        // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ ОТПРАВКИ СООБЩЕНИЯ ==========
+        function sendAdminMessage() {
+            if (!activeChatUser) {
+                alert('Выберите пользователя для отправки сообщения');
+                return;
+            }
+            
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            if (adminWebSocket && adminWebSocket.readyState === WebSocket.OPEN) {
+                // Создаем уникальный ID для сообщения
+                const messageId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                
+                const messageData = {
+                    type: 'admin_message',
+                    user_id: activeChatUser.id,
+                    content: message,
+                    timestamp: new Date().toISOString(),
+                    message_id: messageId
+                };
+                
+                // Добавляем ID в множество ожидающих сообщений
+                pendingMessages.add(messageId);
+                
+                // Отправляем через WebSocket
+                adminWebSocket.send(JSON.stringify(messageData));
+                
+                // НЕ добавляем сообщение сразу - ждем подтверждения от сервера
+                
+                input.value = '';
+                logToConsole('📤 Отправлено сообщение пользователю ' + activeChatUser.name);
+                
+            } else {
+                alert('WebSocket не подключен. Перезагрузите страницу.');
+                logToConsole('❌ WebSocket не подключен');
+                connectAdminWebSocket();
+            }
+        }
+
+        // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ ПОДКЛЮЧЕНИЯ WEBSOCKET ==========
+        function connectAdminWebSocket() {
+            const userId = localStorage.getItem('user_id');
+            if (!userId) {
+                console.error('❌ Нет User ID для WebSocket');
+                return;
+            }
+            
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = wsProtocol + '//' + window.location.host + '/api/chat/ws/chat/0';
+            
+            console.log('🔌 Подключение к WebSocket:', wsUrl);
+            logToConsole('🔌 Подключение к WebSocket...');
+            
+            try {
+                adminWebSocket = new WebSocket(wsUrl);
+                
+                adminWebSocket.onopen = function() {
+                    console.log('✅ WebSocket подключен (админ)');
+                    logToConsole('✅ WebSocket подключен');
+                    
+                    const wsStatus = document.getElementById('ws-status');
+                    if (wsStatus) {
+                        wsStatus.innerHTML = '🟢 Подключен';
+                        wsStatus.className = 'text-green-400';
+                    }
+                    
+                    reconnectAttempts = 0;
+                };
+                
+                adminWebSocket.onclose = function(event) {
+                    console.log('❌ WebSocket отключен:', event.code, event.reason);
+                    logToConsole('❌ WebSocket отключен');
+                    
+                    const wsStatus = document.getElementById('ws-status');
+                    if (wsStatus) {
+                        wsStatus.innerHTML = '🔴 Отключен';
+                        wsStatus.className = 'text-red-400';
+                    }
+                    
+                    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                        reconnectAttempts++;
+                        const delay = Math.min(1000 * reconnectAttempts, 10000);
+                        console.log(`🔄 Переподключение через ${delay/1000}с... (попытка ${reconnectAttempts})`);
+                        logToConsole(`🔄 Переподключение через ${delay/1000}с...`);
+                        setTimeout(connectAdminWebSocket, delay);
+                    }
+                };
+                
+                adminWebSocket.onerror = function(error) {
+                    console.error('⚠️ Ошибка WebSocket:', error);
+                    logToConsole('⚠️ Ошибка WebSocket');
+                };
+                
+                // ========== ИСПРАВЛЕННЫЙ ОБРАБОТЧИК WEBSOCKET ==========
+                adminWebSocket.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        
+                        if (data.type === 'new_message') {
+                            // Проверяем, не является ли это сообщение тем, которое мы только что отправили
+                            if (data.message_id && pendingMessages.has(data.message_id)) {
+                                // Это наше собственное сообщение, которое вернулось с сервера
+                                // Удаляем из множества ожидающих и НЕ добавляем повторно
+                                pendingMessages.delete(data.message_id);
+                                console.log('Сообщение подтверждено сервером, не добавляем повторно');
+                                return;
+                            }
+                            
+                            // Проверяем, не добавили ли мы уже это сообщение (по времени и содержанию)
+                            if (activeChatUser && activeChatUser.id === data.user_id) {
+                                const messagesContainer = document.getElementById('chat-messages-container');
+                                const existingMessages = messagesContainer.querySelectorAll('.message-content');
+                                let messageExists = false;
+                                
+                                // Проверяем, есть ли уже такое сообщение (похожее по времени и содержанию)
+                                existingMessages.forEach(msg => {
+                                    if (msg.textContent === data.content) {
+                                        // Находим родительский div с временем
+                                        const parentDiv = msg.closest('.flex');
+                                        if (parentDiv) {
+                                            const timeDiv = parentDiv.querySelector('.text-xs');
+                                            if (timeDiv) {
+                                                const msgTime = timeDiv.textContent;
+                                                const newTime = new Date(data.timestamp || data.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                                if (msgTime === newTime) {
+                                                    messageExists = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                                
+                                // Если сообщение еще не отображается, добавляем его
+                                if (!messageExists) {
+                                    const time = new Date(data.timestamp || data.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                    
+                                    // Определяем, от кого сообщение
+                                    const isFromAdmin = data.sender_id === 1 || data.sender_id === parseInt(localStorage.getItem('user_id'));
+                                    const messageClass = isFromAdmin ? 'bg-blue-100 text-blue-800 justify-end' : 'bg-gray-200 text-gray-800 justify-start';
+                                    const align = isFromAdmin ? 'justify-end' : 'justify-start';
+                                    
+                                    const messageDiv = document.createElement('div');
+                                    messageDiv.className = `flex ${align} mb-3`;
+                                    messageDiv.innerHTML = `
+                                        <div class="max-w-xs md:max-w-md lg:max-w-lg ${isFromAdmin ? 'bg-blue-100 text-blue-800' : 'bg-gray-200 text-gray-800'} rounded-lg p-3">
+                                            <div class="message-content">${data.content}</div>
+                                            <div class="text-xs opacity-70 mt-1 text-right">${time}</div>
+                                        </div>
+                                    `;
+                                    
+                                    messagesContainer.appendChild(messageDiv);
+                                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                    logToConsole('📩 Новое сообщение' + (isFromAdmin ? ' (ваше)' : ' от ' + activeChatUser.name));
+                                }
+                            }
+                            
+                            updateMessageStats();
+                            
+                            if (currentClientId && currentClientId === data.user_id && !document.getElementById('client-card-modal').classList.contains('hidden')) {
+                                loadClientCardData(currentClientId, currentClientName, currentClientEmail);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Ошибка обработки сообщения:', error);
+                    }
+                };
+            } catch (error) {
+                console.error('❌ Ошибка создания WebSocket:', error);
+                logToConsole('❌ Ошибка создания WebSocket');
+            }
+        }
 
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         document.addEventListener('DOMContentLoaded', function() {
@@ -1262,31 +1750,8 @@
             showNotification('✅ Админ-панель загружена', 'success');
         }
 
-        function updateAdminEmail() {
-            const adminEmail = localStorage.getItem('user_email');
-            const emailElement = document.getElementById('admin-email');
-            if (emailElement) {
-                emailElement.textContent = adminEmail || 't72trak@gmail.com';
-            }
-        }
-
-        function logout() {
-            console.log('🚪 Выход из системы');
-            if (adminWebSocket) {
-                adminWebSocket.close();
-            }
-            if (clientCardRefreshInterval) {
-                clearInterval(clientCardRefreshInterval);
-            }
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('user_id');
-            localStorage.removeItem('user_email');
-            localStorage.removeItem('user_name');
-            window.location.href = '/login';
-        }
-
-        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ (loadQuickStats, updateMessageStats, switchClientTab, loadTab и т.д.) ==========
-        // ... (весь остальной JavaScript код остается без изменений, как в вашем файле) ...
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
+        // ... (остальные функции loadUserDropdown, filterUsers, loadChatHistory и т.д. остаются без изменений) ...
         
     </script>
 </body>
