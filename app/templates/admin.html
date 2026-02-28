@@ -8,14 +8,13 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/chat-fix.css">
     <style>
+        /* ===== ОСНОВНЫЕ СТИЛИ ===== */
         .sidebar { transition: all 0.3s; }
         .chat-panel { transition: all 0.3s; }
         .active-tab { background-color: #3b82f6; color: white; }
         .active-tab span { color: white !important; }
         .message-admin { background-color: #3b82f6; color: white; margin-left: auto; }
         .message-user { background-color: #e5e7eb; color: #1f2937; }
-        .stat-card { transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-2px); }
         
         #chat-input {
             color: #000000 !important;
@@ -59,73 +58,8 @@
         .ws-connected { color: #10b981; }
         .ws-disconnected { color: #ef4444; }
         .ws-connecting { color: #f59e0b; }
-        
-        .message-edit-mode {
-            background-color: #fef3c7 !important;
-            border: 2px solid #f59e0b !important;
-        }
-        
-        .edit-textarea {
-            width: 100%;
-            padding: 8px;
-            border: 2px solid #f59e0b;
-            border-radius: 8px;
-            background-color: #fff9e6;
-            font-size: 14px;
-            resize: vertical;
-            min-height: 60px;
-        }
-        
-        .edit-textarea:focus {
-            outline: none;
-            border-color: #d97706;
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
-        }
-        
-        .edit-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        
-        .edit-save-btn {
-            background-color: #10b981;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        
-        .edit-save-btn:hover {
-            background-color: #059669;
-        }
-        
-        .edit-cancel-btn {
-            background-color: #6b7280;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        
-        .edit-cancel-btn:hover {
-            background-color: #4b5563;
-        }
-        
-        .stat-highlight {
-            animation: statPulse 0.5s ease-in-out;
-        }
-        
-        @keyframes statPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); color: #8b5cf6; }
-            100% { transform: scale(1); }
-        }
 
-        /* Модальные окна */
+        /* ===== МОДАЛЬНЫЕ ОКНА ===== */
         .modal {
             display: none;
             position: fixed;
@@ -153,43 +87,6 @@
             overflow-y: auto;
         }
         
-        .form-group {
-            margin-bottom: 16px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-            color: #374151;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #000000 !important;
-            background-color: #ffffff !important;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            ring: 2px solid #93c5fd;
-            background-color: #ffffff !important;
-        }
-        
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: #9ca3af !important;
-        }
-        
         .btn {
             padding: 8px 16px;
             border-radius: 8px;
@@ -197,33 +94,12 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
-        .btn-primary {
-            background-color: #3b82f6;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: #2563eb;
-        }
-        
-        .btn-danger {
-            background-color: #ef4444;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background-color: #dc2626;
-        }
-        
-        .btn-secondary {
-            background-color: #6b7280;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #4b5563;
-        }
+        .btn-primary { background-color: #3b82f6; color: white; }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-danger { background-color: #ef4444; color: white; }
+        .btn-danger:hover { background-color: #dc2626; }
+        .btn-secondary { background-color: #6b7280; color: white; }
+        .btn-secondary:hover { background-color: #4b5563; }
         
         .action-btn {
             padding: 4px 8px;
@@ -232,24 +108,10 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
-        .action-btn.edit {
-            background-color: #e5e7eb;
-            color: #4b5563;
-        }
-        
-        .action-btn.edit:hover {
-            background-color: #d1d5db;
-        }
-        
-        .action-btn.delete {
-            background-color: #fee2e2;
-            color: #ef4444;
-        }
-        
-        .action-btn.delete:hover {
-            background-color: #fecaca;
-        }
+        .action-btn.edit { background-color: #e5e7eb; color: #4b5563; }
+        .action-btn.edit:hover { background-color: #d1d5db; }
+        .action-btn.delete { background-color: #fee2e2; color: #ef4444; }
+        .action-btn.delete:hover { background-color: #fecaca; }
         
         .badge {
             padding: 4px 8px;
@@ -257,18 +119,10 @@
             font-size: 12px;
             font-weight: 500;
         }
-        
-        .badge.admin {
-            background-color: #fef3c7;
-            color: #d97706;
-        }
-        
-        .badge.user {
-            background-color: #e5e7eb;
-            color: #4b5563;
-        }
+        .badge.admin { background-color: #fef3c7; color: #d97706; }
+        .badge.user { background-color: #e5e7eb; color: #4b5563; }
 
-        /* Выпадающий список пользователей */
+        /* ===== ВЫПАДАЮЩИЕ СПИСКИ ===== */
         .user-list-dropdown {
             position: absolute;
             z-index: 50;
@@ -288,59 +142,11 @@
             border-bottom: 1px solid #f3f4f6;
             transition: all 0.2s;
         }
-        
-        .user-list-item:hover {
-            background-color: #f3f4f6;
-        }
-        
-        .user-list-item .name {
-            font-weight: 500;
-            color: #1f2937;
-        }
-        
-        .user-list-item .email {
-            font-size: 12px;
-            color: #6b7280;
-        }
+        .user-list-item:hover { background-color: #f3f4f6; }
+        .user-list-item .name { font-weight: 500; color: #1f2937; }
+        .user-list-item .email { font-size: 12px; color: #6b7280; }
 
-        /* Стили для карточки клиента */
-        .client-card-section {
-            background-color: #f9fafb;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-        
-        .client-card-section h4 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        
-        .details-item {
-            font-size: 14px;
-        }
-        
-        .details-item .label {
-            color: #6b7280;
-            margin-right: 8px;
-        }
-        
-        .details-item .value {
-            color: #1f2937;
-            font-weight: 500;
-        }
-
-        /* Стили для таблицы договоров */
+        /* ===== ТАБЛИЦА ДОГОВОРОВ ===== */
         .contracts-table-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -350,9 +156,7 @@
             max-height: 600px;
             overflow-y: auto;
         }
-        .contracts-table-scroll {
-            min-width: 2400px;
-        }
+        .contracts-table-scroll { min-width: 2400px; }
         .contracts-table {
             width: 100%;
             border-collapse: collapse;
@@ -371,11 +175,9 @@
             padding: 12px 10px;
             border-bottom: 1px solid #e5e7eb;
             color: #1f2937;
-            vertical-align: middle;
         }
-        .contracts-table tr:hover {
-            background-color: #f9fafb;
-        }
+        .contracts-table tr:hover { background-color: #f9fafb; }
+        
         .contract-cell {
             max-width: 200px;
             overflow: hidden;
@@ -391,152 +193,8 @@
             border-radius: 6px;
             padding: 4px !important;
         }
-        .contract-cell .expand-icon {
-            opacity: 0.5;
-            font-size: 12px;
-            margin-left: 4px;
-        }
-        .contract-cell:hover .expand-icon {
-            opacity: 1;
-        }
-        .progress-bar-container {
-            width: 100px;
-            height: 6px;
-            background-color: #e5e7eb;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background-color: #3b82f6;
-            border-radius: 10px;
-        }
-        .contract-status-badge {
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 500;
-            display: inline-block;
-        }
-        .status-draft { background-color: #f3f4f6; color: #4b5563; }
-        .status-active { background-color: #dbeafe; color: #1e40af; }
-        .status-completed { background-color: #d1fae5; color: #065f46; }
-        .status-cancelled { background-color: #fee2e2; color: #991b1b; }
-        .filter-section {
-            background-color: #f9fafb;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
 
-        /* Стили для кнопок действий с договорами */
-        .contract-action-btn {
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 36px;
-        }
-        .contract-action-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .contract-action-btn.edit { background-color: #e5e7eb; color: #4b5563; }
-        .contract-action-btn.edit:hover { background-color: #d1d5db; }
-        .contract-action-btn.view { background-color: #dbeafe; color: #1e40af; }
-        .contract-action-btn.view:hover { background-color: #bfdbfe; }
-        .contract-action-btn.download { background-color: #f3e8ff; color: #6b21a8; }
-        .contract-action-btn.download:hover { background-color: #e9d5ff; }
-
-        /* Стили для модального окна выбора формата */
-        #format-select-modal {
-            animation: fadeIn 0.2s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .format-option {
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-        .format-option:hover {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
-            transform: translateY(-2px);
-        }
-
-        /* Стили для интерактивной таблицы проектов */
-        .project-cell {
-            cursor: pointer;
-            transition: all 0.2s;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .project-cell.expanded {
-            white-space: normal;
-            word-wrap: break-word;
-            max-width: none;
-            background-color: #fef9e7;
-            border: 1px solid #fbbf24;
-            border-radius: 8px;
-            padding: 8px !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .project-cell .expand-icon {
-            opacity: 0.5;
-            font-size: 12px;
-            margin-left: 4px;
-        }
-        .project-cell:hover .expand-icon {
-            opacity: 1;
-        }
-        .project-folder-btn {
-            background-color: #f3f4f6;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: #374151;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .project-folder-btn:hover {
-            background-color: #e5e7eb;
-            color: #1f2937;
-        }
-        .status-selector {
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            border: 1px solid transparent;
-            cursor: pointer;
-        }
-        .status-pending { background-color: #fef3c7; color: #92400e; }
-        .status-in_progress { background-color: #dbeafe; color: #1e40af; }
-        .status-completed { background-color: #d1fae5; color: #065f46; }
-        .status-cancelled { background-color: #fee2e2; color: #991b1b; }
-        .project-actions {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .project-actions button {
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ С УЗКИМИ ПАНЕЛЯМИ СЛЕВА ===== */
+        /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
         @media (max-width: 1024px) {
             .container.mx-auto.flex {
                 flex-direction: row !important;
@@ -547,7 +205,6 @@
                 gap: 0 !important;
             }
             
-            /* Левая панель с иконками */
             .sidebar {
                 width: 70px !important;
                 min-width: 70px !important;
@@ -562,9 +219,7 @@
                 box-shadow: none !important;
             }
             
-            .sidebar h2 {
-                display: none !important;
-            }
+            .sidebar h2, .sidebar .mt-6.p-4 { display: none !important; }
             
             .sidebar .space-y-1 {
                 display: flex !important;
@@ -587,16 +242,14 @@
                 margin: 0 !important;
                 color: #4b5563 !important;
                 cursor: pointer !important;
-                pointer-events: auto !important;
-                z-index: 100 !important;
-                position: relative !important;
-                -webkit-tap-highlight-color: rgba(59, 130, 246, 0.3);
+                border: none !important;
+                transition: all 0.2s;
+                -webkit-tap-highlight-color: transparent;
             }
             
             .sidebar .tab-btn:active {
-                opacity: 0.7;
+                background-color: rgba(59, 130, 246, 0.2) !important;
                 transform: scale(0.95);
-                background-color: rgba(59, 130, 246, 0.1);
             }
             
             .sidebar .tab-btn span:first-child {
@@ -605,26 +258,11 @@
                 margin-bottom: 2px !important;
             }
             
-            .sidebar .tab-btn span.text-gray-800 {
-                display: none !important;
-            }
+            .sidebar .tab-btn span.text-gray-800 { display: none !important; }
+            .sidebar .tab-btn.active-tab { background-color: #3b82f6 !important; color: white !important; }
+            .sidebar .tab-btn.active-tab span { color: white !important; }
             
-            .sidebar .tab-btn.active-tab {
-                background-color: #3b82f6 !important;
-                color: white !important;
-            }
-            
-            .sidebar .tab-btn.active-tab span {
-                color: white !important;
-            }
-            
-            /* Скрываем статистику на мобильных */
-            .sidebar .mt-6.p-4 {
-                display: none !important;
-            }
-            
-            /* Панель контента */
-            .flex-1 {
+            .flex-1, .chat-panel {
                 width: 0 !important;
                 flex: 1 !important;
                 margin: 0 !important;
@@ -637,23 +275,7 @@
                 display: none !important;
             }
             
-            /* Панель чата */
-            .chat-panel {
-                width: 0 !important;
-                flex: 1 !important;
-                margin: 0 !important;
-                height: 100% !important;
-                overflow-y: auto !important;
-                background: white;
-                transition: transform 0.3s ease !important;
-                border-radius: 0 !important;
-                box-shadow: none !important;
-                display: none !important;
-            }
-            
-            /* Активная панель */
-            .flex-1.active-panel,
-            .chat-panel.active-panel {
+            .flex-1.active-panel, .chat-panel.active-panel {
                 display: block !important;
                 position: absolute !important;
                 top: 0 !important;
@@ -666,12 +288,8 @@
                 box-shadow: -2px 0 10px rgba(0,0,0,0.1) !important;
             }
             
-            .chat-panel.active-panel {
-                display: flex !important;
-                flex-direction: column !important;
-            }
+            .chat-panel.active-panel { display: flex !important; flex-direction: column !important; }
             
-            /* Кнопка закрытия */
             .panel-close-btn {
                 display: none !important;
                 position: absolute !important;
@@ -689,132 +307,18 @@
                 cursor: pointer !important;
                 border: none !important;
             }
-            
-            .active-panel .panel-close-btn {
-                display: flex !important;
-            }
-            
-            /* Показываем левую панель всегда */
-            .sidebar {
-                display: block !important;
-            }
+            .active-panel .panel-close-btn { display: flex !important; }
+            .sidebar { display: block !important; }
         }
 
         @media (max-width: 768px) {
-            /* Навигация */
-            nav .container {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 10px;
-            }
-            
-            nav .flex.items-center.space-x-4 {
-                flex-direction: column;
-                width: 100%;
-                gap: 10px;
-            }
-            
-            nav a, nav button {
-                width: 100%;
-                text-align: center;
-                margin: 2px 0;
-                min-height: 44px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 14px;
-            }
-            
-            nav h1 {
-                font-size: 1.2rem;
-                margin-bottom: 10px;
-            }
-            
-            /* Контент внутри панелей */
-            #content-area {
-                padding: 10px;
-            }
-            
-            /* Таблицы */
-            .overflow-x-auto {
-                overflow-x: auto !important;
-                margin: 0 -10px;
-                padding: 0 10px;
-                width: calc(100% + 20px);
-            }
-            
-            .data-table {
-                font-size: 12px;
-                min-width: 600px;
-            }
-            
-            .data-table th, .data-table td {
-                padding: 8px 6px;
-                white-space: nowrap;
-            }
-            
-            /* Кнопки */
-            .flex.justify-center.items-center.space-x-6 {
-                flex-direction: column;
-                gap: 8px;
-                width: 100%;
-            }
-            
-            .flex.justify-center.items-center.space-x-6 button {
-                width: 100%;
-                margin: 0;
-                padding: 12px;
-                font-size: 14px;
-            }
-            
-            /* Модальные окна */
-            .modal-content {
-                width: 95%;
-                padding: 15px;
-                max-height: 80vh;
-            }
-            
-            #client-card-modal .grid.grid-cols-3 {
-                grid-template-columns: 1fr;
-            }
-            
-            /* Вкладки в карточке клиента */
-            .flex.flex-wrap.-mb-px.text-sm.font-medium.text-center {
-                overflow-x: auto;
-                white-space: nowrap;
-                padding-bottom: 10px;
-                display: flex;
-                flex-wrap: nowrap;
-            }
-            
-            .client-tab-btn {
-                padding: 10px 15px;
-                font-size: 13px;
-                white-space: nowrap;
-            }
-        }
-
-        @media (max-width: 480px) {
-            nav h1 {
-                font-size: 1rem;
-            }
-            
-            .data-table {
-                font-size: 11px;
-            }
-            
-            .badge {
-                font-size: 9px;
-                padding: 3px 4px;
-            }
-            
-            .project-actions {
-                flex-direction: column;
-            }
-            
-            .project-actions button {
-                width: 100%;
-            }
+            nav .container { flex-direction: column; align-items: flex-start; padding: 10px; }
+            nav .flex.items-center.space-x-4 { flex-direction: column; width: 100%; gap: 10px; }
+            nav a, nav button { width: 100%; text-align: center; margin: 2px 0; min-height: 44px; }
+            #content-area { padding: 10px; }
+            .data-table { font-size: 12px; min-width: 600px; }
+            .flex.justify-center.items-center.space-x-6 { flex-direction: column; gap: 8px; width: 100%; }
+            .flex.justify-center.items-center.space-x-6 button { width: 100%; }
         }
     </style>
 </head>
@@ -827,11 +331,9 @@
             </div>
             <div class="flex items-center space-x-4">
                 <span id="admin-email" class="font-medium">Загрузка...</span>
-                <a href="/" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition flex items-center">
-                    <span class="mr-2">🏠</span> Главная
-                </a>
+                <a href="/" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition">🏠 Главная</a>
                 <a href="/dashboard" class="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded transition">В личный кабинет</a>
-                <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition">Выход</button>
+                <button onclick="app.logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition">Выход</button>
             </div>
         </div>
     </nav>
@@ -841,114 +343,74 @@
         <div class="sidebar w-64 bg-white rounded-lg shadow-lg p-4 overflow-y-auto">
             <h2 class="text-lg font-bold mb-4 text-gray-700 border-b pb-2">📊 Навигация</h2>
             <div class="space-y-1">
-                <button onclick="loadTab('users')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-users">
+                <button onclick="app.loadTab('users')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-users">
                     <span class="mr-2 text-gray-700">👤</span> <span class="text-gray-800">Пользователи</span>
                 </button>
-                
-                <button onclick="loadTab('contracts')" class="tab-btn w-full text-left p-3 rounded hover:bg-amber-50 transition flex items-center text-gray-800 font-medium" id="tab-contracts">
+                <button onclick="app.loadTab('contracts')" class="tab-btn w-full text-left p-3 rounded hover:bg-amber-50 transition flex items-center text-gray-800 font-medium" id="tab-contracts">
                     <span class="mr-2 text-amber-600">📄</span> <span class="text-gray-800">Договора</span>
                 </button>
-                
-                <button onclick="loadTab('payments')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-payments">
+                <button onclick="app.loadTab('payments')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-payments">
                     <span class="mr-2 text-gray-700">💰</span> <span class="text-gray-800">Платежи</span>
                 </button>
-                <button onclick="loadTab('projects')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-projects">
+                <button onclick="app.loadTab('projects')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-projects">
                     <span class="mr-2 text-gray-700">📁</span> <span class="text-gray-800">Проекты</span>
                 </button>
-                <button onclick="loadTab('work-materials')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-work-materials">
+                <button onclick="app.loadTab('work-materials')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-work-materials">
                     <span class="mr-2 text-gray-700">⚙️</span> <span class="text-gray-800">Рабочие материалы</span>
                 </button>
-                <button onclick="loadTab('archive')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-archive">
+                <button onclick="app.loadTab('archive')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-archive">
                     <span class="mr-2 text-gray-700">📦</span> <span class="text-gray-800">Архив</span>
                 </button>
             </div>
             
             <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-                <h3 class="font-bold mb-3 text-gray-700 flex items-center">
-                    <span class="mr-2">🚀</span> Быстрая статистика
-                </h3>
+                <h3 class="font-bold mb-3 text-gray-700">🚀 Быстрая статистика</h3>
                 <div class="space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">👤 Пользователи:</span>
-                        <span id="stats-users" class="font-bold text-blue-600 text-lg" data-stat="users">0</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">📁 Проекты:</span>
-                        <span id="stats-projects" class="font-bold text-green-600 text-lg" data-stat="projects">0</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">🛠️ Услуги:</span>
-                        <span id="stats-services" class="font-bold text-yellow-600 text-lg" data-stat="services">0</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">💬 Сообщения:</span>
-                        <span id="stats-messages" class="font-bold text-purple-600 text-lg" data-stat="messages">0</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">💰 Транзакции:</span>
-                        <span id="stats-transactions" class="font-bold text-red-600 text-lg" data-stat="transactions">0</span>
-                    </div>
+                    <div class="flex justify-between"><span class="text-gray-600">👤 Пользователи:</span><span id="stats-users" class="font-bold text-blue-600">0</span></div>
+                    <div class="flex justify-between"><span class="text-gray-600">📁 Проекты:</span><span id="stats-projects" class="font-bold text-green-600">0</span></div>
+                    <div class="flex justify-between"><span class="text-gray-600">🛠️ Услуги:</span><span id="stats-services" class="font-bold text-yellow-600">0</span></div>
+                    <div class="flex justify-between"><span class="text-gray-600">💬 Сообщения:</span><span id="stats-messages" class="font-bold text-purple-600">0</span></div>
+                    <div class="flex justify-between"><span class="text-gray-600">💰 Транзакции:</span><span id="stats-transactions" class="font-bold text-red-600">0</span></div>
                 </div>
             </div>
         </div>
         
         <!-- Панель контента -->
-        <div class="flex-1 bg-white rounded-lg shadow-lg p-6 overflow-y-auto">
-            <button class="panel-close-btn" onclick="closeActivePanel()">✕</button>
+        <div class="flex-1 bg-white rounded-lg shadow-lg p-6 overflow-y-auto" id="content-panel">
+            <button class="panel-close-btn" onclick="app.mobile.closeActivePanel()">✕</button>
             <div class="p-5 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-blue-200 shadow-sm mb-6">
-                <h3 class="text-lg font-bold text-blue-800 mb-3 flex items-center">
-                    <span class="mr-2">👨‍💻</span> Панель разработчика
-                </h3>
+                <h3 class="text-lg font-bold text-blue-800 mb-3">👨‍💻 Панель разработчика</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-                    <button onclick="testWebSocket()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition flex items-center justify-center">
-                        <span class="mr-2">🔌</span> Тест WebSocket
-                    </button>
-                    <button onclick="clearCache()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition flex items-center justify-center">
-                        <span class="mr-2">🧹</span> Очистить кэш
-                    </button>
-                    <button onclick="reloadData()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg transition flex items-center justify-center">
-                        <span class="mr-2">🔄</span> Обновить данные
-                    </button>
+                    <button onclick="app.testWebSocket()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg">🔌 Тест WebSocket</button>
+                    <button onclick="app.clearCache()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg">🧹 Очистить кэш</button>
+                    <button onclick="app.reloadData()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg">🔄 Обновить данные</button>
                 </div>
-                <div class="bg-gray-900 text-green-400 rounded-lg p-3 font-mono text-sm h-40 overflow-y-auto mb-6" id="dev-console">
+                <div class="bg-gray-900 text-green-400 rounded-lg p-3 font-mono text-sm h-40 overflow-y-auto" id="dev-console">
                     <div class="text-gray-400">// Консоль разработчика</div>
                     <div>> Система инициализируется...</div>
                 </div>
             </div>
-
-            <div id="content-area" class="mt-6">
-                <!-- Контент будет загружаться сюда -->
-            </div>
+            <div id="content-area" class="mt-6"></div>
         </div>
         
         <!-- Панель чата -->
-        <div class="chat-panel w-80 bg-white rounded-lg shadow-lg flex flex-col">
-            <button class="panel-close-btn" onclick="closeActivePanel()">✕</button>
+        <div class="chat-panel w-80 bg-white rounded-lg shadow-lg flex flex-col" id="chat-panel">
+            <button class="panel-close-btn" onclick="app.mobile.closeActivePanel()">✕</button>
             <div class="p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-lg font-bold text-gray-700 flex items-center">
-                        <span class="mr-2">💬</span> Чат поддержки
-                    </h2>
+                    <h2 class="text-lg font-bold text-gray-700">💬 Чат поддержки</h2>
                     <span id="chat-status" class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full flex items-center">
-                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                        Онлайн
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span> Онлайн
                     </span>
                 </div>
                 <div class="flex space-x-2 mb-3">
                     <div class="relative flex-1">
-                        <input type="text" id="chat-search" placeholder="Поиск пользователя..."
-                               class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                               onfocus="loadUserDropdown()" oninput="filterUsers()">
-                        <div id="user-dropdown" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto hidden">
-                            <div class="p-2 text-gray-500 text-center">Загрузка пользователей...</div>
-                        </div>
+                        <input type="text" id="chat-search" placeholder="Поиск пользователя..." class="w-full p-2 border rounded-lg focus:outline-none focus:border-blue-500" onfocus="app.chat.loadUserDropdown()" oninput="app.chat.filterUsers()">
+                        <div id="user-dropdown" class="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto hidden"></div>
                     </div>
-                    <button onclick="refreshChatList()" class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition">
-                        🔄
-                    </button>
+                    <button onclick="app.chat.refreshList()" class="p-2 bg-blue-100 text-blue-600 rounded-lg">🔄</button>
                 </div>
             </div>
-            
             <div class="flex-1 flex flex-col p-3" id="chat-window">
                 <div class="flex-1 overflow-y-auto mb-3 p-3 bg-gray-50 rounded-lg" id="chat-messages-container">
                     <div class="text-center py-8 text-gray-400">
@@ -958,22 +420,10 @@
                 </div>
                 <div class="border-t pt-3">
                     <div class="flex space-x-2 mb-2 items-stretch">
-                        <textarea id="chat-input" placeholder="Введите сообщение..." 
-                                  class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none" 
-                                  rows="2" onkeydown="handleChatKeydown(event)"></textarea>
-                        <button onclick="sendAdminMessage()" 
-                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg transition flex items-center justify-center whitespace-nowrap font-medium h-auto">
-                            Отправить
-                        </button>
+                        <textarea id="chat-input" placeholder="Введите сообщение..." class="flex-1 p-3 border rounded-lg resize-none" rows="2" onkeydown="app.chat.handleKeydown(event)"></textarea>
+                        <button onclick="app.chat.sendMessage()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg">Отправить</button>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <button onclick="editLastMessage()" class="text-sm text-gray-500 hover:text-gray-700">
-                            ✏️ Редактировать сообщение
-                        </button>
-                        <div class="text-xs text-gray-400">
-                            Enter - отправить, Shift+Enter - новая строка
-                        </div>
-                    </div>
+                    <div class="flex justify-between text-xs text-gray-400">Enter - отправить, Shift+Enter - новая строка</div>
                 </div>
             </div>
         </div>
@@ -983,29 +433,19 @@
     <div id="user-modal" class="modal">
         <div class="modal-content">
             <h2 id="modal-title" class="text-2xl font-bold mb-4">Добавить пользователя</h2>
-            <form id="user-form" onsubmit="saveUser(event)">
+            <form id="user-form" onsubmit="app.users.save(event)">
                 <input type="hidden" id="user-id">
-                <div class="form-group">
-                    <label for="user-name">Имя</label>
-                    <input type="text" id="user-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="user-email">Email</label>
-                    <input type="email" id="user-email" required>
-                </div>
-                <div class="form-group">
-                    <label for="user-password">Пароль</label>
-                    <input type="password" id="user-password" placeholder="Оставьте пустым, если не меняете">
-                </div>
-                <div class="form-group">
-                    <label for="user-is-admin">Роль</label>
-                    <select id="user-is-admin">
+                <div class="mb-4"><label class="block mb-1 font-medium">Имя</label><input type="text" id="user-name" class="w-full p-2 border rounded" required></div>
+                <div class="mb-4"><label class="block mb-1 font-medium">Email</label><input type="email" id="user-email" class="w-full p-2 border rounded" required></div>
+                <div class="mb-4"><label class="block mb-1 font-medium">Пароль</label><input type="password" id="user-password" class="w-full p-2 border rounded" placeholder="Оставьте пустым, если не меняете"></div>
+                <div class="mb-4"><label class="block mb-1 font-medium">Роль</label>
+                    <select id="user-is-admin" class="w-full p-2 border rounded">
                         <option value="false">Пользователь</option>
                         <option value="true">Администратор</option>
                     </select>
                 </div>
                 <div class="flex justify-end space-x-2">
-                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Отмена</button>
+                    <button type="button" onclick="app.ui.closeModal('user-modal')" class="btn btn-secondary">Отмена</button>
                     <button type="submit" class="btn btn-primary">Сохранить</button>
                 </div>
             </form>
@@ -1017,8 +457,8 @@
             <h2 class="text-2xl font-bold mb-4">Подтверждение удаления</h2>
             <p class="mb-6">Вы уверены, что хотите удалить пользователя <span id="delete-user-name" class="font-bold"></span>?</p>
             <div class="flex justify-end space-x-2">
-                <button onclick="closeDeleteModal()" class="btn btn-secondary">Отмена</button>
-                <button onclick="confirmDelete()" class="btn btn-danger">Удалить</button>
+                <button onclick="app.ui.closeModal('delete-modal')" class="btn btn-secondary">Отмена</button>
+                <button onclick="app.users.confirmDelete()" class="btn btn-danger">Удалить</button>
             </div>
         </div>
     </div>
@@ -1027,271 +467,40 @@
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-gray-800">👤 Выберите клиента</h3>
-                <button onclick="closeUserSelectModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                <button onclick="app.ui.closeModal('user-select-modal')" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
             </div>
             <div class="mb-4">
-                <input type="text" id="user-search" placeholder="Поиск по имени или email..." 
-                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                       onkeyup="filterUserSelectList()">
+                <input type="text" id="user-search" placeholder="Поиск по имени или email..." class="w-full px-4 py-2 border rounded-lg" onkeyup="app.clients.filterList()">
             </div>
             <div id="user-select-list" class="max-h-96 overflow-y-auto space-y-2">
                 <div class="text-center py-4 text-gray-500">Загрузка пользователей...</div>
             </div>
             <div class="flex justify-end mt-4">
-                <button onclick="closeUserSelectModal()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Отмена</button>
+                <button onclick="app.ui.closeModal('user-select-modal')" class="px-4 py-2 bg-gray-300 rounded-lg">Отмена</button>
             </div>
         </div>
     </div>
 
-    <!-- ИСПРАВЛЕНО: убран sticky top-0, добавлен position: relative -->
+    <!-- Карточка клиента -->
     <div id="client-card-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center hidden z-50 overflow-y-auto">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl my-8 mx-4 relative">
-            <div class="bg-white rounded-t-xl border-b shadow-md" style="position: relative; top: 0;">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl my-8 mx-4">
+            <div class="bg-white rounded-t-xl border-b shadow-md">
                 <div class="flex justify-between items-center p-6">
-                    <h3 class="text-2xl font-bold text-gray-800" id="client-card-title">👤 Личная карточка клиента</h3>
-                    <button onclick="closeClientCardModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center shadow-sm">
-                        <span class="mr-2">✕</span> Выход
-                    </button>
+                    <h3 class="text-2xl font-bold text-gray-800">👤 Личная карточка клиента</h3>
+                    <button onclick="app.ui.closeModal('client-card-modal')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">✕ Выход</button>
                 </div>
                 <div class="border-t border-gray-200 px-6">
                     <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
-                        <li class="mr-2">
-                            <button class="client-tab-btn inline-block p-4 border-b-2 border-blue-600 text-blue-600 active" id="tab-main-btn" onclick="switchClientTab('main')">📋 Основное</button>
-                        </li>
-                        <li class="mr-2">
-                            <button class="client-tab-btn inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300" id="tab-details-btn" onclick="switchClientTab('details')">📁 Реквизиты</button>
-                        </li>
-                        <li class="mr-2">
-                            <button class="client-tab-btn inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300" id="tab-projects-btn" onclick="switchClientTab('projects')">📊 Проекты</button>
-                        </li>
-                        <li class="mr-2">
-                            <button class="client-tab-btn inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300" id="tab-messages-btn" onclick="switchClientTab('messages')">💬 Сообщения</button>
-                        </li>
-                        <li class="mr-2">
-                            <button class="client-tab-btn inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300" id="tab-contracts-btn" onclick="switchClientTab('contracts')">📄 Договоры</button>
-                        </li>
+                        <li class="mr-2"><button class="client-tab-btn inline-block p-4 border-b-2 border-blue-600 text-blue-600" data-tab="main" onclick="app.clients.switchTab('main')">📋 Основное</button></li>
+                        <li class="mr-2"><button class="client-tab-btn inline-block p-4 border-b-2 border-transparent" data-tab="details" onclick="app.clients.switchTab('details')">📁 Реквизиты</button></li>
+                        <li class="mr-2"><button class="client-tab-btn inline-block p-4 border-b-2 border-transparent" data-tab="projects" onclick="app.clients.switchTab('projects')">📊 Проекты</button></li>
+                        <li class="mr-2"><button class="client-tab-btn inline-block p-4 border-b-2 border-transparent" data-tab="messages" onclick="app.clients.switchTab('messages')">💬 Сообщения</button></li>
+                        <li class="mr-2"><button class="client-tab-btn inline-block p-4 border-b-2 border-transparent" data-tab="contracts" onclick="app.clients.switchTab('contracts')">📄 Договоры</button></li>
                     </ul>
                 </div>
             </div>
             <div id="client-card-content" class="p-6 max-h-[70vh] overflow-y-auto">
                 <div class="text-center py-8 text-gray-500">Загрузка данных клиента...</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="client-details-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
-            <div class="flex justify-between items-center p-4 border-b bg-white sticky top-0 z-10 -mt-6 -mx-6 mb-6 px-6">
-                <h3 class="text-2xl font-bold text-gray-800">📝 Редактирование реквизитов</h3>
-                <button onclick="closeClientDetailsModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center">
-                    <span class="mr-2">✕</span> Выход
-                </button>
-            </div>
-            <form id="client-details-form" onsubmit="saveClientDetails(event)">
-                <input type="hidden" id="details-user-id">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-4">
-                        <h4 class="font-bold text-gray-700 border-b pb-2">Юридическая информация</h4>
-                        <div class="form-group">
-                            <label for="company-name">🏢 Название компании</label>
-                            <input type="text" id="company-name" class="w-full p-2 border rounded">
-                        </div>
-                        <div class="form-group">
-                            <label for="legal-address">📍 Юридический адрес</label>
-                            <textarea id="legal-address" rows="2" class="w-full p-2 border rounded"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="actual-address">📍 Фактический адрес</label>
-                            <textarea id="actual-address" rows="2" class="w-full p-2 border rounded"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact-phone">📞 Контактный телефон</label>
-                            <input type="text" id="contact-phone" class="w-full p-2 border rounded">
-                        </div>
-                        <div class="form-group">
-                            <label for="contact-email">📧 Контактный email</label>
-                            <input type="email" id="contact-email" class="w-full p-2 border rounded">
-                        </div>
-                        <div class="form-group">
-                            <label for="messenger-contact">💬 Контакт в мессенджере</label>
-                            <input type="text" id="messenger-contact" class="w-full p-2 border rounded" placeholder="Telegram, WhatsApp...">
-                        </div>
-                        <h4 class="font-bold text-gray-700 border-b pb-2 mt-4">Налоговые реквизиты</h4>
-                        <div class="form-group">
-                            <label for="inn">🏦 ИНН</label>
-                            <input type="text" id="inn" class="w-full p-2 border rounded">
-                        </div>
-                        <div class="form-group">
-                            <label for="kpp">🏦 КПП</label>
-                            <input type="text" id="kpp" class="w-full p-2 border rounded">
-                        </div>
-                        <div class="form-group">
-                            <label for="ogrn">🏦 ОГРН</label>
-                            <input type="text" id="ogrn" class="w-full p-2 border rounded">
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <h4 class="font-bold text-gray-700 border-b pb-2">Банковские реквизиты</h4>
-                        <div class="form-group">
-                            <label for="bank-name">💳 Банк</label>
-                            <input type="text" id="bank-name" class="w-full p-2 border rounded">
-                        </div>
-                        <div class="form-group">
-                            <label for="bik">💳 БИК</label>
-                            <input type="text" id="bik" class="w-full p-2 border rounded">
-                        </div>
-                        <div class="form-group">
-                            <label for="checking-account">💳 Расчетный счет</label>
-                            <input type="text" id="checking-account" class="w-full p-2 border rounded">
-                        </div>
-                        <div class="form-group">
-                            <label for="correspondent-account">💳 Корреспондентский счет</label>
-                            <input type="text" id="correspondent-account" class="w-full p-2 border rounded">
-                        </div>
-                        <h4 class="font-bold text-gray-700 border-b pb-2 mt-4">Руководитель</h4>
-                        <div class="form-group">
-                            <label for="director-name">👤 ФИО руководителя</label>
-                            <input type="text" id="director-name" class="w-full p-2 border rounded">
-                        </div>
-                        <div class="form-group">
-                            <label for="director-basis">📄 Действует на основании</label>
-                            <input type="text" id="director-basis" class="w-full p-2 border rounded" value="Устава">
-                        </div>
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-2 mt-6 pt-4 border-t">
-                    <button type="button" onclick="closeClientDetailsModal()" class="btn btn-secondary">Отмена</button>
-                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="contracts-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6">
-            <div class="flex justify-between items-center p-4 border-b bg-white sticky top-0 z-10 -mt-6 -mx-6 mb-6 px-6">
-                <h3 class="text-2xl font-bold text-gray-800">📄 Договоры клиента</h3>
-                <button onclick="closeContractsModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center">
-                    <span class="mr-2">✕</span> Выход
-                </button>
-            </div>
-            <div class="mb-4 flex justify-between items-center">
-                <div>
-                    <span id="contracts-client-name" class="font-medium text-lg"></span>
-                </div>
-                <button onclick="createNewContract()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
-                    <span class="mr-2">➕</span> Новый договор
-                </button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="contracts-table">
-                    <thead>
-                        <tr>
-                            <th class="px-4 py-3">№ договора</th>
-                            <th class="px-4 py-3">Дата</th>
-                            <th class="px-4 py-3">Тип</th>
-                            <th class="px-4 py-3">Сумма</th>
-                            <th class="px-4 py-3">Статус</th>
-                            <th class="px-4 py-3">Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody id="contracts-table-body">
-                        <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">Загрузка договоров...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div id="contract-edit-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
-            <div class="flex justify-between items-center p-4 border-b bg-white sticky top-0 z-10 -mt-6 -mx-6 mb-6 px-6">
-                <h3 class="text-2xl font-bold text-gray-800">📄 Редактирование договора</h3>
-                <button onclick="closeContractEditModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center">
-                    <span class="mr-2">✕</span> Выход
-                </button>
-            </div>
-            <form id="contract-form" onsubmit="saveContract(event)" class="space-y-4">
-                <input type="hidden" id="contract-id">
-                <input type="hidden" id="contract-user-id">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="form-group">
-                        <label for="contract-number" class="block text-sm font-medium text-gray-700 mb-1">Номер договора</label>
-                        <input type="text" id="contract-number" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contract-date" class="block text-sm font-medium text-gray-700 mb-1">Дата договора</label>
-                        <input type="date" id="contract-date" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contract-type" class="block text-sm font-medium text-gray-700 mb-1">Тип договора</label>
-                        <select id="contract-type" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <option value="service">На оказание услуг</option>
-                            <option value="development">Разработка ПО</option>
-                            <option value="nda">NDA</option>
-                            <option value="maintenance">Абонентское обслуживание</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="contract-amount" class="block text-sm font-medium text-gray-700 mb-1">Сумма</label>
-                        <input type="number" id="contract-amount" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div class="form-group col-span-2">
-                        <label for="contract-description" class="block text-sm font-medium text-gray-700 mb-1">Описание</label>
-                        <textarea id="contract-description" rows="3" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="contract-status" class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
-                        <select id="contract-status" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <option value="draft">Черновик</option>
-                            <option value="sent">Отправлен</option>
-                            <option value="signed">Подписан</option>
-                            <option value="completed">Завершён</option>
-                            <option value="cancelled">Расторгнут</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="contract-expiry" class="block text-sm font-medium text-gray-700 mb-1">Срок действия</label>
-                        <input type="date" id="contract-expiry" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-2 mt-6 pt-4 border-t">
-                    <button type="button" onclick="closeContractEditModal()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Отмена</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Сохранить</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="format-select-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800">Выберите формат файла</h3>
-                <button onclick="closeFormatModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-            </div>
-            <p id="format-contract-info" class="text-gray-600 mb-4"></p>
-            <div class="grid grid-cols-2 gap-3 mb-6">
-                <button id="format-txt" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
-                    <span class="text-2xl mb-1">📄</span>
-                    <span class="font-medium">TXT</span>
-                </button>
-                <button id="format-docx" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
-                    <span class="text-2xl mb-1">📝</span>
-                    <span class="font-medium">DOCX</span>
-                </button>
-                <button id="format-pdf" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
-                    <span class="text-2xl mb-1">📕</span>
-                    <span class="font-medium">PDF</span>
-                </button>
-                <button id="format-xlsx" class="format-option p-3 border rounded-lg hover:bg-blue-50 transition flex flex-col items-center">
-                    <span class="text-2xl mb-1">📊</span>
-                    <span class="font-medium">XLSX</span>
-                </button>
-            </div>
-            <div class="flex justify-end">
-                <button onclick="closeFormatModal()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Отмена</button>
             </div>
         </div>
     </div>
@@ -1310,758 +519,723 @@
     </footer>
     
     <script>
-        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
-        let adminWebSocket = null;
-        let activeChatUser = null;
-        let lastMessageId = null;
-        let reconnectAttempts = 0;
-        let editMode = false;
-        let editingMessageDiv = null;
-        let editingContentDiv = null;
-        let originalMessageContent = '';
-        const MAX_RECONNECT_ATTEMPTS = 10;
-        let currentUsers = [];
-        let userToDelete = null;
-        let currentContractsUserId = null;
-        let currentContractsUserName = '';
-        let currentClientId = null;
-        let currentClientName = '';
-        let currentClientEmail = '';
-        let clientCardRefreshInterval = null;
-        let currentProjects = [];
-        
-        // Множество для отслеживания отправленных сообщений (предотвращение дублирования)
-        let pendingMessages = new Set();
-        
-        // Переменные для модального окна выбора формата
-        let currentContractId = null;
-        let currentContractNumber = '';
-        let currentAction = '';
+        // ========== ЕДИНОЕ ПРИЛОЖЕНИЕ ==========
+        const app = {
+            // Состояние
+            state: {
+                webSocket: null,
+                activeChatUser: null,
+                pendingMessages: new Set(),
+                currentUsers: [],
+                userToDelete: null,
+                currentClientId: null,
+                currentClientName: '',
+                currentClientEmail: '',
+                reconnectAttempts: 0,
+                mobilePanelActive: null,
+                isMobile: () => window.innerWidth <= 1024
+            },
 
-        // ========== ФУНКЦИЯ ДЛЯ ПРОВЕРКИ МОБИЛЬНОГО УСТРОЙСТВА ==========
-        function isMobileDevice() {
-            return window.innerWidth <= 1024;
-        }
-
-        // ========== МОБИЛЬНЫЕ ПАНЕЛИ ==========
-        let activeMobilePanel = 'content';
-        let mobilePanelsInitialized = false;
-
-        function initMobilePanels() {
-            if (!isMobileDevice()) {
-                // На десктопе показываем все панели
-                const contentPanel = document.querySelector('.flex-1');
-                const chatPanel = document.querySelector('.chat-panel');
-                if (contentPanel && chatPanel) {
-                    contentPanel.style.display = 'block';
-                    chatPanel.style.display = 'flex';
-                    contentPanel.classList.remove('active-panel');
-                    chatPanel.classList.remove('active-panel');
-                }
-                return;
-            }
-            
-            if (mobilePanelsInitialized) return;
-            mobilePanelsInitialized = true;
-            
-            console.log('%c📱 Инициализация мобильных панелей', 'background: #2563eb; color: white;');
-            
-            const contentPanel = document.querySelector('.flex-1');
-            const chatPanel = document.querySelector('.chat-panel');
-            
-            if (!contentPanel || !chatPanel) {
-                console.error('Панели не найдены');
-                return;
-            }
-            
-            // Скрываем все панели
-            contentPanel.classList.remove('active-panel');
-            chatPanel.classList.remove('active-panel');
-            contentPanel.style.display = 'none';
-            chatPanel.style.display = 'none';
-            
-            // Показываем панель контента по умолчанию
-            setTimeout(() => {
-                showMobilePanel('content');
-            }, 100);
-        }
-
-        function showMobilePanel(panel) {
-            if (!isMobileDevice()) {
-                // На десктопе показываем все панели
-                const contentPanel = document.querySelector('.flex-1');
-                const chatPanel = document.querySelector('.chat-panel');
-                if (contentPanel && chatPanel) {
-                    contentPanel.style.display = 'block';
-                    chatPanel.style.display = 'flex';
-                    contentPanel.classList.remove('active-panel');
-                    chatPanel.classList.remove('active-panel');
-                }
-                return;
-            }
-            
-            console.log('%c📱 Показываем панель:', 'background: #2563eb; color: white;', panel);
-            
-            const contentPanel = document.querySelector('.flex-1');
-            const chatPanel = document.querySelector('.chat-panel');
-            
-            if (!contentPanel || !chatPanel) {
-                console.error('Панели не найдены');
-                return;
-            }
-            
-            // Скрываем все панели
-            contentPanel.classList.remove('active-panel');
-            chatPanel.classList.remove('active-panel');
-            contentPanel.style.display = 'none';
-            chatPanel.style.display = 'none';
-            
-            // Показываем нужную
-            if (panel === 'content') {
-                contentPanel.style.display = 'block';
-                contentPanel.classList.add('active-panel');
-                activeMobilePanel = 'content';
-                console.log('✅ Панель контента активирована');
-            } else if (panel === 'chat') {
-                chatPanel.style.display = 'flex';
-                chatPanel.classList.add('active-panel');
-                activeMobilePanel = 'chat';
-                console.log('✅ Панель чата активирована');
-            }
-        }
-
-        function closeActivePanel() {
-            if (!isMobileDevice()) return;
-            
-            console.log('📱 Закрываем активную панель');
-            
-            const contentPanel = document.querySelector('.flex-1');
-            const chatPanel = document.querySelector('.chat-panel');
-            
-            if (!contentPanel || !chatPanel) return;
-            
-            contentPanel.classList.remove('active-panel');
-            chatPanel.classList.remove('active-panel');
-            contentPanel.style.display = 'none';
-            chatPanel.style.display = 'none';
-            activeMobilePanel = null;
-        }
-
-        // ========== ФУНКЦИЯ ДЛЯ ИСПРАВЛЕНИЯ КЛИКОВ НА МОБИЛЬНЫХ ==========
-        function fixMobileTabClicks() {
-            if (!isMobileDevice()) return;
-            
-            const tabButtons = document.querySelectorAll('.tab-btn');
-            console.log('Перепривязываем события для', tabButtons.length, 'кнопок');
-            
-            tabButtons.forEach((button, index) => {
-                // Сохраняем оригинальный onclick
-                const originalOnClick = button.getAttribute('onclick');
+            // ===== ИНИЦИАЛИЗАЦИЯ =====
+            init: async function() {
+                console.log('🚀 Инициализация приложения...');
                 
-                // Удаляем старые обработчики
-                const newButton = button.cloneNode(true);
-                button.parentNode.replaceChild(newButton, button);
-                
-                // Восстанавливаем onclick атрибут
-                if (originalOnClick) {
-                    newButton.setAttribute('onclick', originalOnClick);
-                }
-                
-                // Добавляем новый обработчик
-                newButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    console.log('Клик по кнопке вкладки (мобильная версия):', this);
-                    
-                    // Получаем название вкладки из onclick атрибута
-                    const onclickAttr = this.getAttribute('onclick');
-                    if (onclickAttr) {
-                        const match = onclickAttr.match(/loadTab\('([^']+)'\)/);
-                        if (match && match[1]) {
-                            const tabName = match[1];
-                            console.log('Загружаем вкладку:', tabName);
-                            
-                            // Вызываем функцию загрузки вкладки
-                            if (typeof window.loadTab === 'function') {
-                                window.loadTab(tabName);
-                            } else if (typeof loadTab === 'function') {
-                                loadTab(tabName);
-                            }
-                        }
-                    }
-                    
-                    // Показываем панель контента
-                    setTimeout(() => showMobilePanel('content'), 200);
-                });
-            });
-        }
-
-        // ========== УСИЛЕННАЯ ОБРАБОТКА КЛИКОВ ДЛЯ МОБИЛЬНЫХ ==========
-        function enhanceMobileTabClicks() {
-            if (!isMobileDevice()) return;
-            
-            const tabButtons = document.querySelectorAll('.tab-btn');
-            console.log('Усиленная обработка для', tabButtons.length, 'кнопок');
-            
-            tabButtons.forEach(button => {
-                // Убираем возможные блокирующие события
-                button.style.pointerEvents = 'auto';
-                button.style.cursor = 'pointer';
-                button.style.zIndex = '1000';
-                
-                // Добавляем прямой обработчик
-                button.onclick = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const onclickAttr = this.getAttribute('onclick');
-                    if (onclickAttr) {
-                        const match = onclickAttr.match(/loadTab\('([^']+)'\)/);
-                        if (match && match[1]) {
-                            const tabName = match[1];
-                            console.log('Прямой клик по вкладке:', tabName);
-                            
-                            // Вызываем напрямую
-                            if (typeof loadTab === 'function') {
-                                loadTab(tabName);
-                            }
-                        }
-                    }
-                    
-                    showMobilePanel('content');
-                    return false;
-                };
-            });
-        }
-
-        // ========== ПЕРЕОПРЕДЕЛЕНИЕ ФУНКЦИЙ ДЛЯ МОБИЛЬНЫХ ==========
-        // Сохраняем оригинальные функции
-        const originalLoadTab = window.loadTab;
-        const originalSelectUserForChat = window.selectUserForChat;
-
-        // Переопределяем loadTab
-        window.loadTab = function(tabName) {
-            console.log('loadTab вызван с параметром:', tabName);
-            if (originalLoadTab) {
-                originalLoadTab(tabName);
-            } else if (typeof loadTab === 'function') {
-                loadTab(tabName);
-            }
-            if (isMobileDevice()) {
-                showMobilePanel('content');
-            }
-        }
-
-        // Переопределяем selectUserForChat
-        window.selectUserForChat = function(userId, userName, userEmail) {
-            console.log('selectUserForChat вызван:', userId, userName);
-            if (originalSelectUserForChat) {
-                originalSelectUserForChat(userId, userName, userEmail);
-            } else if (typeof selectUserForChat === 'function') {
-                selectUserForChat(userId, userName, userEmail);
-            }
-            if (isMobileDevice()) {
-                showMobilePanel('chat');
-            }
-        }
-
-        // ========== ОБРАБОТЧИКИ СОБЫТИЙ ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            // Находим все кнопки вкладок
-            const tabButtons = document.querySelectorAll('.tab-btn');
-            console.log('Найдено кнопок вкладок:', tabButtons.length);
-            
-            // Добавляем обработчик для каждой кнопки
-            tabButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    if (!isMobileDevice()) return;
-                    
-                    console.log('Клик по вкладке:', this);
-                    setTimeout(() => showMobilePanel('content'), 200);
-                });
-            });
-            
-            // Обработчик для поиска в чате
-            const chatSearch = document.getElementById('chat-search');
-            if (chatSearch) {
-                chatSearch.addEventListener('focus', function() {
-                    if (!isMobileDevice()) return;
-                    setTimeout(() => showMobilePanel('chat'), 100);
-                });
-            }
-            
-            // Обработчик для клика по пользователям в выпадающем списке
-            document.addEventListener('click', function(e) {
-                if (!isMobileDevice()) return;
-                
-                if (e.target.closest('.user-item')) {
-                    setTimeout(() => showMobilePanel('chat'), 200);
-                }
-            });
-            
-            // Вызываем исправление кликов после загрузки
-            setTimeout(fixMobileTabClicks, 500);
-            setTimeout(enhanceMobileTabClicks, 1000);
-        });
-
-        // Следим за изменением размера окна
-        window.addEventListener('resize', function() {
-            if (!isMobileDevice()) {
-                // На десктопе показываем все панели
-                const contentPanel = document.querySelector('.flex-1');
-                const chatPanel = document.querySelector('.chat-panel');
-                if (contentPanel && chatPanel) {
-                    contentPanel.style.display = 'block';
-                    chatPanel.style.display = 'flex';
-                    contentPanel.classList.remove('active-panel');
-                    chatPanel.classList.remove('active-panel');
-                }
-            } else {
-                mobilePanelsInitialized = false;
-                initMobilePanels();
-                setTimeout(fixMobileTabClicks, 500);
-                setTimeout(enhanceMobileTabClicks, 1000);
-            }
-        });
-
-        // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ ОТПРАВКИ СООБЩЕНИЯ ==========
-        function sendAdminMessage() {
-            if (!activeChatUser) {
-                alert('Выберите пользователя для отправки сообщения');
-                return;
-            }
-            
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-            if (!message) return;
-            
-            if (adminWebSocket && adminWebSocket.readyState === WebSocket.OPEN) {
-                // Создаем уникальный ID для сообщения
-                const messageId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                
-                // Добавляем сообщение в чат сразу (оптимистично)
-                const messagesContainer = document.getElementById('chat-messages-container');
-                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'flex justify-end mb-3';
-                messageDiv.setAttribute('data-message-id', messageId);
-                messageDiv.innerHTML = `
-                    <div class="max-w-xs md:max-w-md lg:max-w-lg bg-blue-100 text-blue-800 rounded-lg p-3">
-                        <div class="message-content">${message}</div>
-                        <div class="text-xs opacity-70 mt-1 text-right">${time}</div>
-                    </div>
-                `;
-                
-                messagesContainer.appendChild(messageDiv);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                
-                const messageData = {
-                    type: 'admin_message',
-                    user_id: activeChatUser.id,
-                    content: message,
-                    timestamp: new Date().toISOString(),
-                    message_id: messageId,
-                    sender_id: 1
-                };
-                
-                // Добавляем ID в множество ожидающих сообщений
-                pendingMessages.add(messageId);
-                
-                // Отправляем через WebSocket
-                adminWebSocket.send(JSON.stringify(messageData));
-                
-                input.value = '';
-                logToConsole('📤 Отправлено сообщение пользователю ' + activeChatUser.name);
-                
-                // Удаляем ID из множества через 5 секунд (на случай, если подтверждение не придет)
-                setTimeout(() => {
-                    if (pendingMessages.has(messageId)) {
-                        pendingMessages.delete(messageId);
-                    }
-                }, 5000);
-                
-            } else {
-                alert('WebSocket не подключен. Перезагрузите страницу.');
-                logToConsole('❌ WebSocket не подключен');
-                connectAdminWebSocket();
-            }
-        }
-
-        // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ ПОДКЛЮЧЕНИЯ WEBSOCKET ==========
-        function connectAdminWebSocket() {
-            const userId = localStorage.getItem('user_id');
-            if (!userId) {
-                console.error('❌ Нет User ID для WebSocket');
-                return;
-            }
-            
-            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = wsProtocol + '//' + window.location.host + '/api/chat/ws/chat/0';
-            
-            console.log('🔌 Подключение к WebSocket:', wsUrl);
-            logToConsole('🔌 Подключение к WebSocket...');
-            
-            try {
-                adminWebSocket = new WebSocket(wsUrl);
-                
-                adminWebSocket.onopen = function() {
-                    console.log('✅ WebSocket подключен (админ)');
-                    logToConsole('✅ WebSocket подключен');
-                    
-                    const wsStatus = document.getElementById('ws-status');
-                    if (wsStatus) {
-                        wsStatus.innerHTML = '🟢 Подключен';
-                        wsStatus.className = 'text-green-400';
-                    }
-                    
-                    reconnectAttempts = 0;
-                };
-                
-                adminWebSocket.onclose = function(event) {
-                    console.log('❌ WebSocket отключен:', event.code, event.reason);
-                    logToConsole('❌ WebSocket отключен');
-                    
-                    const wsStatus = document.getElementById('ws-status');
-                    if (wsStatus) {
-                        wsStatus.innerHTML = '🔴 Отключен';
-                        wsStatus.className = 'text-red-400';
-                    }
-                    
-                    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-                        reconnectAttempts++;
-                        const delay = Math.min(1000 * reconnectAttempts, 10000);
-                        console.log(`🔄 Переподключение через ${delay/1000}с... (попытка ${reconnectAttempts})`);
-                        logToConsole(`🔄 Переподключение через ${delay/1000}с...`);
-                        setTimeout(connectAdminWebSocket, delay);
-                    }
-                };
-                
-                adminWebSocket.onerror = function(error) {
-                    console.error('⚠️ Ошибка WebSocket:', error);
-                    logToConsole('⚠️ Ошибка WebSocket');
-                };
-                
-                // ========== ИСПРАВЛЕННЫЙ ОБРАБОТЧИК WEBSOCKET ==========
-                adminWebSocket.onmessage = function(event) {
-                    try {
-                        const data = JSON.parse(event.data);
-                        
-                        if (data.type === 'new_message') {
-                            // Проверяем, не является ли это сообщение тем, которое мы только что отправили
-                            if (data.message_id && pendingMessages.has(data.message_id)) {
-                                // Это наше собственное сообщение, удаляем из множества
-                                pendingMessages.delete(data.message_id);
-                                console.log('Сообщение подтверждено сервером');
-                                return;
-                            }
-                            
-                            // Проверяем, есть ли уже такое сообщение в чате
-                            if (activeChatUser && activeChatUser.id === data.user_id) {
-                                const messagesContainer = document.getElementById('chat-messages-container');
-                                
-                                // Проверяем по атрибуту data-message-id
-                                if (data.message_id) {
-                                    const existingMessage = messagesContainer.querySelector(`[data-message-id="${data.message_id}"]`);
-                                    if (existingMessage) {
-                                        console.log('Сообщение уже есть в чате, пропускаем');
-                                        return;
-                                    }
-                                }
-                                
-                                // Если это сообщение от пользователя (не от админа), добавляем его
-                                if (data.sender_id !== 1 && data.sender_id !== parseInt(localStorage.getItem('user_id'))) {
-                                    const time = new Date(data.timestamp || data.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                                    
-                                    const messageDiv = document.createElement('div');
-                                    messageDiv.className = 'flex justify-start mb-3';
-                                    messageDiv.innerHTML = `
-                                        <div class="max-w-xs md:max-w-md lg:max-w-lg bg-gray-200 text-gray-800 rounded-lg p-3">
-                                            <div class="message-content">${data.content}</div>
-                                            <div class="text-xs opacity-70 mt-1 text-right">${time}</div>
-                                        </div>
-                                    `;
-                                    
-                                    messagesContainer.appendChild(messageDiv);
-                                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                                    logToConsole('📩 Новое сообщение от ' + activeChatUser.name);
-                                    showNotification(`Новое сообщение от ${activeChatUser.name}`, 'info');
-                                }
-                            }
-                            
-                            updateMessageStats();
-                            
-                            if (currentClientId && currentClientId === data.user_id && !document.getElementById('client-card-modal').classList.contains('hidden')) {
-                                loadClientCardData(currentClientId, currentClientName, currentClientEmail);
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Ошибка обработки сообщения:', error);
-                    }
-                };
-            } catch (error) {
-                console.error('❌ Ошибка создания WebSocket:', error);
-                logToConsole('❌ Ошибка создания WebSocket');
-            }
-        }
-
-        // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ СПИСКА ПОЛЬЗОВАТЕЛЕЙ ==========
-        async function loadUserSelectList() {
-            const listContainer = document.getElementById('user-select-list');
-            if (!listContainer) return;
-            
-            listContainer.innerHTML = '<div class="text-center py-4 text-gray-500">Загрузка пользователей...</div>';
-            
-            try {
+                // Проверка авторизации
                 const token = localStorage.getItem('access_token');
-                if (!token) {
+                const userId = localStorage.getItem('user_id');
+                
+                if (!token || !userId || userId !== '1') {
                     window.location.href = '/login';
                     return;
                 }
-                
-                // Исправление Mixed Content - используем относительный URL
-                const response = await fetch('/api/admin/users', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (response.status === 401) {
-                    localStorage.removeItem('access_token');
-                    localStorage.removeItem('user_id');
-                    localStorage.removeItem('user_email');
-                    localStorage.removeItem('user_name');
-                    listContainer.innerHTML = '<div class="text-center py-4 text-red-500">Сессия истекла. Войдите снова.</div>';
-                    setTimeout(() => { window.location.href = '/login'; }, 2000);
-                    return;
-                }
-                
-                if (response.status === 403) {
-                    listContainer.innerHTML = '<div class="text-center py-4 text-red-500">Доступ запрещен</div>';
-                    return;
-                }
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                const data = await response.json();
-                // API возвращает объект с полем users
-                const users = data.users || [];
-                
-                if (users.length === 0) {
-                    listContainer.innerHTML = '<div class="text-center py-4 text-gray-500">Нет зарегистрированных пользователей</div>';
-                    return;
-                }
-                
-                let html = '';
-                users.forEach(user => {
-                    // Экранируем кавычки для безопасной вставки в onclick
-                    const safeName = (user.name || 'Без имени').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                    const safeEmail = user.email.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                try {
+                    const response = await fetch('/api/auth/me', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
                     
-                    html += `
-                        <div class="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition"
-                             onclick="selectUserForClientCard(${user.id}, '${safeName}', '${safeEmail}')">
-                            <div class="font-medium text-gray-800">${user.name || 'Без имени'}</div>
-                            <div class="text-sm text-gray-600">${user.email}</div>
-                            <div class="text-xs mt-1">
-                                <span class="px-2 py-1 rounded-full ${user.is_admin ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}">
-                                    ${user.is_admin ? 'Администратор' : 'Пользователь'}
-                                </span>
+                    if (!response.ok) throw new Error('Не авторизован');
+                    
+                    const data = await response.json();
+                    if (!data.is_admin) throw new Error('Не администратор');
+                    
+                    // Запуск
+                    document.getElementById('admin-email').textContent = data.email || 't72trak@gmail.com';
+                    await this.loadTab('users');
+                    await this.stats.load();
+                    this.chat.connect();
+                    this.mobile.init();
+                    
+                    this.log('✅ Админ-панель инициализирована');
+                } catch (error) {
+                    console.error('Ошибка инициализации:', error);
+                    localStorage.clear();
+                    window.location.href = '/login';
+                }
+            },
+
+            log: function(msg) {
+                const consoleEl = document.getElementById('dev-console');
+                if (consoleEl) {
+                    consoleEl.innerHTML += `<div>> [${new Date().toLocaleTimeString()}] ${msg}</div>`;
+                    consoleEl.scrollTop = consoleEl.scrollHeight;
+                }
+            },
+
+            logout: function() {
+                if (this.state.webSocket) this.state.webSocket.close();
+                localStorage.clear();
+                window.location.href = '/login';
+            },
+
+            // ===== МОБИЛЬНАЯ ВЕРСИЯ =====
+            mobile: {
+                init: function() {
+                    if (!app.state.isMobile()) return;
+                    
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setTimeout(() => app.mobile.showPanel('content'), 100);
+                        });
+                    });
+                    
+                    const search = document.getElementById('chat-search');
+                    if (search) {
+                        search.addEventListener('focus', () => setTimeout(() => app.mobile.showPanel('chat'), 100));
+                    }
+                    
+                    app.mobile.showPanel('content');
+                },
+                
+                showPanel: function(panel) {
+                    if (!app.state.isMobile()) return;
+                    
+                    const contentPanel = document.getElementById('content-panel');
+                    const chatPanel = document.getElementById('chat-panel');
+                    
+                    contentPanel.classList.remove('active-panel');
+                    chatPanel.classList.remove('active-panel');
+                    
+                    if (panel === 'content') {
+                        contentPanel.classList.add('active-panel');
+                        app.state.mobilePanelActive = 'content';
+                    } else {
+                        chatPanel.classList.add('active-panel');
+                        app.state.mobilePanelActive = 'chat';
+                    }
+                },
+                
+                closeActivePanel: function() {
+                    if (!app.state.isMobile()) return;
+                    document.getElementById('content-panel').classList.remove('active-panel');
+                    document.getElementById('chat-panel').classList.remove('active-panel');
+                    app.state.mobilePanelActive = null;
+                }
+            },
+
+            // ===== ЗАГРУЗКА ВКЛАДОК =====
+            loadTab: async function(tabName) {
+                console.log(`📁 Загрузка вкладки: ${tabName}`);
+                
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
+                const tabBtn = document.getElementById(`tab-${tabName}`);
+                if (tabBtn) tabBtn.classList.add('active-tab');
+                
+                document.getElementById('content-area').innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-20">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                        <p class="text-gray-600">Загрузка раздела "${tabName}"...</p>
+                    </div>
+                `;
+
+                try {
+                    const token = localStorage.getItem('access_token');
+                    
+                    switch(tabName) {
+                        case 'users': await app.users.loadTab(token); break;
+                        case 'contracts': document.getElementById('content-area').innerHTML = '<div class="p-6 text-center text-gray-500">Раздел в разработке</div>'; break;
+                        case 'payments': document.getElementById('content-area').innerHTML = '<div class="p-6 text-center text-gray-500">Раздел в разработке</div>'; break;
+                        case 'projects': document.getElementById('content-area').innerHTML = '<div class="p-6 text-center text-gray-500">Раздел в разработке</div>'; break;
+                        case 'work-materials': document.getElementById('content-area').innerHTML = '<div class="p-6 text-center text-gray-500">Раздел в разработке</div>'; break;
+                        case 'archive': document.getElementById('content-area').innerHTML = '<div class="p-6 text-center text-gray-500">Раздел в разработке</div>'; break;
+                    }
+                    
+                    this.log(`✅ Вкладка "${tabName}" загружена`);
+                } catch (error) {
+                    console.error(error);
+                    document.getElementById('content-area').innerHTML = `
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                            <h3 class="text-red-800 font-bold mb-2">⚠️ Ошибка загрузки</h3>
+                            <p class="text-red-600 mb-4">${error.message}</p>
+                            <button onclick="app.loadTab('${tabName}')" class="bg-red-600 text-white px-4 py-2 rounded">Повторить</button>
+                        </div>
+                    `;
+                }
+            },
+
+            // ===== СТАТИСТИКА =====
+            stats: {
+                load: async function() {
+                    const token = localStorage.getItem('access_token');
+                    
+                    try {
+                        // Пользователи
+                        const usersRes = await fetch('/api/admin/users', {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (usersRes.ok) {
+                            const data = await usersRes.json();
+                            document.getElementById('stats-users').textContent = data.users?.length || 0;
+                        }
+                        
+                        // Проекты
+                        const projectsRes = await fetch('/api/admin/projects', {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (projectsRes.ok) {
+                            const data = await projectsRes.json();
+                            document.getElementById('stats-projects').textContent = data.projects?.length || 0;
+                        }
+                        
+                        // Сообщения
+                        const messagesRes = await fetch('/api/chat/stats/total');
+                        if (messagesRes.ok) {
+                            const data = await messagesRes.json();
+                            document.getElementById('stats-messages').textContent = data.total || 0;
+                        }
+                        
+                        app.log('📊 Статистика загружена');
+                    } catch (e) {
+                        console.log('Ошибка загрузки статистики:', e);
+                    }
+                }
+            },
+
+            // ===== ПОЛЬЗОВАТЕЛИ =====
+            users: {
+                loadTab: async function(token) {
+                    const response = await fetch('/api/admin/users', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    
+                    const data = await response.json();
+                    app.state.currentUsers = data.users || [];
+                    
+                    let rows = '';
+                    if (app.state.currentUsers.length === 0) {
+                        rows = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">Нет пользователей</td></tr>';
+                    } else {
+                        app.state.currentUsers.forEach(user => {
+                            rows += `
+                                <tr>
+                                    <td class="px-4 py-3">${user.id}</td>
+                                    <td class="px-4 py-3 font-medium">${user.name || 'Без имени'}</td>
+                                    <td class="px-4 py-3">${user.email}</td>
+                                    <td class="px-4 py-3"><span class="badge ${user.is_admin ? 'admin' : 'user'}">${user.is_admin ? 'Администратор' : 'Пользователь'}</span></td>
+                                    <td class="px-4 py-3">${user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Н/Д'}</td>
+                                    <td class="px-4 py-3">
+                                        <button onclick="app.users.edit(${user.id})" class="action-btn edit">✏️</button>
+                                        <button onclick="app.users.delete(${user.id})" class="action-btn delete">🗑️</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+                    
+                    document.getElementById('content-area').innerHTML = `
+                        <div class="bg-white rounded-2xl shadow-sm p-6">
+                            <h2 class="text-2xl font-bold text-center mb-8">Панель управления пользователями</h2>
+                            <div class="flex flex-wrap justify-center gap-4 mb-8">
+                                <button onclick="app.clients.openSelectModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl">🆔 Личная карточка клиента</button>
+                                <button onclick="app.users.showAddModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl">➕ Добавить пользователя</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full data-table">
+                                    <thead><tr><th>ID</th><th>Имя</th><th>Email</th><th>Роль</th><th>Дата</th><th>Действия</th></tr></thead>
+                                    <tbody>${rows}</tbody>
+                                </table>
                             </div>
                         </div>
                     `;
-                });
+                },
                 
-                listContainer.innerHTML = html;
+                showAddModal: function() {
+                    document.getElementById('modal-title').textContent = 'Добавить пользователя';
+                    document.getElementById('user-id').value = '';
+                    document.getElementById('user-name').value = '';
+                    document.getElementById('user-email').value = '';
+                    document.getElementById('user-password').value = '';
+                    document.getElementById('user-password').required = true;
+                    document.getElementById('user-is-admin').value = 'false';
+                    app.ui.openModal('user-modal');
+                },
                 
-            } catch (error) {
-                console.error('Ошибка загрузки пользователей:', error);
-                listContainer.innerHTML = '<div class="text-center py-4 text-red-500">Ошибка загрузки. Попробуйте позже.</div>';
-            }
-        }
-
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('%c🔍 АДМИН-ПАНЕЛЬ: ИНИЦИАЛИЗАЦИЯ', 'background: #2563eb; color: white; font-size: 14px; padding: 4px;');
-            
-            const token = localStorage.getItem('access_token');
-            const userId = localStorage.getItem('user_id');
-            
-            if (!token) {
-                console.error('%c❌ ТОКЕН ОТСУТСТВУЕТ', 'background: #dc2626; color: white;');
-                showNotification('❌ Ошибка авторизации', 'error');
-                setTimeout(() => { window.location.href = '/login'; }, 2000);
-                return;
-            }
-            
-            if (!userId || userId !== '1') {
-                console.error('%c❌ НЕ АДМИНИСТРАТОР', 'background: #dc2626; color: white;');
-                showNotification('⛔ Доступ запрещён', 'error');
-                setTimeout(() => { window.location.href = '/dashboard'; }, 2000);
-                return;
-            }
-            
-            fetch('/api/auth/me', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error(`HTTP ${response.status}`);
+                edit: function(userId) {
+                    const user = app.state.currentUsers.find(u => u.id === userId);
+                    if (!user) return;
+                    
+                    document.getElementById('modal-title').textContent = 'Редактировать пользователя';
+                    document.getElementById('user-id').value = user.id;
+                    document.getElementById('user-name').value = user.name || '';
+                    document.getElementById('user-email').value = user.email || '';
+                    document.getElementById('user-password').value = '';
+                    document.getElementById('user-password').required = false;
+                    document.getElementById('user-is-admin').value = user.is_admin ? 'true' : 'false';
+                    app.ui.openModal('user-modal');
+                },
+                
+                save: async function(event) {
+                    event.preventDefault();
+                    
+                    const userId = document.getElementById('user-id').value;
+                    const name = document.getElementById('user-name').value.trim();
+                    const email = document.getElementById('user-email').value.trim();
+                    const password = document.getElementById('user-password').value;
+                    const isAdmin = document.getElementById('user-is-admin').value === 'true';
+                    const token = localStorage.getItem('access_token');
+                    
+                    if (!name || !email) return app.notify('❌ Имя и Email обязательны', 'error');
+                    if (!userId && !password) return app.notify('❌ Пароль обязателен', 'error');
+                    
+                    try {
+                        let response;
+                        
+                        if (userId) {
+                            response = await fetch(`/api/admin/users/${userId}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                body: JSON.stringify({ name, email, password: password || undefined, is_admin: isAdmin })
+                            });
+                        } else {
+                            response = await fetch('/api/auth/register', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name, email, password })
+                            });
+                        }
+                        
+                        if (response.ok) {
+                            app.notify(userId ? '✅ Пользователь обновлён' : '✅ Пользователь создан', 'success');
+                            app.ui.closeModal('user-modal');
+                            await app.loadTab('users');
+                            await app.stats.load();
+                        } else {
+                            const err = await response.json();
+                            app.notify(`❌ ${err.detail || 'Ошибка'}`, 'error');
+                        }
+                    } catch (error) {
+                        app.notify(`❌ Ошибка: ${error.message}`, 'error');
+                    }
+                },
+                
+                delete: function(userId) {
+                    const user = app.state.currentUsers.find(u => u.id === userId);
+                    if (!user) return;
+                    app.state.userToDelete = userId;
+                    document.getElementById('delete-user-name').textContent = user.name || user.email;
+                    app.ui.openModal('delete-modal');
+                },
+                
+                confirmDelete: async function() {
+                    if (!app.state.userToDelete) return;
+                    
+                    try {
+                        const response = await fetch(`/api/admin/users/${app.state.userToDelete}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+                        });
+                        
+                        if (response.ok) {
+                            app.notify('✅ Пользователь удалён', 'success');
+                            app.ui.closeModal('delete-modal');
+                            await app.loadTab('users');
+                            await app.stats.load();
+                        } else {
+                            app.notify('❌ Ошибка при удалении', 'error');
+                        }
+                    } catch (error) {
+                        app.notify('❌ Ошибка при удалении', 'error');
+                    } finally {
+                        app.state.userToDelete = null;
+                    }
                 }
-            })
-            .then(data => {
-                if (!data.is_admin) {
-                    throw new Error('Не администратор');
+            },
+
+            // ===== КЛИЕНТЫ (ЛИЧНАЯ КАРТОЧКА) =====
+            clients: {
+                openSelectModal: function() {
+                    app.ui.openModal('user-select-modal');
+                    this.loadList();
+                },
+                
+                loadList: async function() {
+                    const list = document.getElementById('user-select-list');
+                    if (!list) return;
+                    
+                    list.innerHTML = '<div class="text-center py-4 text-gray-500">Загрузка...</div>';
+                    
+                    try {
+                        const response = await fetch('/api/admin/users', {
+                            headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+                        });
+                        
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        
+                        const data = await response.json();
+                        const users = data.users || [];
+                        
+                        if (users.length === 0) {
+                            list.innerHTML = '<div class="text-center py-4 text-gray-500">Нет пользователей</div>';
+                            return;
+                        }
+                        
+                        let html = '';
+                        users.forEach(user => {
+                            html += `
+                                <div class="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition"
+                                     onclick="app.clients.select(${user.id}, '${(user.name || 'Без имени').replace(/'/g, "\\'")}', '${user.email.replace(/'/g, "\\'")}')">
+                                    <div class="font-medium">${user.name || 'Без имени'}</div>
+                                    <div class="text-sm text-gray-600">${user.email}</div>
+                                </div>
+                            `;
+                        });
+                        
+                        list.innerHTML = html;
+                    } catch (error) {
+                        console.error(error);
+                        list.innerHTML = '<div class="text-center py-4 text-red-500">Ошибка загрузки</div>';
+                    }
+                },
+                
+                filterList: function() {
+                    const search = document.getElementById('user-search')?.value.toLowerCase() || '';
+                    document.querySelectorAll('#user-select-list > div').forEach(item => {
+                        const text = item.textContent.toLowerCase();
+                        item.style.display = text.includes(search) ? 'block' : 'none';
+                    });
+                },
+                
+                select: async function(userId, userName, userEmail) {
+                    app.ui.closeModal('user-select-modal');
+                    
+                    app.state.currentClientId = userId;
+                    app.state.currentClientName = userName;
+                    app.state.currentClientEmail = userEmail;
+                    
+                    app.ui.openModal('client-card-modal');
+                    document.getElementById('client-card-content').innerHTML = '<div class="text-center py-8 text-gray-500">Загрузка...</div>';
+                    
+                    await this.loadCard(userId, userName, userEmail);
+                },
+                
+                loadCard: async function(userId, userName, userEmail) {
+                    const content = document.getElementById('client-card-content');
+                    
+                    try {
+                        // Заглушка для демонстрации
+                        content.innerHTML = `
+                            <div class="grid grid-cols-3 gap-6">
+                                <div class="col-span-1 space-y-4">
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <h4 class="font-bold mb-3">👤 Основная информация</h4>
+                                        <div class="space-y-2 text-sm">
+                                            <div><span class="text-gray-600">🆔 ID:</span> <span class="font-medium">${userId}</span></div>
+                                            <div><span class="text-gray-600">👤 Имя:</span> <span class="font-medium">${userName}</span></div>
+                                            <div><span class="text-gray-600">📧 Email:</span> <span class="font-medium">${userEmail}</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col space-y-2">
+                                        <button class="w-full bg-purple-600 text-white px-3 py-2 rounded-lg text-sm">📝 Реквизиты</button>
+                                        <button class="w-full bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">✏️ Редактировать</button>
+                                        <button class="w-full bg-green-600 text-white px-3 py-2 rounded-lg text-sm">💬 Написать</button>
+                                    </div>
+                                </div>
+                                <div class="col-span-2">
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <h4 class="font-bold mb-3">💬 Последние сообщения</h4>
+                                        <div class="text-gray-500 text-sm">Нет сообщений</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } catch (error) {
+                        content.innerHTML = '<div class="text-center py-8 text-red-500">Ошибка загрузки</div>';
+                    }
+                },
+                
+                switchTab: function(tabName) {
+                    document.querySelectorAll('.client-tab-btn').forEach(btn => {
+                        btn.classList.remove('border-blue-600', 'text-blue-600');
+                        btn.classList.add('border-transparent');
+                    });
+                    document.querySelector(`[data-tab="${tabName}"]`).classList.add('border-blue-600', 'text-blue-600');
+                    // Здесь будет загрузка соответствующего таба
                 }
-                initializeAdminPanel();
-                initMobilePanels();
-            })
-            .catch(error => {
-                console.error('❌ Ошибка валидации:', error);
-                showNotification('❌ Ошибка авторизации', 'error');
-                localStorage.removeItem('access_token');
-                localStorage.removeItem('user_id');
-                localStorage.removeItem('user_email');
-                localStorage.removeItem('user_name');
-                setTimeout(() => { window.location.href = '/login'; }, 2000);
-            });
-        });
+            },
 
-        function initializeAdminPanel() {
-            console.log('%c🚀 ЗАПУСК АДМИН-ПАНЕЛИ', 'background: #2563eb; color: white;');
-            loadTab('users');
-            updateAdminEmail();
-            loadQuickStats();
-            connectAdminWebSocket();
-            logToConsole('✅ Админ-панель успешно инициализирована');
-            logToConsole('👤 Администратор: ' + localStorage.getItem('user_email'));
-            showNotification('✅ Админ-панель загружена', 'success');
-        }
+            // ===== ЧАТ =====
+            chat: {
+                connect: function() {
+                    const wsUrl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + window.location.host + '/api/chat/ws/chat/0';
+                    
+                    app.state.webSocket = new WebSocket(wsUrl);
+                    
+                    app.state.webSocket.onopen = () => {
+                        app.log('✅ WebSocket подключен');
+                        document.getElementById('ws-status').innerHTML = '🟢 Подключен';
+                    };
+                    
+                    app.state.webSocket.onclose = () => {
+                        app.log('❌ WebSocket отключен');
+                        document.getElementById('ws-status').innerHTML = '🔴 Отключен';
+                        
+                        if (app.state.reconnectAttempts < 10) {
+                            app.state.reconnectAttempts++;
+                            setTimeout(() => app.chat.connect(), 3000);
+                        }
+                    };
+                    
+                    app.state.webSocket.onerror = (error) => {
+                        console.error('WebSocket ошибка:', error);
+                        app.log('⚠️ Ошибка WebSocket');
+                    };
+                    
+                    app.state.webSocket.onmessage = (event) => {
+                        try {
+                            const data = JSON.parse(event.data);
+                            
+                            if (data.type === 'new_message') {
+                                // Проверка дубликатов
+                                if (data.message_id && app.state.pendingMessages.has(data.message_id)) {
+                                    app.state.pendingMessages.delete(data.message_id);
+                                    return;
+                                }
+                                
+                                if (app.state.activeChatUser && app.state.activeChatUser.id === data.user_id) {
+                                    // Добавляем сообщение в чат
+                                    app.chat.addMessage(data);
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Ошибка обработки сообщения:', e);
+                        }
+                    };
+                },
+                
+                addMessage: function(data) {
+                    const container = document.getElementById('chat-messages-container');
+                    const time = new Date(data.timestamp || data.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const isAdmin = data.sender_id === 1;
+                    
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = `flex ${isAdmin ? 'justify-end' : 'justify-start'} mb-3`;
+                    if (data.message_id) msgDiv.setAttribute('data-message-id', data.message_id);
+                    
+                    msgDiv.innerHTML = `
+                        <div class="max-w-xs md:max-w-md lg:max-w-lg ${isAdmin ? 'bg-blue-100 text-blue-800' : 'bg-gray-200 text-gray-800'} rounded-lg p-3">
+                            <div class="message-content">${data.content}</div>
+                            <div class="text-xs opacity-70 mt-1 text-right">${time}</div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(msgDiv);
+                    container.scrollTop = container.scrollHeight;
+                },
+                
+                loadUserDropdown: async function() {
+                    const dropdown = document.getElementById('user-dropdown');
+                    if (!dropdown) return;
+                    
+                    dropdown.classList.remove('hidden');
+                    dropdown.innerHTML = '<div class="p-2 text-gray-500 text-center">Загрузка...</div>';
+                    
+                    try {
+                        const response = await fetch('/api/admin/users', {
+                            headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+                        });
+                        
+                        const data = await response.json();
+                        const users = data.users || [];
+                        
+                        if (users.length === 0) {
+                            dropdown.innerHTML = '<div class="p-2 text-gray-500 text-center">Нет пользователей</div>';
+                            return;
+                        }
+                        
+                        let html = '';
+                        users.forEach(user => {
+                            html += `
+                                <div class="p-2 hover:bg-blue-50 cursor-pointer border-b user-item"
+                                     onclick="app.chat.selectUser(${user.id}, '${(user.name || user.email).replace(/'/g, "\\'")}', '${user.email.replace(/'/g, "\\'")}')">
+                                    <div class="font-medium">${user.name || user.email}</div>
+                                    <div class="text-xs text-gray-500">${user.email}</div>
+                                </div>
+                            `;
+                        });
+                        
+                        dropdown.innerHTML = html;
+                    } catch (error) {
+                        dropdown.innerHTML = '<div class="p-2 text-red-500 text-center">Ошибка загрузки</div>';
+                    }
+                },
+                
+                filterUsers: function() {
+                    const search = document.getElementById('chat-search').value.toLowerCase();
+                    document.querySelectorAll('.user-item').forEach(item => {
+                        const text = item.textContent.toLowerCase();
+                        item.style.display = text.includes(search) ? 'block' : 'none';
+                    });
+                },
+                
+                selectUser: function(userId, userName, userEmail) {
+                    document.getElementById('chat-search').value = userName;
+                    document.getElementById('user-dropdown').classList.add('hidden');
+                    
+                    app.state.activeChatUser = { id: userId, name: userName, email: userEmail };
+                    
+                    this.loadHistory(userId);
+                    app.log('💬 Выбран пользователь: ' + userName);
+                },
+                
+                loadHistory: async function(userId) {
+                    const container = document.getElementById('chat-messages-container');
+                    container.innerHTML = '<div class="text-center py-8 text-gray-400">Загрузка...</div>';
+                    
+                    try {
+                        const response = await fetch(`/api/chat/history/${userId}`, {
+                            headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+                        });
+                        
+                        const messages = await response.json();
+                        
+                        container.innerHTML = '';
+                        if (messages.length === 0) {
+                            container.innerHTML = '<div class="text-center py-8 text-gray-400">Нет сообщений</div>';
+                        } else {
+                            messages.forEach(msg => app.chat.addMessage(msg));
+                        }
+                    } catch (error) {
+                        container.innerHTML = '<div class="text-center py-8 text-red-500">Ошибка загрузки</div>';
+                    }
+                },
+                
+                sendMessage: function() {
+                    if (!app.state.activeChatUser) return alert('Выберите пользователя');
+                    
+                    const input = document.getElementById('chat-input');
+                    const message = input.value.trim();
+                    if (!message) return;
+                    
+                    if (!app.state.webSocket || app.state.webSocket.readyState !== WebSocket.OPEN) {
+                        return alert('WebSocket не подключен');
+                    }
+                    
+                    const messageId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    
+                    // Оптимистичное добавление
+                    app.chat.addMessage({
+                        content: message,
+                        sender_id: 1,
+                        message_id: messageId,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    app.state.pendingMessages.add(messageId);
+                    
+                    app.state.webSocket.send(JSON.stringify({
+                        type: 'admin_message',
+                        user_id: app.state.activeChatUser.id,
+                        content: message,
+                        timestamp: new Date().toISOString(),
+                        message_id: messageId,
+                        sender_id: 1
+                    }));
+                    
+                    input.value = '';
+                    
+                    setTimeout(() => app.state.pendingMessages.delete(messageId), 5000);
+                },
+                
+                handleKeydown: function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                },
+                
+                refreshList: function() {
+                    this.loadUserDropdown();
+                }
+            },
 
-        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
-        function updateAdminEmail() {
-            const adminEmail = localStorage.getItem('user_email');
-            const emailElement = document.getElementById('admin-email');
-            if (emailElement) {
-                emailElement.textContent = adminEmail || 't72trak@gmail.com';
-            }
-        }
+            // ===== UI УТИЛИТЫ =====
+            ui: {
+                openModal: function(id) {
+                    document.getElementById(id).classList.add('active');
+                },
+                
+                closeModal: function(id) {
+                    document.getElementById(id).classList.remove('active');
+                }
+            },
 
-        function logout() {
-            console.log('🚪 Выход из системы');
-            if (adminWebSocket) {
-                adminWebSocket.close();
-            }
-            if (clientCardRefreshInterval) {
-                clearInterval(clientCardRefreshInterval);
-            }
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('user_id');
-            localStorage.removeItem('user_email');
-            localStorage.removeItem('user_name');
-            window.location.href = '/login';
-        }
-
-        function logToConsole(message) {
-            const consoleEl = document.getElementById('dev-console');
-            if (!consoleEl) return;
-            
-            const timestamp = new Date().toLocaleTimeString();
-            consoleEl.innerHTML += '<div>> [' + timestamp + '] ' + message + '</div>';
-            consoleEl.scrollTop = consoleEl.scrollHeight;
-        }
-
-        function showNotification(message, type = 'info') {
-            // Функция показа уведомлений
-            console.log('Уведомление:', message, type);
-        }
-
-        function testWebSocket() {
-            if (adminWebSocket && adminWebSocket.readyState === WebSocket.OPEN) {
-                const testMessage = {
-                    type: 'admin_message',
-                    user_id: activeChatUser ? activeChatUser.id : 2,
-                    content: '🧪 Тестовое сообщение от администратора',
-                    timestamp: new Date().toISOString()
+            // ===== УВЕДОМЛЕНИЯ =====
+            notify: function(message, type = 'info') {
+                const colors = {
+                    success: 'bg-green-100 border-green-400 text-green-700',
+                    error: 'bg-red-100 border-red-400 text-red-700',
+                    warning: 'bg-yellow-100 border-yellow-400 text-yellow-700',
+                    info: 'bg-blue-100 border-blue-400 text-blue-700'
                 };
-                adminWebSocket.send(JSON.stringify(testMessage));
-                logToConsole('🧪 Тестовое сообщение отправлено');
+                
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 p-4 rounded-lg border-l-4 ${colors[type]} shadow-lg z-50 max-w-sm`;
+                notification.innerHTML = `
+                    <div class="flex">
+                        <div class="flex-shrink-0 mr-3">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</div>
+                        <div class="font-medium">${message}</div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="ml-auto pl-3">×</button>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 5000);
+            },
+
+            // ===== ВСПОМОГАТЕЛЬНЫЕ =====
+            testWebSocket: function() {
+                if (app.state.webSocket && app.state.webSocket.readyState === WebSocket.OPEN) {
+                    app.chat.sendMessage();
+                } else {
+                    app.notify('WebSocket не подключен', 'error');
+                }
+            },
+
+            clearCache: function() {
+                app.log('🧹 Кэш очищен');
+                app.notify('Кэш очищен', 'success');
+            },
+
+            reloadData: function() {
+                app.stats.load();
+                app.log('🔄 Данные обновлены');
+            }
+        };
+
+        // Запуск при загрузке
+        document.addEventListener('DOMContentLoaded', () => app.init());
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) {
+                document.getElementById('content-panel').classList.remove('active-panel');
+                document.getElementById('chat-panel').classList.remove('active-panel');
             } else {
-                logToConsole('⚠️ WebSocket не подключен');
-                connectAdminWebSocket();
+                app.mobile.init();
             }
-        }
-
-        function clearCache() {
-            logToConsole('🧹 Кэш очищен');
-        }
-
-        function reloadData() {
-            loadQuickStats();
-            logToConsole('🔄 Данные обновлены');
-        }
-
-        function loadQuickStats() {
-            // Заглушка для статистики
-            document.getElementById('stats-users').textContent = currentUsers.length || '0';
-        }
-
-        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ (ЗАГЛУШКИ) ==========
-        function loadUserDropdown() {}
-        function filterUsers() {}
-        function refreshChatList() {}
-        function handleChatKeydown(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendAdminMessage();
-            }
-        }
-        function editLastMessage() {}
-        function switchClientTab(tabName) {}
-        function closeModal() {}
-        function closeDeleteModal() {}
-        function confirmDelete() {}
-        function saveUser(e) { e.preventDefault(); }
-        function closeUserSelectModal() {}
-        function filterUserSelectList() {}
-        function selectUserForClientCard() {}
-        function loadClientCardData() {}
-        function closeClientCardModal() {}
-        function openClientDetailsModal() {}
-        function closeClientDetailsModal() {}
-        function saveClientDetails(e) { e.preventDefault(); }
-        function openContractsModal() {}
-        function closeContractsModal() {}
-        function loadContracts() {}
-        function createNewContract() {}
-        function editContract() {}
-        function viewContract() {}
-        function downloadContract() {}
-        function closeContractEditModal() {}
-        function saveContract(e) { e.preventDefault(); }
-        function closeFormatModal() {}
-        function updateMessageStats() {}
-        function loadUsersTab() {}
-        function loadPaymentsTab() {}
-        function loadProjectsTab() {}
-        function loadWorkMaterialsTab() {}
-        function loadArchiveTab() {}
-        function loadContractsTab() {}
-        function filterContracts() {}
-        function toggleCellExpand() {}
-        function openProjectFolder() {}
-        function changeProjectStatus() {}
-        function showAddFileModal() {}
-        function showAddProjectModal() {}
-        function showViewFilesModal() {}
-        function addProjectFile() {}
-        function deleteProjectFile() {}
-        function viewProjectFiles() {}
-        function editProject() {}
-        function showArchiveTab() {}
+        });
     </script>
 </body>
 </html>
