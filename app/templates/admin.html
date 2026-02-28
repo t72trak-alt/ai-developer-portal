@@ -586,6 +586,7 @@
                 width: 100% !important;
                 margin: 0 !important;
                 color: #4b5563 !important;
+                cursor: pointer !important;
             }
             
             .sidebar .tab-btn span:first-child {
@@ -623,6 +624,7 @@
                 transition: transform 0.3s ease !important;
                 border-radius: 0 !important;
                 box-shadow: none !important;
+                display: none !important;
             }
             
             /* Панель чата */
@@ -636,11 +638,13 @@
                 transition: transform 0.3s ease !important;
                 border-radius: 0 !important;
                 box-shadow: none !important;
+                display: none !important;
             }
             
             /* Активная панель */
             .flex-1.active-panel,
             .chat-panel.active-panel {
+                display: block !important;
                 position: absolute !important;
                 top: 0 !important;
                 left: 70px !important;
@@ -650,7 +654,11 @@
                 z-index: 20 !important;
                 background: white !important;
                 box-shadow: -2px 0 10px rgba(0,0,0,0.1) !important;
-                display: block !important;
+            }
+            
+            .chat-panel.active-panel {
+                display: flex !important;
+                flex-direction: column !important;
             }
             
             /* Кнопка закрытия */
@@ -674,12 +682,6 @@
             
             .active-panel .panel-close-btn {
                 display: flex !important;
-            }
-            
-            /* Скрываем неактивные панели */
-            .flex-1:not(.active-panel),
-            .chat-panel:not(.active-panel) {
-                display: none !important;
             }
             
             /* Показываем левую панель всегда */
@@ -1009,24 +1011,41 @@
         let currentContractNumber = '';
         let currentAction = '';
 
+        // ========== ФУНКЦИЯ ДЛЯ ПРОВЕРКИ МОБИЛЬНОГО УСТРОЙСТВА ==========
+        function isMobileDevice() {
+            return window.innerWidth <= 1024;
+        }
+
         // ========== МОБИЛЬНЫЕ ПАНЕЛИ ==========
-        let activeMobilePanel = null;
+        let activeMobilePanel = 'content';
 
         function initMobilePanels() {
-            if (window.innerWidth > 1024) return;
+            if (!isMobileDevice()) return;
             
+            console.log('Инициализация мобильных панелей');
             const contentPanel = document.querySelector('.flex-1');
             const chatPanel = document.querySelector('.chat-panel');
             
-            // По умолчанию показываем контент
-            showMobilePanel('content');
+            if (!contentPanel || !chatPanel) return;
+            
+            // Скрываем все панели
+            contentPanel.classList.remove('active-panel');
+            chatPanel.classList.remove('active-panel');
+            
+            // Показываем панель контента по умолчанию
+            setTimeout(() => {
+                showMobilePanel('content');
+            }, 100);
         }
 
         function showMobilePanel(panel) {
-            if (window.innerWidth > 1024) return;
+            if (!isMobileDevice()) return;
             
+            console.log('Показываем панель:', panel);
             const contentPanel = document.querySelector('.flex-1');
             const chatPanel = document.querySelector('.chat-panel');
+            
+            if (!contentPanel || !chatPanel) return;
             
             // Скрываем все панели
             contentPanel.classList.remove('active-panel');
@@ -1043,39 +1062,67 @@
         }
 
         function closeActivePanel() {
-            if (window.innerWidth > 1024) return;
+            if (!isMobileDevice()) return;
             
+            console.log('Закрываем активную панель');
             const contentPanel = document.querySelector('.flex-1');
             const chatPanel = document.querySelector('.chat-panel');
+            
+            if (!contentPanel || !chatPanel) return;
             
             contentPanel.classList.remove('active-panel');
             chatPanel.classList.remove('active-panel');
             activeMobilePanel = null;
         }
 
-        // Переопределяем функции для мобильных
-        const originalLoadTab = loadTab;
-        loadTab = function(tabName) {
-            originalLoadTab(tabName);
-            showMobilePanel('content');
-        }
+        // ========== ПЕРЕОПРЕДЕЛЕНИЕ ФУНКЦИЙ ДЛЯ МОБИЛЬНЫХ ==========
+        // Сохраняем оригинальные функции
+        const originalLoadTab = window.loadTab;
+        const originalSelectUserForChat = window.selectUserForChat;
 
-        const originalSelectUserForChat = selectUserForChat;
-        selectUserForChat = function(userId, userName, userEmail) {
-            originalSelectUserForChat(userId, userName, userEmail);
-            showMobilePanel('chat');
-        }
-
-        // Добавляем обработчики
-        document.addEventListener('click', function(e) {
-            if (window.innerWidth > 1024) return;
-            
-            if (e.target.closest('.tab-btn')) {
+        // Переопределяем loadTab
+        window.loadTab = function(tabName) {
+            console.log('loadTab вызван с параметром:', tabName);
+            if (originalLoadTab) {
+                originalLoadTab(tabName);
+            }
+            if (isMobileDevice()) {
                 showMobilePanel('content');
             }
+        }
+
+        // Переопределяем selectUserForChat
+        window.selectUserForChat = function(userId, userName, userEmail) {
+            console.log('selectUserForChat вызван:', userId, userName);
+            if (originalSelectUserForChat) {
+                originalSelectUserForChat(userId, userName, userEmail);
+            }
+            if (isMobileDevice()) {
+                showMobilePanel('chat');
+            }
+        }
+
+        // ========== ОБРАБОТЧИКИ СОБЫТИЙ ==========
+        document.addEventListener('click', function(e) {
+            if (!isMobileDevice()) return;
             
-            if (e.target.closest('#chat-search') || e.target.closest('.user-item')) {
+            // Клик по кнопке вкладки в левой панели
+            const tabButton = e.target.closest('.tab-btn');
+            if (tabButton) {
+                console.log('Клик по вкладке:', tabButton);
+                // Функция loadTab будет вызвана из onclick атрибута
+                // Мы просто показываем панель после загрузки
+                setTimeout(() => showMobilePanel('content'), 200);
+            }
+            
+            // Клик по полю поиска в чате
+            if (e.target.closest('#chat-search')) {
                 setTimeout(() => showMobilePanel('chat'), 100);
+            }
+            
+            // Клик по пользователю в выпадающем списке
+            if (e.target.closest('.user-item')) {
+                setTimeout(() => showMobilePanel('chat'), 200);
             }
         });
 
@@ -1129,21 +1176,57 @@
         });
 
         window.addEventListener('resize', function() {
-            if (window.innerWidth > 1024) {
+            if (!isMobileDevice()) {
                 // На десктопе показываем все панели
                 const contentPanel = document.querySelector('.flex-1');
                 const chatPanel = document.querySelector('.chat-panel');
-                contentPanel.classList.remove('active-panel');
-                chatPanel.classList.remove('active-panel');
-                contentPanel.style.display = 'block';
-                chatPanel.style.display = 'flex';
+                if (contentPanel && chatPanel) {
+                    contentPanel.classList.remove('active-panel');
+                    chatPanel.classList.remove('active-panel');
+                    contentPanel.style.display = 'block';
+                    chatPanel.style.display = 'flex';
+                }
             } else {
                 initMobilePanels();
             }
         });
 
-        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ БЕЗ ИЗМЕНЕНИЙ ==========
-        // ... (весь остальной JavaScript код остается без изменений) ...
+        function initializeAdminPanel() {
+            console.log('%c🚀 ЗАПУСК АДМИН-ПАНЕЛИ', 'background: #2563eb; color: white;');
+            loadTab('users');
+            updateAdminEmail();
+            loadQuickStats();
+            connectAdminWebSocket();
+            logToConsole('✅ Админ-панель успешно инициализирована');
+            logToConsole('👤 Администратор: ' + localStorage.getItem('user_email'));
+            showNotification('✅ Админ-панель загружена', 'success');
+        }
+
+        function updateAdminEmail() {
+            const adminEmail = localStorage.getItem('user_email');
+            const emailElement = document.getElementById('admin-email');
+            if (emailElement) {
+                emailElement.textContent = adminEmail || 't72trak@gmail.com';
+            }
+        }
+
+        function logout() {
+            console.log('🚪 Выход из системы');
+            if (adminWebSocket) {
+                adminWebSocket.close();
+            }
+            if (clientCardRefreshInterval) {
+                clearInterval(clientCardRefreshInterval);
+            }
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('user_email');
+            localStorage.removeItem('user_name');
+            window.location.href = '/login';
+        }
+
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ (loadQuickStats, updateMessageStats, switchClientTab, loadTab и т.д.) ==========
+        // ... (весь остальной JavaScript код остается без изменений, как в вашем файле) ...
         
     </script>
 </body>
