@@ -1018,19 +1018,40 @@
 
         // ========== МОБИЛЬНЫЕ ПАНЕЛИ ==========
         let activeMobilePanel = 'content';
+        let mobilePanelsInitialized = false;
 
         function initMobilePanels() {
-            if (!isMobileDevice()) return;
+            if (!isMobileDevice()) {
+                // На десктопе показываем все панели
+                const contentPanel = document.querySelector('.flex-1');
+                const chatPanel = document.querySelector('.chat-panel');
+                if (contentPanel && chatPanel) {
+                    contentPanel.style.display = 'block';
+                    chatPanel.style.display = 'flex';
+                    contentPanel.classList.remove('active-panel');
+                    chatPanel.classList.remove('active-panel');
+                }
+                return;
+            }
             
-            console.log('Инициализация мобильных панелей');
+            if (mobilePanelsInitialized) return;
+            mobilePanelsInitialized = true;
+            
+            console.log('%c📱 Инициализация мобильных панелей', 'background: #2563eb; color: white;');
+            
             const contentPanel = document.querySelector('.flex-1');
             const chatPanel = document.querySelector('.chat-panel');
             
-            if (!contentPanel || !chatPanel) return;
+            if (!contentPanel || !chatPanel) {
+                console.error('Панели не найдены');
+                return;
+            }
             
             // Скрываем все панели
             contentPanel.classList.remove('active-panel');
             chatPanel.classList.remove('active-panel');
+            contentPanel.style.display = 'none';
+            chatPanel.style.display = 'none';
             
             // Показываем панель контента по умолчанию
             setTimeout(() => {
@@ -1039,32 +1060,54 @@
         }
 
         function showMobilePanel(panel) {
-            if (!isMobileDevice()) return;
+            if (!isMobileDevice()) {
+                // На десктопе показываем все панели
+                const contentPanel = document.querySelector('.flex-1');
+                const chatPanel = document.querySelector('.chat-panel');
+                if (contentPanel && chatPanel) {
+                    contentPanel.style.display = 'block';
+                    chatPanel.style.display = 'flex';
+                    contentPanel.classList.remove('active-panel');
+                    chatPanel.classList.remove('active-panel');
+                }
+                return;
+            }
             
-            console.log('Показываем панель:', panel);
+            console.log('%c📱 Показываем панель:', 'background: #2563eb; color: white;', panel);
+            
             const contentPanel = document.querySelector('.flex-1');
             const chatPanel = document.querySelector('.chat-panel');
             
-            if (!contentPanel || !chatPanel) return;
+            if (!contentPanel || !chatPanel) {
+                console.error('Панели не найдены');
+                return;
+            }
             
             // Скрываем все панели
             contentPanel.classList.remove('active-panel');
             chatPanel.classList.remove('active-panel');
+            contentPanel.style.display = 'none';
+            chatPanel.style.display = 'none';
             
             // Показываем нужную
             if (panel === 'content') {
+                contentPanel.style.display = 'block';
                 contentPanel.classList.add('active-panel');
                 activeMobilePanel = 'content';
+                console.log('✅ Панель контента активирована');
             } else if (panel === 'chat') {
+                chatPanel.style.display = 'flex';
                 chatPanel.classList.add('active-panel');
                 activeMobilePanel = 'chat';
+                console.log('✅ Панель чата активирована');
             }
         }
 
         function closeActivePanel() {
             if (!isMobileDevice()) return;
             
-            console.log('Закрываем активную панель');
+            console.log('📱 Закрываем активную панель');
+            
             const contentPanel = document.querySelector('.flex-1');
             const chatPanel = document.querySelector('.chat-panel');
             
@@ -1072,6 +1115,8 @@
             
             contentPanel.classList.remove('active-panel');
             chatPanel.classList.remove('active-panel');
+            contentPanel.style.display = 'none';
+            chatPanel.style.display = 'none';
             activeMobilePanel = null;
         }
 
@@ -1103,26 +1148,57 @@
         }
 
         // ========== ОБРАБОТЧИКИ СОБЫТИЙ ==========
-        document.addEventListener('click', function(e) {
-            if (!isMobileDevice()) return;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Находим все кнопки вкладок
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            console.log('Найдено кнопок вкладок:', tabButtons.length);
             
-            // Клик по кнопке вкладки в левой панели
-            const tabButton = e.target.closest('.tab-btn');
-            if (tabButton) {
-                console.log('Клик по вкладке:', tabButton);
-                // Функция loadTab будет вызвана из onclick атрибута
-                // Мы просто показываем панель после загрузки
-                setTimeout(() => showMobilePanel('content'), 200);
+            // Добавляем обработчик для каждой кнопки
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (!isMobileDevice()) return;
+                    
+                    console.log('Клик по вкладке:', this);
+                    // Не вызываем showMobilePanel здесь, так как loadTab уже вызовет его
+                    // Просто убеждаемся, что панель покажется после загрузки
+                    setTimeout(() => showMobilePanel('content'), 200);
+                });
+            });
+            
+            // Обработчик для поиска в чате
+            const chatSearch = document.getElementById('chat-search');
+            if (chatSearch) {
+                chatSearch.addEventListener('focus', function() {
+                    if (!isMobileDevice()) return;
+                    setTimeout(() => showMobilePanel('chat'), 100);
+                });
             }
             
-            // Клик по полю поиска в чате
-            if (e.target.closest('#chat-search')) {
-                setTimeout(() => showMobilePanel('chat'), 100);
-            }
-            
-            // Клик по пользователю в выпадающем списке
-            if (e.target.closest('.user-item')) {
-                setTimeout(() => showMobilePanel('chat'), 200);
+            // Обработчик для клика по пользователям в выпадающем списке
+            document.addEventListener('click', function(e) {
+                if (!isMobileDevice()) return;
+                
+                if (e.target.closest('.user-item')) {
+                    setTimeout(() => showMobilePanel('chat'), 200);
+                }
+            });
+        });
+
+        // Следим за изменением размера окна
+        window.addEventListener('resize', function() {
+            if (!isMobileDevice()) {
+                // На десктопе показываем все панели
+                const contentPanel = document.querySelector('.flex-1');
+                const chatPanel = document.querySelector('.chat-panel');
+                if (contentPanel && chatPanel) {
+                    contentPanel.style.display = 'block';
+                    chatPanel.style.display = 'flex';
+                    contentPanel.classList.remove('active-panel');
+                    chatPanel.classList.remove('active-panel');
+                }
+            } else {
+                mobilePanelsInitialized = false;
+                initMobilePanels();
             }
         });
 
@@ -1173,22 +1249,6 @@
                 localStorage.removeItem('user_name');
                 setTimeout(() => { window.location.href = '/login'; }, 2000);
             });
-        });
-
-        window.addEventListener('resize', function() {
-            if (!isMobileDevice()) {
-                // На десктопе показываем все панели
-                const contentPanel = document.querySelector('.flex-1');
-                const chatPanel = document.querySelector('.chat-panel');
-                if (contentPanel && chatPanel) {
-                    contentPanel.classList.remove('active-panel');
-                    chatPanel.classList.remove('active-panel');
-                    contentPanel.style.display = 'block';
-                    chatPanel.style.display = 'flex';
-                }
-            } else {
-                initMobilePanels();
-            }
         });
 
         function initializeAdminPanel() {
