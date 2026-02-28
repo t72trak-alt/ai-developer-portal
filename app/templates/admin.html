@@ -1765,6 +1765,80 @@
             }
         }
 
+        // ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ СПИСКА ПОЛЬЗОВАТЕЛЕЙ ==========
+        async function loadUserSelectList() {
+            const listContainer = document.getElementById('user-select-list');
+            if (!listContainer) return;
+            
+            listContainer.innerHTML = '<div class="text-center py-4 text-gray-500">Загрузка пользователей...</div>';
+            
+            try {
+                const token = localStorage.getItem('access_token');
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                const response = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.status === 401) {
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('user_id');
+                    localStorage.removeItem('user_email');
+                    localStorage.removeItem('user_name');
+                    listContainer.innerHTML = '<div class="text-center py-4 text-red-500">Сессия истекла. Войдите снова.</div>';
+                    setTimeout(() => { window.location.href = '/login'; }, 2000);
+                    return;
+                }
+                
+                if (response.status === 403) {
+                    listContainer.innerHTML = '<div class="text-center py-4 text-red-500">Доступ запрещен</div>';
+                    return;
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                // API возвращает объект с полем users
+                const users = data.users || [];
+                
+                if (users.length === 0) {
+                    listContainer.innerHTML = '<div class="text-center py-4 text-gray-500">Нет зарегистрированных пользователей</div>';
+                    return;
+                }
+                
+                let html = '';
+                users.forEach(user => {
+                    // Экранируем кавычки для безопасной вставки в onclick
+                    const safeName = (user.name || 'Без имени').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const safeEmail = user.email.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    
+                    html += `
+                        <div class="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition"
+                             onclick="selectUserForClientCard(${user.id}, '${safeName}', '${safeEmail}')">
+                            <div class="font-medium text-gray-800">${user.name || 'Без имени'}</div>
+                            <div class="text-sm text-gray-600">${user.email}</div>
+                            <div class="text-xs mt-1">
+                                <span class="px-2 py-1 rounded-full ${user.is_admin ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}">
+                                    ${user.is_admin ? 'Администратор' : 'Пользователь'}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                listContainer.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Ошибка загрузки пользователей:', error);
+                listContainer.innerHTML = '<div class="text-center py-4 text-red-500">Ошибка загрузки. Попробуйте позже.</div>';
+            }
+        }
+
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         document.addEventListener('DOMContentLoaded', function() {
             console.log('%c🔍 АДМИН-ПАНЕЛЬ: ИНИЦИАЛИЗАЦИЯ', 'background: #2563eb; color: white; font-size: 14px; padding: 4px;');
