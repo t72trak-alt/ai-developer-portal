@@ -1043,9 +1043,10 @@
         </div>
     </div>
 
+    <!-- ИСПРАВЛЕНО: убран sticky top-0, добавлен position: relative -->
     <div id="client-card-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center hidden z-50 overflow-y-auto">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl my-8 mx-4 relative">
-            <div class="sticky top-0 z-30 bg-white rounded-t-xl border-b shadow-md">
+            <div class="bg-white rounded-t-xl border-b shadow-md" style="position: relative; top: 0;">
                 <div class="flex justify-between items-center p-6">
                     <h3 class="text-2xl font-bold text-gray-800" id="client-card-title">👤 Личная карточка клиента</h3>
                     <button onclick="closeClientCardModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center shadow-sm">
@@ -1496,6 +1497,44 @@
             });
         }
 
+        // ========== УСИЛЕННАЯ ОБРАБОТКА КЛИКОВ ДЛЯ МОБИЛЬНЫХ ==========
+        function enhanceMobileTabClicks() {
+            if (!isMobileDevice()) return;
+            
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            console.log('Усиленная обработка для', tabButtons.length, 'кнопок');
+            
+            tabButtons.forEach(button => {
+                // Убираем возможные блокирующие события
+                button.style.pointerEvents = 'auto';
+                button.style.cursor = 'pointer';
+                button.style.zIndex = '1000';
+                
+                // Добавляем прямой обработчик
+                button.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const onclickAttr = this.getAttribute('onclick');
+                    if (onclickAttr) {
+                        const match = onclickAttr.match(/loadTab\('([^']+)'\)/);
+                        if (match && match[1]) {
+                            const tabName = match[1];
+                            console.log('Прямой клик по вкладке:', tabName);
+                            
+                            // Вызываем напрямую
+                            if (typeof loadTab === 'function') {
+                                loadTab(tabName);
+                            }
+                        }
+                    }
+                    
+                    showMobilePanel('content');
+                    return false;
+                };
+            });
+        }
+
         // ========== ПЕРЕОПРЕДЕЛЕНИЕ ФУНКЦИЙ ДЛЯ МОБИЛЬНЫХ ==========
         // Сохраняем оригинальные функции
         const originalLoadTab = window.loadTab;
@@ -1563,6 +1602,7 @@
             
             // Вызываем исправление кликов после загрузки
             setTimeout(fixMobileTabClicks, 500);
+            setTimeout(enhanceMobileTabClicks, 1000);
         });
 
         // Следим за изменением размера окна
@@ -1581,6 +1621,7 @@
                 mobilePanelsInitialized = false;
                 initMobilePanels();
                 setTimeout(fixMobileTabClicks, 500);
+                setTimeout(enhanceMobileTabClicks, 1000);
             }
         });
 
@@ -1779,6 +1820,7 @@
                     return;
                 }
                 
+                // Исправление Mixed Content - используем относительный URL
                 const response = await fetch('/api/admin/users', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
