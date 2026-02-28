@@ -1,5 +1,5 @@
 ﻿from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException, Depends
-from typing import List
+from typing import List, Dict
 import json
 from datetime import datetime
 from sqlalchemy.orm import Session
@@ -13,35 +13,57 @@ router = APIRouter(prefix="/api/chat", tags=["chat"])
 class ConnectionManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
+        self.user_connections: Dict[int, WebSocket] = {}  # user_id -> websocket
     
-    async def connect(self, websocket: WebSocket):
+    async def connect(self, websocket: WebSocket, user_id: int = None):
         await websocket.accept()
         self.active_connections.append(websocket)
-        print(f"🔌 WebSocket подключен. Всего подключений: {len(self.active_connections)}")
+        if user_id:
+            self.user_connections[user_id] = websocket
+            print(f"🔌 Пользователь {user_id} подключен. Всего: {len(self.active_connections)}")
+        else:
+            print(f"🔌 Подключение без user_id. Всего: {len(self.active_connections)}")
     
-    def disconnect(self, websocket: WebSocket):
+    def disconnect(self, websocket: WebSocket, user_id: int = None):
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
-            print(f"🔌 WebSocket отключен. Осталось: {len(self.active_connections)}")
+        if user_id and user_id in self.user_connections:
+            del self.user_connections[user_id]
+        print(f"🔌 Отключен. Осталось: {len(self.active_connections)}")
     
-    async def send_personal_message(self, message: dict, websocket: WebSocket):
-        await websocket.send_json(message)
+    async def send_to_user(self, user_id: int, message: dict):
+        """Отправить сообщение конкретному пользователю"""
+        if user_id in self.user_connections:
+            try:
+                await self.user_connections[user_id].send_json(message)
+                print(f"📤 Сообщение отправлено пользователю {user_id}")
+                return True
+            except Exception as e:
+                print(f"❌ Ошибка отправки пользователю {user_id}: {e}")
+                return False
+        else:
+            print(f"⚠️ Пользователь {user_id} не в сети")
+            return False
     
-    async def broadcast(self, message: dict):
-        for connection in self.active_connections:
+    async def send_to_admin(self, message: dict):
+        """Отправить сообщение админу (ID=1)"""
+        return await self.send_to_user(1, message)
+    
+    async def broadcast(self, message: dict, exclude_user: int = None):
+        """Отправить сообщение всем подключенным пользователям"""
+        for user_id, connection in self.user_connections.items():
+            if exclude_user and user_id == exclude_user:
+                continue
             try:
                 await connection.send_json(message)
-            except Exception as e:
-                print(f"❌ Ошибка отправки сообщения: {e}")
+            except:
+                pass
 
 manager = ConnectionManager()
 
-# ========== ЭНДПОИНТ ДЛЯ ПРОВЕРКИ БД ==========
 @router.get("/check-db")
 async def check_db(db: Session = Depends(get_db)):
-    """
-    Проверить, какая БД реально используется
-    """
+    """Проверить, какая БД реально используется"""
     try:
         db_url = str(db.bind.url)
         user_count = db.query(User).count()
@@ -65,12 +87,9 @@ async def check_db(db: Session = Depends(get_db)):
             "error_type": type(e).__name__
         }
 
-# ========== ТЕСТОВЫЙ ЭНДПОИНТ ДЛЯ ПРОВЕРКИ ПОЛЬЗОВАТЕЛЕЙ ==========
 @router.get("/test-users")
 async def test_users(db: Session = Depends(get_db)):
-    """
-    Тестовый эндпоинт для проверки пользователей в БД
-    """
+    """Тестовый эндпоинт для проверки пользователей в БД"""
     try:
         print("\n🔍 ТЕСТОВЫЙ ЗАПРОС: ПОЛУЧЕНИЕ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ")
         users = db.query(User).all()
@@ -93,9 +112,7 @@ async def test_users(db: Session = Depends(get_db)):
 
 @router.get("/history/{user_id}")
 async def get_chat_history(user_id: int, db: Session = Depends(get_db)):
-    """
-    Получить историю сообщений для конкретного пользователя
-    """
+    """Получить историю сообщений для конкретного пользователя"""
     print(f"\n{'='*50}")
     print(f"🔥 ВЫЗВАНА get_chat_history ДЛЯ user_id={user_id}")
     print(f"{'='*50}")
@@ -119,13 +136,13 @@ async def get_chat_history(user_id: int, db: Session = Depends(get_db)):
         
         result = []
         for i, msg in enumerate(messages):
-            print(f"  📝 Сообщение {i+1}: id={msg.id}, sender={msg.sender_id}, receiver={msg.receiver_id}, owner={msg.is_owner}")
+            print(f"  📝 Сообщение {i+1}: id={msg.id}, sender={msg.sender_id}, receiver={msg.receiver_id}")
             result.append({
                 "id": msg.id,
                 "content": msg.content,
                 "sender_id": msg.sender_id,
                 "receiver_id": msg.receiver_id,
-                "is_from_admin": not msg.is_owner,
+                "is_from_admin": msg.sender_id == 1,
                 "created_at": msg.created_at.isoformat() if msg.created_at else None
             })
         
@@ -146,9 +163,7 @@ async def get_chat_history(user_id: int, db: Session = Depends(get_db)):
 
 @router.get("/stats/total")
 async def get_total_messages(db: Session = Depends(get_db)):
-    """
-    Получить общее количество сообщений
-    """
+    """Получить общее количество сообщений"""
     try:
         total = db.query(Message).count()
         print(f"📊 Общее количество сообщений в БД: {total}")
@@ -159,41 +174,32 @@ async def get_total_messages(db: Session = Depends(get_db)):
 
 @router.websocket("/ws/chat/0")
 async def websocket_admin_endpoint(websocket: WebSocket):
-    """
-    WebSocket эндпоинт для администратора (ID=0 означает админ)
-    """
+    """WebSocket эндпоинт для администратора"""
     print(f"\n{'='*50}")
     print(f"🔌 АДМИН ПОДКЛЮЧАЕТСЯ К WEBSOCKET")
     print(f"{'='*50}")
     
-    await manager.connect(websocket)
+    await manager.connect(websocket, user_id=1)
     db = SessionLocal()
     ping_task = None
     
     try:
         await websocket.send_json({
-            "type": "connection_established",
-            "status": "connected",
+            "type": "connected",
+            "user_id": 1,
             "timestamp": datetime.now().isoformat()
         })
-        print("✅ Админ подключен, приветствие отправлено")
+        print("✅ Админ подключен")
         
-        # Задача для отправки ping каждые 20 секунд
         async def send_ping():
             try:
                 while True:
                     await asyncio.sleep(20)
                     try:
-                        await websocket.send_json({
-                            "type": "ping",
-                            "timestamp": datetime.now().isoformat()
-                        })
-                        print("📤 Ping отправлен")
-                    except Exception as e:
-                        print(f"❌ Ошибка отправки ping: {e}")
+                        await websocket.send_json({"type": "ping"})
+                    except:
                         break
             except asyncio.CancelledError:
-                print("📌 Ping задача отменена")
                 raise
         
         ping_task = asyncio.create_task(send_ping())
@@ -201,113 +207,81 @@ async def websocket_admin_endpoint(websocket: WebSocket):
         while True:
             try:
                 data = await websocket.receive_text()
-                print(f"📩 Получено сообщение от админа: {data[:100]}...")
-                
                 message_data = json.loads(data)
                 message_type = message_data.get("type")
                 
-                # Обработка pong ответов
                 if message_type == "pong":
-                    print("📥 Получен pong")
                     continue
                 
                 if message_type == "admin_message":
                     target_user_id = message_data.get("user_id")
                     content = message_data.get("content")
+                    message_id = message_data.get("message_id")
                     
                     if not target_user_id or not content:
-                        print("⚠️ Неполные данные сообщения")
                         continue
                     
-                    print(f"📝 Сообщение для пользователя {target_user_id}: {content[:50]}...")
+                    print(f"📨 Админ -> Пользователь {target_user_id}: {content}")
                     
-                    try:
-                        # Сохраняем сообщение в БД
-                        db_message = Message(
-                            content=content,
-                            sender_id=1,  # ID админа
-                            receiver_id=target_user_id,
-                            is_owner=False,  # Админ - не владелец сообщения
-                            created_at=datetime.now()
-                        )
-                        db.add(db_message)
-                        db.commit()
-                        
-                        print(f"✅ Сообщение от админа СОХРАНЕНО в БД для user_id={target_user_id}")
-                        print(f"   ID сообщения в БД: {db_message.id}")
-                        
-                        # Отправляем подтверждение админу
-                        await websocket.send_json({
-                            "type": "new_message",
-                            "user_id": target_user_id,
-                            "content": content,
-                            "sender_id": 1,
-                            "is_from_admin": True,
-                            "created_at": datetime.now().isoformat()
-                        })
-                        
-                        # Отправляем сообщение пользователю (если он в сети)
-                        user_sent = False
-                        for connection in manager.active_connections:
-                            if connection != websocket:
-                                try:
-                                    await connection.send_json({
-                                        "type": "new_message",
-                                        "user_id": target_user_id,
-                                        "content": content,
-                                        "sender_id": 1,
-                                        "is_from_admin": True,
-                                        "created_at": datetime.now().isoformat()
-                                    })
-                                    user_sent = True
-                                    print(f"📨 Сообщение от админа ДОСТАВЛЕНО пользователю {target_user_id}")
-                                except Exception as e:
-                                    print(f"❌ Ошибка отправки пользователю: {e}")
-                        
-                        if not user_sent:
-                            print(f"⚠️ Пользователь {target_user_id} не в сети, сообщение сохранено в БД")
-                        
-                    except Exception as e:
-                        db.rollback()
-                        print(f"❌ ОШИБКА БД при сохранении сообщения от админа: {e}")
-                        import traceback
-                        traceback.print_exc()
-                        
+                    # Сохраняем сообщение
+                    db_message = Message(
+                        content=content,
+                        sender_id=1,
+                        receiver_id=target_user_id,
+                        created_at=datetime.now()
+                    )
+                    db.add(db_message)
+                    db.commit()
+                    db.refresh(db_message)
+                    
+                    print(f"💾 Сообщение сохранено в БД, id={db_message.id}")
+                    
+                    # Формируем сообщение для отправки
+                    message_response = {
+                        "type": "new_message",
+                        "message_id": message_id or str(db_message.id),
+                        "user_id": target_user_id,
+                        "content": content,
+                        "sender_id": 1,
+                        "is_from_admin": True,
+                        "created_at": datetime.now().isoformat()
+                    }
+                    
+                    # Отправляем админу (подтверждение)
+                    await websocket.send_json(message_response)
+                    print(f"📤 Подтверждение отправлено админу")
+                    
+                    # Отправляем пользователю, если он онлайн
+                    sent = await manager.send_to_user(target_user_id, message_response)
+                    if sent:
+                        print(f"📤 Сообщение доставлено пользователю {target_user_id}")
+                    else:
+                        print(f"⏸️ Пользователь {target_user_id} не в сети, сообщение сохранено в БД")
+                    
             except WebSocketDisconnect:
-                print("🔌 АДМИН ОТКЛЮЧИЛСЯ")
+                print("❌ WebSocket админа отключен")
                 break
-            except json.JSONDecodeError as e:
-                print(f"❌ Ошибка парсинга JSON: {e}")
-                continue
             except Exception as e:
-                print(f"❌ Ошибка в цикле: {e}")
+                print(f"❌ Ошибка в обработчике админа: {e}")
                 import traceback
                 traceback.print_exc()
                 break
-                
-    except WebSocketDisconnect:
-        print("🔌 АДМИН ОТКЛЮЧИЛСЯ")
-    except Exception as e:
-        print(f"❌ Ошибка в websocket_admin_endpoint: {e}")
-        import traceback
-        traceback.print_exc()
+                    
     finally:
         if ping_task:
             ping_task.cancel()
-        manager.disconnect(websocket)
+        manager.disconnect(websocket, user_id=1)
         db.close()
-        print("📁 Соединение с БД для админа закрыто")
+        print("🔌 Ресурсы освобождены")
 
 @router.websocket("/ws/chat/{user_id}")
 async def websocket_user_endpoint(websocket: WebSocket, user_id: int):
-    """
-    WebSocket эндпоинт для обычного пользователя
-    """
+    """WebSocket эндпоинт для обычного пользователя"""
     print(f"\n{'='*50}")
     print(f"👤 ПОЛЬЗОВАТЕЛЬ {user_id} ПОДКЛЮЧАЕТСЯ К WEBSOCKET")
     print(f"{'='*50}")
     
-    await manager.connect(websocket)
+    await manager.connect(websocket, user_id=user_id)
     db = SessionLocal()
     ping_task = None
     
@@ -317,117 +291,86 @@ async def websocket_user_endpoint(websocket: WebSocket, user_id: int):
             "user_id": user_id,
             "timestamp": datetime.now().isoformat()
         })
-        print(f"✅ Пользователь {user_id} подключен, приветствие отправлено")
+        print(f"✅ Пользователь {user_id} подключен")
         
-        # Задача для отправки ping каждые 20 секунд
         async def send_ping():
             try:
                 while True:
                     await asyncio.sleep(20)
                     try:
-                        await websocket.send_json({
-                            "type": "ping",
-                            "timestamp": datetime.now().isoformat()
-                        })
-                        print(f"📤 Ping отправлен пользователю {user_id}")
-                    except Exception as e:
-                        print(f"❌ Ошибка отправки ping: {e}")
+                        await websocket.send_json({"type": "ping"})
+                    except:
                         break
             except asyncio.CancelledError:
-                print(f"📌 Ping задача для пользователя {user_id} отменена")
                 raise
         
         ping_task = asyncio.create_task(send_ping())
         
         while True:
             try:
-                data = await websocket.receive_json()
-                content = data.get("content", "")
-                print(f"📩 Получено сообщение от пользователя {user_id}: {content[:100]}...")
+                data = await websocket.receive_text()
+                message_data = json.loads(data)
+                message_type = message_data.get("type")
                 
-                message_type = data.get("type")
-                
-                # Обработка pong ответов
                 if message_type == "pong":
-                    print(f"📥 Получен pong от пользователя {user_id}")
                     continue
                 
                 if message_type == "message":
+                    content = message_data.get("content", "")
+                    message_id = message_data.get("message_id")
+                    
                     if not content:
-                        print("⚠️ Пустое сообщение")
                         continue
                     
-                    try:
-                        # Сохраняем сообщение в БД
-                        message = Message(
-                            sender_id=user_id,
-                            receiver_id=1,  # ID админа
-                            content=content,
-                            is_owner=True,  # Пользователь - владелец сообщения
-                            created_at=datetime.now()
-                        )
-                        db.add(message)
-                        db.commit()
-                        
-                        print(f"✅ Сообщение от пользователя {user_id} СОХРАНЕНО в БД")
-                        print(f"   ID сообщения в БД: {message.id}")
-                        print(f"   Содержание: {content[:50]}...")
-                        
-                        # Подтверждение пользователю
-                        await websocket.send_json({
-                            "type": "new_message",
-                            "user_id": user_id,
-                            "content": content,
-                            "sender_id": user_id,
-                            "is_from_admin": False,
-                            "created_at": datetime.now().isoformat()
-                        })
-                        
-                        # Отправляем сообщение админу (если в сети)
-                        admin_sent = False
-                        for connection in manager.active_connections:
-                            if connection != websocket:
-                                try:
-                                    await connection.send_json({
-                                        "type": "new_message",
-                                        "user_id": user_id,
-                                        "content": content,
-                                        "sender_id": user_id,
-                                        "is_from_admin": False,
-                                        "created_at": datetime.now().isoformat()
-                                    })
-                                    admin_sent = True
-                                    print(f"📨 Сообщение от пользователя {user_id} ДОСТАВЛЕНО админу")
-                                except Exception as e:
-                                    print(f"❌ Ошибка отправки админу: {e}")
-                        
-                        if not admin_sent:
-                            print("⚠️ Админ не в сети, сообщение сохранено в БД")
-                        
-                    except Exception as e:
-                        db.rollback()
-                        print(f"❌ ОШИБКА БД при сохранении сообщения от пользователя {user_id}: {e}")
-                        import traceback
-                        traceback.print_exc()
-                        
+                    print(f"📨 Пользователь {user_id} -> Админ: {content}")
+                    
+                    # Сохраняем сообщение
+                    message = Message(
+                        sender_id=user_id,
+                        receiver_id=1,
+                        content=content,
+                        created_at=datetime.now()
+                    )
+                    db.add(message)
+                    db.commit()
+                    db.refresh(message)
+                    
+                    print(f"💾 Сообщение сохранено в БД, id={message.id}")
+                    
+                    # Формируем сообщение для отправки
+                    message_response = {
+                        "type": "new_message",
+                        "message_id": message_id or str(message.id),
+                        "user_id": user_id,
+                        "content": content,
+                        "sender_id": user_id,
+                        "is_from_admin": False,
+                        "created_at": datetime.now().isoformat()
+                    }
+                    
+                    # Отправляем пользователю (подтверждение)
+                    await websocket.send_json(message_response)
+                    print(f"📤 Подтверждение отправлено пользователю {user_id}")
+                    
+                    # Отправляем админу
+                    sent = await manager.send_to_user(1, message_response)
+                    if sent:
+                        print(f"📤 Сообщение доставлено админу")
+                    else:
+                        print(f"⏸️ Админ не в сети, сообщение сохранено в БД")
+                    
             except WebSocketDisconnect:
-                print(f"🔌 ПОЛЬЗОВАТЕЛЬ {user_id} ОТКЛЮЧИЛСЯ")
+                print(f"❌ WebSocket пользователя {user_id} отключен")
                 break
             except Exception as e:
-                print(f"❌ Ошибка в цикле для пользователя {user_id}: {e}")
+                print(f"❌ Ошибка в обработчике пользователя {user_id}: {e}")
                 import traceback
                 traceback.print_exc()
                 break
                     
-    except WebSocketDisconnect:
-        print(f"🔌 ПОЛЬЗОВАТЕЛЬ {user_id} ОТКЛЮЧИЛСЯ")
-    except Exception as e:
-        print(f"❌ Ошибка в websocket_user_endpoint: {e}")
-        import traceback
-        traceback.print_exc()
     finally:
         if ping_task:
             ping_task.cancel()
-        manager.disconnect(websocket)
+        manager.disconnect(websocket, user_id=user_id)
         db.close()
-        print(f"📁 Соединение с БД для пользователя {user_id} закрыто")
+        print(f"🔌 Ресурсы для пользователя {user_id} освобождены")
