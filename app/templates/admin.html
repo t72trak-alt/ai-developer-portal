@@ -196,110 +196,134 @@
 
         /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
         @media (max-width: 1024px) {
+            /* Трёхколоночная структура */
             .container.mx-auto.flex {
+                display: flex !important;
                 flex-direction: row !important;
                 position: relative;
                 height: calc(100vh - 140px);
                 overflow: hidden;
                 padding: 0 !important;
                 gap: 0 !important;
+                width: 100% !important;
             }
             
+            /* Колонка 2 (Навигация) - скрыта, видна только верхняя часть */
             .sidebar {
-                width: 70px !important;
-                min-width: 70px !important;
-                max-width: 70px !important;
-                padding: 10px 5px !important;
+                width: 50px !important;
+                min-width: 50px !important;
+                max-width: 50px !important;
+                padding: 10px 0 !important;
                 margin: 0 !important;
                 border-radius: 0 !important;
                 height: 100%;
-                overflow-y: auto !important;
+                overflow: visible !important;
                 background-color: #f3f4f6;
                 border-right: 1px solid #e5e7eb;
-                box-shadow: none !important;
                 position: relative !important;
                 z-index: 10 !important;
-                -webkit-overflow-scrolling: touch;
+                transition: all 0.3s ease;
             }
             
-            .sidebar h2, .sidebar .mt-6.p-4 { display: none !important; }
-            
-            .sidebar .space-y-1 {
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 4px !important;
-                padding-bottom: 20px !important;
-            }
-            
-            .sidebar .tab-btn {
-                padding: 12px 0 !important;
-                text-align: center !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                justify-content: center !important;
-                font-size: 10px !important;
-                border-radius: 8px !important;
-                background-color: transparent !important;
-                min-height: 70px !important;
-                width: 100% !important;
-                margin: 0 !important;
-                color: #4b5563 !important;
-                cursor: pointer !important;
-                border: none !important;
-                transition: all 0.2s;
-                -webkit-tap-highlight-color: transparent;
-                pointer-events: auto !important;
-                position: relative !important;
-                z-index: 15 !important;
-                touch-action: manipulation;
-            }
-            
-            .sidebar .tab-btn:active {
-                background-color: rgba(59, 130, 246, 0.2) !important;
-                transform: scale(0.95);
-            }
-            
-            .sidebar .tab-btn span:first-child {
-                margin-right: 0 !important;
-                font-size: 24px !important;
-                margin-bottom: 4px !important;
-                display: block !important;
-            }
-            
-            .sidebar .tab-btn span.text-gray-800 { display: none !important; }
-            .sidebar .tab-btn.active-tab { background-color: #3b82f6 !important; color: white !important; }
-            .sidebar .tab-btn.active-tab span { color: white !important; }
-            
-            .flex-1, .chat-panel {
-                width: 0 !important;
+            /* Колонка 1 (Чат) - видимая центральная колонка */
+            .flex-1 {
+                width: calc(100% - 100px) !important;
                 flex: 1 !important;
                 margin: 0 !important;
                 height: 100% !important;
                 overflow-y: auto !important;
                 background: white;
-                transition: transform 0.3s ease !important;
-                border-radius: 0 !important;
-                box-shadow: none !important;
+                display: block !important;
+                position: relative !important;
+                z-index: 5 !important;
+            }
+            
+            /* Колонка 3 (Панель разработчика) - скрыта, видна только верхняя часть */
+            .chat-panel {
+                width: 50px !important;
+                min-width: 50px !important;
+                max-width: 50px !important;
+                margin: 0 !important;
+                height: 100% !important;
+                overflow: visible !important;
+                background: white;
+                border-left: 1px solid #e5e7eb;
+                display: flex !important;
+                flex-direction: column !important;
+                position: relative !important;
+                z-index: 10 !important;
+                transition: all 0.3s ease;
+            }
+            
+            /* Верхние части колонок */
+            .sidebar::before {
+                content: "📊";
+                display: block;
+                text-align: center;
+                font-size: 20px;
+                padding: 10px 0;
+                background: #e5e7eb;
+                cursor: pointer;
+            }
+            
+            .chat-panel::before {
+                content: "👨‍💻";
+                display: block;
+                text-align: center;
+                font-size: 20px;
+                padding: 10px 0;
+                background: #e5e7eb;
+                cursor: pointer;
+            }
+            
+            /* Скрываем всё содержимое колонок кроме верхней части */
+            .sidebar > *:not(::before) {
                 display: none !important;
             }
             
-            .flex-1.active-panel, .chat-panel.active-panel {
-                display: block !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 70px !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                width: auto !important;
-                z-index: 20 !important;
-                background: white !important;
-                box-shadow: -2px 0 10px rgba(0,0,0,0.1) !important;
+            .chat-panel > *:not(::before) {
+                display: none !important;
             }
             
-            .chat-panel.active-panel { display: flex !important; flex-direction: column !important; }
+            /* Развёрнутые колонки */
+            .sidebar.expanded {
+                width: 100% !important;
+                max-width: 100% !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                z-index: 1000 !important;
+                height: 100vh !important;
+                background: white !important;
+                overflow-y: auto !important;
+                padding: 20px !important;
+            }
             
-            .panel-close-btn {
+            .chat-panel.expanded {
+                width: 100% !important;
+                max-width: 100% !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                z-index: 1000 !important;
+                height: 100vh !important;
+                background: white !important;
+                overflow-y: auto !important;
+                padding: 20px !important;
+            }
+            
+            .sidebar.expanded::before,
+            .chat-panel.expanded::before {
+                display: none !important;
+            }
+            
+            .sidebar.expanded > *,
+            .chat-panel.expanded > * {
+                display: block !important;
+            }
+            
+            /* Кнопка закрытия для развёрнутых колонок */
+            .close-column-btn {
                 display: none !important;
                 position: absolute !important;
                 top: 10px !important;
@@ -312,78 +336,25 @@
                 align-items: center !important;
                 justify-content: center !important;
                 font-size: 20px !important;
-                z-index: 30 !important;
+                z-index: 1001 !important;
                 cursor: pointer !important;
                 border: none !important;
             }
-            .active-panel .panel-close-btn { display: flex !important; }
-            .sidebar { display: block !important; }
-        }
-
-        /* ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ МОБИЛЬНОЙ ВЕРСИИ */
-        @media (max-width: 1024px) {
-            .force-panel-active {
-                display: block !important;
-                position: fixed !important;
-                top: 0 !important;
-                left: 70px !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                width: auto !important;
-                height: 100vh !important;
-                z-index: 9999 !important;
-                background: white !important;
-                box-shadow: -2px 0 10px rgba(0,0,0,0.3) !important;
-                margin: 0 !important;
-                padding: 20px !important;
-                overflow-y: auto !important;
+            
+            .sidebar.expanded .close-column-btn,
+            .chat-panel.expanded .close-column-btn {
+                display: flex !important;
             }
             
-            .force-chat-active {
-                display: flex !important;
-                position: fixed !important;
-                top: 0 !important;
-                left: 70px !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                width: auto !important;
-                height: 100vh !important;
-                z-index: 9999 !important;
-                background: white !important;
-                box-shadow: -2px 0 10px rgba(0,0,0,0.3) !important;
-                margin: 0 !important;
-                padding: 20px !important;
-                flex-direction: column !important;
-            }
-            
-            .force-close-btn {
-                display: flex !important;
-                position: absolute !important;
-                top: 10px !important;
-                right: 10px !important;
-                background: #ef4444 !important;
-                color: white !important;
-                width: 40px !important;
-                height: 40px !important;
-                border-radius: 50% !important;
-                align-items: center !important;
-                justify-content: center !important;
-                font-size: 24px !important;
-                z-index: 10000 !important;
-                cursor: pointer !important;
-                border: none !important;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
-            }
+            .panel-close-btn { display: none !important; }
         }
 
         /* Дополнительные стили для маленьких экранов */
         @media (max-width: 480px) {
-            .sidebar .tab-btn {
-                min-height: 65px !important;
+            .sidebar::before,
+            .chat-panel::before {
+                font-size: 18px !important;
                 padding: 8px 0 !important;
-            }
-            .sidebar .tab-btn span:first-child {
-                font-size: 22px !important;
             }
         }
 
@@ -415,25 +386,11 @@
     </nav>
     
     <div class="container mx-auto flex mt-4 gap-4" style="min-height: calc(100vh - 140px);">
-        <!-- Левая панель с иконками -->
-        <div class="sidebar w-64 bg-white rounded-lg shadow-lg p-4 overflow-y-auto">
+        <!-- Колонка 2 (Навигация) - скрыта, видна только верхняя часть с 📊 -->
+        <div class="sidebar w-64 bg-white rounded-lg shadow-lg p-4 overflow-y-auto" id="nav-column">
+            <button class="close-column-btn" onclick="app.closeColumn('nav')">✕</button>
             <h2 class="text-lg font-bold mb-4 text-gray-700 border-b pb-2">📊 Навигация</h2>
             <div class="space-y-1">
-                <!-- Кнопка чата с прямым обработчиком -->
-                <button onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('chat-panel').classList.add('force-chat-active'); document.getElementById('chat-panel').style.cssText='display: flex !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; flex-direction: column !important;'; document.getElementById('content-panel').classList.remove('force-panel-active'); document.getElementById('content-panel').style.cssText=''; return false;" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium">
-                    <span class="mr-2 text-gray-700">💬</span> <span class="text-gray-800">Чат поддержки</span>
-                </button>
-                
-                <!-- Кнопка панели разработчика с прямым обработчиком -->
-                <button onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('content-panel').classList.add('force-panel-active'); document.getElementById('content-panel').style.cssText='display: block !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; overflow-y: auto !important;'; document.getElementById('chat-panel').classList.remove('force-chat-active'); document.getElementById('chat-panel').style.cssText=''; setTimeout(() => { const devPanel = document.querySelector('.p-5.bg-gradient-to-r'); if (devPanel) devPanel.scrollIntoView({ behavior: 'smooth' }); }, 200); return false;" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium">
-                    <span class="mr-2 text-gray-700">👨‍💻</span> <span class="text-gray-800">Панель разработчика</span>
-                </button>
-                
-                <!-- Кнопка навигации с прямым обработчиком -->
-                <button onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('content-panel').classList.add('force-panel-active'); document.getElementById('content-panel').style.cssText='display: block !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; overflow-y: auto !important;'; document.getElementById('chat-panel').classList.remove('force-chat-active'); document.getElementById('chat-panel').style.cssText=''; if (typeof app !== 'undefined' && app.loadTab) app.loadTab('users'); return false;" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium">
-                    <span class="mr-2 text-gray-700">📊</span> <span class="text-gray-800">Навигация</span>
-                </button>
-
                 <button onclick="app.loadTab('users')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-users">
                     <span class="mr-2 text-gray-700">👤</span> <span class="text-gray-800">Пользователи</span>
                 </button>
@@ -466,9 +423,8 @@
             </div>
         </div>
         
-        <!-- Панель контента -->
-        <div class="flex-1 bg-white rounded-lg shadow-lg p-6 overflow-y-auto" id="content-panel">
-            <button class="panel-close-btn" onclick="app.mobile.closeActivePanel()">✕</button>
+        <!-- Колонка 1 (Чат) - видимая центральная колонка -->
+        <div class="flex-1 bg-white rounded-lg shadow-lg p-6 overflow-y-auto" id="chat-column">
             <div class="p-5 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-blue-200 shadow-sm mb-6">
                 <h3 class="text-lg font-bold text-blue-800 mb-3">👨‍💻 Панель разработчика</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
@@ -484,9 +440,9 @@
             <div id="content-area" class="mt-6"></div>
         </div>
         
-        <!-- Панель чата -->
-        <div class="chat-panel w-80 bg-white rounded-lg shadow-lg flex flex-col" id="chat-panel">
-            <button class="panel-close-btn" onclick="app.mobile.closeActivePanel()">✕</button>
+        <!-- Колонка 3 (Панель разработчика) - скрыта, видна только верхняя часть с 👨‍💻 -->
+        <div class="chat-panel w-80 bg-white rounded-lg shadow-lg flex flex-col" id="dev-column">
+            <button class="close-column-btn" onclick="app.closeColumn('dev')">✕</button>
             <div class="p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
                 <div class="flex justify-between items-center mb-2">
                     <h2 class="text-lg font-bold text-gray-700">💬 Чат поддержки</h2>
@@ -623,7 +579,7 @@
                 currentClientName: '',
                 currentClientEmail: '',
                 reconnectAttempts: 0,
-                mobilePanelActive: null,
+                expandedColumn: null,
                 isMobile: () => window.innerWidth <= 1024
             },
 
@@ -655,7 +611,7 @@
                     await this.loadTab('users');
                     await this.stats.load();
                     this.chat.connect();
-                    this.mobile.init();
+                    this.initMobileColumns();
                     
                     this.log('✅ Админ-панель инициализирована');
                 } catch (error) {
@@ -679,66 +635,85 @@
                 window.location.href = '/login';
             },
 
-            // ===== МОБИЛЬНАЯ ВЕРСИЯ =====
-            mobile: {
-                init: function() {
-                    if (!app.state.isMobile()) return;
-                    
-                    console.log('📱 Мобильный режим активирован');
-                    
-                    // Убираем все активные панели и сбрасываем классы
-                    const contentPanel = document.getElementById('content-panel');
-                    const chatPanel = document.getElementById('chat-panel');
-                    
-                    contentPanel.classList.remove('active-panel', 'force-panel-active');
-                    chatPanel.classList.remove('active-panel', 'force-chat-active');
-                    
-                    // Сбрасываем inline стили
-                    contentPanel.style.cssText = '';
-                    chatPanel.style.cssText = '';
-                    
-                    // Обработчик для поиска в чате
-                    const search = document.getElementById('chat-search');
-                    if (search) {
-                        search.removeEventListener('focus', app.mobile.handleSearchFocus);
-                        search.addEventListener('focus', app.mobile.handleSearchFocus);
-                    }
-                    
-                    app.log('📱 Мобильный режим готов');
-                },
+            // ===== МОБИЛЬНЫЕ КОЛОНКИ =====
+            initMobileColumns: function() {
+                if (!this.state.isMobile()) return;
                 
-                handleSearchFocus: function(e) {
-                    e.preventDefault();
-                    console.log('📱 Фокус на поиске чата');
-                    setTimeout(() => {
-                        const chatPanel = document.getElementById('chat-panel');
-                        const contentPanel = document.getElementById('content-panel');
-                        
-                        contentPanel.classList.remove('force-panel-active');
-                        chatPanel.classList.add('force-chat-active');
-                        
-                        chatPanel.style.cssText = 'display: flex !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; flex-direction: column !important;';
-                        contentPanel.style.cssText = '';
-                    }, 100);
-                },
+                console.log('📱 Инициализация трёхколоночного интерфейса');
                 
-                closeActivePanel: function() {
-                    if (!app.state.isMobile()) return;
-                    
-                    console.log('📱 Закрываем панель');
-                    
-                    const contentPanel = document.getElementById('content-panel');
-                    const chatPanel = document.getElementById('chat-panel');
-                    
-                    contentPanel.classList.remove('active-panel', 'force-panel-active');
-                    chatPanel.classList.remove('active-panel', 'force-chat-active');
-                    
-                    contentPanel.style.cssText = '';
-                    chatPanel.style.cssText = '';
-                    
-                    app.state.mobilePanelActive = null;
-                    app.log('📱 Панель закрыта');
+                const navColumn = document.getElementById('nav-column');
+                const devColumn = document.getElementById('dev-column');
+                
+                // Добавляем обработчики клика на верхние части колонок
+                if (navColumn) {
+                    navColumn.addEventListener('click', (e) => {
+                        // Не срабатывать при клике на кнопку закрытия
+                        if (!e.target.classList.contains('close-column-btn')) {
+                            this.expandColumn('nav');
+                        }
+                    });
                 }
+                
+                if (devColumn) {
+                    devColumn.addEventListener('click', (e) => {
+                        // Не срабатывать при клике на кнопку закрытия
+                        if (!e.target.classList.contains('close-column-btn')) {
+                            this.expandColumn('dev');
+                        }
+                    });
+                }
+                
+                this.log('📱 Колонки инициализированы');
+            },
+            
+            expandColumn: function(column) {
+                if (!this.state.isMobile()) return;
+                
+                console.log(`📱 Разворачиваем колонку: ${column}`);
+                
+                // Сначала закрываем все развёрнутые колонки
+                this.closeAllColumns();
+                
+                const navColumn = document.getElementById('nav-column');
+                const devColumn = document.getElementById('dev-column');
+                
+                if (column === 'nav') {
+                    navColumn.classList.add('expanded');
+                    this.state.expandedColumn = 'nav';
+                    this.log('📱 Открыта колонка навигации');
+                } else if (column === 'dev') {
+                    devColumn.classList.add('expanded');
+                    this.state.expandedColumn = 'dev';
+                    this.log('📱 Открыта колонка разработчика');
+                }
+            },
+            
+            closeColumn: function(column) {
+                if (!this.state.isMobile()) return;
+                
+                console.log(`📱 Закрываем колонку: ${column}`);
+                
+                const navColumn = document.getElementById('nav-column');
+                const devColumn = document.getElementById('dev-column');
+                
+                if (column === 'nav') {
+                    navColumn.classList.remove('expanded');
+                } else if (column === 'dev') {
+                    devColumn.classList.remove('expanded');
+                }
+                
+                this.state.expandedColumn = null;
+                this.log('📱 Колонка закрыта');
+            },
+            
+            closeAllColumns: function() {
+                const navColumn = document.getElementById('nav-column');
+                const devColumn = document.getElementById('dev-column');
+                
+                navColumn.classList.remove('expanded');
+                devColumn.classList.remove('expanded');
+                
+                this.state.expandedColumn = null;
             },
 
             // ===== ЗАГРУЗКА ВКЛАДОК =====
@@ -1377,16 +1352,9 @@
         document.addEventListener('DOMContentLoaded', () => app.init());
         window.addEventListener('resize', () => {
             if (window.innerWidth > 1024) {
-                const contentPanel = document.getElementById('content-panel');
-                const chatPanel = document.getElementById('chat-panel');
-                
-                contentPanel.classList.remove('active-panel', 'force-panel-active');
-                chatPanel.classList.remove('active-panel', 'force-chat-active');
-                
-                contentPanel.style.cssText = '';
-                chatPanel.style.cssText = '';
+                app.closeAllColumns();
             } else {
-                app.mobile.init();
+                app.initMobileColumns();
             }
         });
     </script>
