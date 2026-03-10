@@ -1478,5 +1478,94 @@
             }
         });
     </script>
+    
+    <!-- ПРОСТОЕ РЕШЕНИЕ ДЛЯ МОБИЛЬНЫХ КНОПОК -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ждём загрузки всех скриптов
+        setTimeout(function() {
+            console.log('🔧 Устанавливаем прямые обработчики для мобильных кнопок');
+            
+            // Находим все кнопки в левой панели
+            const allButtons = document.querySelectorAll('.sidebar .tab-btn');
+            
+            allButtons.forEach(btn => {
+                const text = btn.textContent || '';
+                
+                // Кнопка чата
+                if (text.includes('💬') || text.includes('Чат')) {
+                    console.log('🔧 Найдена кнопка чата');
+                    btn.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('📱 Чат');
+                        
+                        const chatPanel = document.getElementById('chat-panel');
+                        const contentPanel = document.getElementById('content-panel');
+                        
+                        contentPanel.classList.remove('force-panel-active');
+                        chatPanel.classList.add('force-chat-active');
+                        
+                        chatPanel.style.cssText = 'display: flex !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; flex-direction: column !important;';
+                        contentPanel.style.cssText = '';
+                        
+                        return false;
+                    };
+                }
+                // Кнопка панели разработчика
+                else if (text.includes('👨‍💻') || text.includes('Панель разработчика')) {
+                    console.log('🔧 Найдена кнопка панели разработчика');
+                    btn.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('📱 Панель разработчика');
+                        
+                        const chatPanel = document.getElementById('chat-panel');
+                        const contentPanel = document.getElementById('content-panel');
+                        
+                        chatPanel.classList.remove('force-chat-active');
+                        contentPanel.classList.add('force-panel-active');
+                        
+                        contentPanel.style.cssText = 'display: block !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; overflow-y: auto !important;';
+                        chatPanel.style.cssText = '';
+                        
+                        setTimeout(() => {
+                            const devPanel = document.querySelector('.p-5.bg-gradient-to-r');
+                            if (devPanel) devPanel.scrollIntoView({ behavior: 'smooth' });
+                        }, 200);
+                        
+                        return false;
+                    };
+                }
+                // Кнопка навигации
+                else if (text.includes('📊') || text.includes('Навигация')) {
+                    console.log('🔧 Найдена кнопка навигации');
+                    btn.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('📱 Навигация');
+                        
+                        const chatPanel = document.getElementById('chat-panel');
+                        const contentPanel = document.getElementById('content-panel');
+                        
+                        chatPanel.classList.remove('force-chat-active');
+                        contentPanel.classList.add('force-panel-active');
+                        
+                        contentPanel.style.cssText = 'display: block !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; overflow-y: auto !important;';
+                        chatPanel.style.cssText = '';
+                        
+                        if (typeof app !== 'undefined' && app.loadTab) {
+                            app.loadTab('users');
+                        }
+                        
+                        return false;
+                    };
+                }
+            });
+            
+            console.log('📱 Мобильные кнопки настроены');
+        }, 1000);
+    });
+    </script>
 </body>
 </html>
