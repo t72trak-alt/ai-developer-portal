@@ -159,7 +159,7 @@
             </div>
             <div id="errorMessage" class="error-message"></div>
             <div id="successMessage" class="success-message"></div>
-            <form id="loginForm" class="login-form">
+            <form id="loginForm" class="login-form" autocomplete="off">
                 <div class="form-group">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" 
@@ -168,7 +168,9 @@
                            class="form-input" 
                            placeholder="ваш@email.com"
                            required
-                           autocomplete="off">
+                           autocomplete="new-email"
+                           readonly
+                           onfocus="this.removeAttribute('readonly')">
                 </div>
                 <div class="form-group">
                     <label for="password" class="form-label">Пароль</label>
@@ -178,7 +180,9 @@
                            class="form-input" 
                            placeholder="••••••••"
                            required
-                           autocomplete="off">
+                           autocomplete="new-password"
+                           readonly
+                           onfocus="this.removeAttribute('readonly')">
                 </div>
                 <button type="submit" class="login-button">
                     ВОЙТИ
@@ -194,9 +198,9 @@
     </div>
 </div>
 <script>
-// Принудительная очистка полей при загрузке страницы
+// Множественная очистка полей
 (function() {
-    // Очищаем поля ДО загрузки DOM
+    // 1. Немедленная очистка при загрузке скрипта
     if (document.getElementById('email')) {
         document.getElementById('email').value = '';
     }
@@ -205,16 +209,20 @@
     }
 })();
 
+// 2. Очистка при DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
     // Очищаем поля
-    document.getElementById('email').value = '';
-    document.getElementById('password').value = '';
+    const emailField = document.getElementById('email');
+    const passwordField = document.getElementById('password');
     
-    // Отключаем автозаполнение
-    document.getElementById('email').setAttribute('autocomplete', 'off');
-    document.getElementById('password').setAttribute('autocomplete', 'off');
+    emailField.value = '';
+    passwordField.value = '';
     
-    // Очищаем всё хранилище
+    // Устанавливаем атрибуты
+    emailField.setAttribute('autocomplete', 'new-email');
+    passwordField.setAttribute('autocomplete', 'new-password');
+    
+    // Очищаем хранилище
     localStorage.clear();
     sessionStorage.clear();
     
@@ -223,10 +231,26 @@ document.addEventListener('DOMContentLoaded', function() {
         document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
     });
     
-    // Фокус на поле email
-    document.getElementById('email').focus();
-    
     console.log('✅ Поля принудительно очищены');
+});
+
+// 3. Очистка при загрузке окна
+window.addEventListener('load', function() {
+    document.getElementById('email').value = '';
+    document.getElementById('password').value = '';
+});
+
+// 4. Очистка при фокусе (на всякий случай)
+document.getElementById('email').addEventListener('focus', function() {
+    if (this.value) {
+        this.value = '';
+    }
+});
+
+document.getElementById('password').addEventListener('focus', function() {
+    if (this.value) {
+        this.value = '';
+    }
 });
 
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
