@@ -694,27 +694,43 @@
                         search.removeEventListener('focus', app.mobile.handleSearchFocus);
                         search.addEventListener('focus', app.mobile.handleSearchFocus);
                     }
+                    
+                    app.log('📱 Мобильный режим готов');
                 },
                 
                 handleTabClick: function(e) {
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    console.log('📱 Клик по вкладке');
+                    const buttonHtml = e.currentTarget.innerHTML;
+                    console.log('📱 Клик по вкладке:', buttonHtml);
                     
-                    // Получаем название вкладки из атрибута onclick
-                    const onclickAttr = e.currentTarget.getAttribute('onclick');
-                    if (onclickAttr) {
-                        const match = onclickAttr.match(/app\.loadTab\(['"]([^'"]+)['"]\)/);
-                        if (match && match[1]) {
-                            const tabName = match[1];
-                            
-                            // Сначала загружаем вкладку
-                            app.loadTab(tabName).then(() => {
-                                // Потом показываем панель контента
-                                app.mobile.showPanel('content');
-                            });
-                        }
+                    // Определяем какая из трёх главных вкладок нажата
+                    if (buttonHtml.includes('💬') || buttonHtml.includes('Чат')) {
+                        // Вкладка 1: Чат поддержки
+                        console.log('📱 Открываем чат');
+                        app.mobile.showPanel('chat');
+                    } 
+                    else if (buttonHtml.includes('👨‍💻') || buttonHtml.includes('Панель разработчика')) {
+                        // Вкладка 2: Панель разработчика
+                        console.log('📱 Открываем панель разработчика');
+                        app.mobile.showPanel('developer');
+                        
+                        // Прокручиваем к панели разработчика
+                        setTimeout(() => {
+                            const devPanel = document.querySelector('.p-5.bg-gradient-to-r');
+                            if (devPanel) {
+                                devPanel.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }, 200);
+                    } 
+                    else if (buttonHtml.includes('📊') || buttonHtml.includes('Навигация')) {
+                        // Вкладка 3: Навигация (меню с иконками)
+                        console.log('📱 Открываем меню навигации');
+                        app.mobile.showPanel('navigation');
+                        
+                        // Загружаем вкладку пользователей по умолчанию
+                        app.loadTab('users');
                     }
                 },
                 
@@ -732,17 +748,15 @@
                     const contentPanel = document.getElementById('content-panel');
                     const chatPanel = document.getElementById('chat-panel');
                     
-                    // Скрываем все панели - убираем классы и сбрасываем стили
+                    // Скрываем все панели
                     contentPanel.classList.remove('active-panel', 'force-panel-active');
                     chatPanel.classList.remove('active-panel', 'force-chat-active');
-                    
                     contentPanel.style.cssText = '';
                     chatPanel.style.cssText = '';
                     
-                    // Показываем нужную панель с ПРИНУДИТЕЛЬНЫМИ стилями
-                    if (panel === 'content') {
+                    if (panel === 'navigation') {
+                        // Панель навигации (меню с иконками)
                         contentPanel.classList.add('force-panel-active');
-                        // Дополнительные inline стили для гарантии
                         contentPanel.style.cssText = `
                             display: block !important;
                             position: fixed !important;
@@ -752,12 +766,33 @@
                             bottom: 0 !important;
                             z-index: 9999 !important;
                             background: white !important;
+                            overflow-y: auto !important;
+                            padding: 20px !important;
                         `;
-                        app.state.mobilePanelActive = 'content';
-                        app.log('📱 Открыта панель контента');
-                    } else {
+                        app.state.mobilePanelActive = 'navigation';
+                        app.log('📱 Открыта панель навигации');
+                    } 
+                    else if (panel === 'developer') {
+                        // Панель разработчика
+                        contentPanel.classList.add('force-panel-active');
+                        contentPanel.style.cssText = `
+                            display: block !important;
+                            position: fixed !important;
+                            top: 0 !important;
+                            left: 70px !important;
+                            right: 0 !important;
+                            bottom: 0 !important;
+                            z-index: 9999 !important;
+                            background: white !important;
+                            overflow-y: auto !important;
+                            padding: 20px !important;
+                        `;
+                        app.state.mobilePanelActive = 'developer';
+                        app.log('📱 Открыта панель разработчика');
+                    }
+                    else if (panel === 'chat') {
+                        // Панель чата
                         chatPanel.classList.add('force-chat-active');
-                        // Дополнительные inline стили для гарантии
                         chatPanel.style.cssText = `
                             display: flex !important;
                             position: fixed !important;
@@ -768,12 +803,11 @@
                             z-index: 9999 !important;
                             background: white !important;
                             flex-direction: column !important;
+                            padding: 20px !important;
                         `;
                         app.state.mobilePanelActive = 'chat';
                         app.log('📱 Открыта панель чата');
                     }
-                    
-                    console.log('📱 Панель открыта');
                 },
                 
                 closeActivePanel: function() {
@@ -799,6 +833,7 @@
             loadTab: async function(tabName) {
                 console.log(`📁 Загрузка вкладки: ${tabName}`);
                 
+                // Подсвечиваем активную вкладку в меню навигации
                 document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
                 const tabBtn = document.getElementById(`tab-${tabName}`);
                 if (tabBtn) tabBtn.classList.add('active-tab');
