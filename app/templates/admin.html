@@ -213,10 +213,13 @@
                 margin: 0 !important;
                 border-radius: 0 !important;
                 height: 100%;
-                overflow-y: auto;
+                overflow-y: auto !important;
                 background-color: #f3f4f6;
                 border-right: 1px solid #e5e7eb;
                 box-shadow: none !important;
+                position: relative !important;
+                z-index: 10 !important;
+                -webkit-overflow-scrolling: touch;
             }
             
             .sidebar h2, .sidebar .mt-6.p-4 { display: none !important; }
@@ -224,7 +227,8 @@
             .sidebar .space-y-1 {
                 display: flex !important;
                 flex-direction: column !important;
-                gap: 8px !important;
+                gap: 4px !important;
+                padding-bottom: 20px !important;
             }
             
             .sidebar .tab-btn {
@@ -237,7 +241,7 @@
                 font-size: 10px !important;
                 border-radius: 8px !important;
                 background-color: transparent !important;
-                min-height: 60px !important;
+                min-height: 70px !important;
                 width: 100% !important;
                 margin: 0 !important;
                 color: #4b5563 !important;
@@ -245,6 +249,10 @@
                 border: none !important;
                 transition: all 0.2s;
                 -webkit-tap-highlight-color: transparent;
+                pointer-events: auto !important;
+                position: relative !important;
+                z-index: 15 !important;
+                touch-action: manipulation;
             }
             
             .sidebar .tab-btn:active {
@@ -255,7 +263,8 @@
             .sidebar .tab-btn span:first-child {
                 margin-right: 0 !important;
                 font-size: 24px !important;
-                margin-bottom: 2px !important;
+                margin-bottom: 4px !important;
+                display: block !important;
             }
             
             .sidebar .tab-btn span.text-gray-800 { display: none !important; }
@@ -309,6 +318,17 @@
             }
             .active-panel .panel-close-btn { display: flex !important; }
             .sidebar { display: block !important; }
+        }
+
+        /* Дополнительные стили для маленьких экранов */
+        @media (max-width: 480px) {
+            .sidebar .tab-btn {
+                min-height: 65px !important;
+                padding: 8px 0 !important;
+            }
+            .sidebar .tab-btn span:first-child {
+                font-size: 22px !important;
+            }
         }
 
         @media (max-width: 768px) {
@@ -593,20 +613,39 @@
                 init: function() {
                     if (!app.state.isMobile()) return;
                     
+                    // Убираем все активные панели
+                    document.getElementById('content-panel').classList.remove('active-panel');
+                    document.getElementById('chat-panel').classList.remove('active-panel');
+                    
+                    // Добавляем обработчики для всех кнопок навигации
                     document.querySelectorAll('.tab-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setTimeout(() => app.mobile.showPanel('content'), 100);
-                        });
+                        // Убираем старые обработчики, чтобы не было дублирования
+                        btn.removeEventListener('click', app.mobile.handleTabClick);
+                        // Добавляем новый обработчик
+                        btn.addEventListener('click', app.mobile.handleTabClick);
                     });
                     
+                    // Обработчик для поиска в чате
                     const search = document.getElementById('chat-search');
                     if (search) {
-                        search.addEventListener('focus', () => setTimeout(() => app.mobile.showPanel('chat'), 100));
+                        search.removeEventListener('focus', app.mobile.handleSearchFocus);
+                        search.addEventListener('focus', app.mobile.handleSearchFocus);
                     }
                     
+                    // Показываем панель контента по умолчанию
+                    setTimeout(() => app.mobile.showPanel('content'), 100);
+                },
+                
+                handleTabClick: function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Показываем панель контента при клике на любую кнопку навигации
                     app.mobile.showPanel('content');
+                },
+                
+                handleSearchFocus: function(e) {
+                    e.preventDefault();
+                    setTimeout(() => app.mobile.showPanel('chat'), 100);
                 },
                 
                 showPanel: function(panel) {
@@ -615,15 +654,19 @@
                     const contentPanel = document.getElementById('content-panel');
                     const chatPanel = document.getElementById('chat-panel');
                     
+                    // Скрываем все панели
                     contentPanel.classList.remove('active-panel');
                     chatPanel.classList.remove('active-panel');
                     
+                    // Показываем нужную панель
                     if (panel === 'content') {
                         contentPanel.classList.add('active-panel');
                         app.state.mobilePanelActive = 'content';
+                        app.log('📱 Открыта панель контента');
                     } else {
                         chatPanel.classList.add('active-panel');
                         app.state.mobilePanelActive = 'chat';
+                        app.log('📱 Открыта панель чата');
                     }
                 },
                 
@@ -632,6 +675,7 @@
                     document.getElementById('content-panel').classList.remove('active-panel');
                     document.getElementById('chat-panel').classList.remove('active-panel');
                     app.state.mobilePanelActive = null;
+                    app.log('📱 Панель закрыта');
                 }
             },
 
