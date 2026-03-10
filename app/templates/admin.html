@@ -668,12 +668,14 @@
                     contentPanel.classList.remove('active-panel');
                     chatPanel.classList.remove('active-panel');
                     
-                    // Показываем нужную панель
+                    // Принудительно устанавливаем display для мобильных
                     if (panel === 'content') {
+                        contentPanel.style.display = 'block';
                         contentPanel.classList.add('active-panel');
                         app.state.mobilePanelActive = 'content';
                         app.log('📱 Открыта панель контента');
                     } else {
+                        chatPanel.style.display = 'flex';
                         chatPanel.classList.add('active-panel');
                         app.state.mobilePanelActive = 'chat';
                         app.log('📱 Открыта панель чата');
@@ -682,8 +684,17 @@
                 
                 closeActivePanel: function() {
                     if (!app.state.isMobile()) return;
-                    document.getElementById('content-panel').classList.remove('active-panel');
-                    document.getElementById('chat-panel').classList.remove('active-panel');
+                    
+                    const contentPanel = document.getElementById('content-panel');
+                    const chatPanel = document.getElementById('chat-panel');
+                    
+                    contentPanel.classList.remove('active-panel');
+                    chatPanel.classList.remove('active-panel');
+                    
+                    // Сбрасываем display
+                    contentPanel.style.display = '';
+                    chatPanel.style.display = '';
+                    
                     app.state.mobilePanelActive = null;
                     app.log('📱 Панель закрыта');
                 }
@@ -709,11 +720,51 @@
                     
                     switch(tabName) {
                         case 'users': await app.users.loadTab(token); break;
-                        case 'contracts': document.getElementById('content-area').innerHTML = '<div class="p-6 text-center text-gray-500">Раздел в разработке</div>'; break;
-                        case 'payments': document.getElementById('content-area').innerHTML = '<div class="p-6 text-center text-gray-500">Раздел в разработке</div>'; break;
-                        case 'projects': document.getElementById('content-area').innerHTML = '<div class="p-6 text-center text-gray-500">Раздел в разработке</div>'; break;
-                        case 'work-materials': document.getElementById('content-area').innerHTML = '<div class="p-6 text-center text-gray-500">Раздел в разработке</div>'; break;
-                        case 'archive': document.getElementById('content-area').innerHTML = '<div class="p-6 text-center text-gray-500">Раздел в разработке</div>'; break;
+                        case 'contracts': 
+                            document.getElementById('content-area').innerHTML = `
+                                <div class="p-8 text-center">
+                                    <div class="text-4xl mb-4">📄</div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Договора</h3>
+                                    <p class="text-gray-600">Раздел в разработке</p>
+                                </div>
+                            `; 
+                            break;
+                        case 'payments': 
+                            document.getElementById('content-area').innerHTML = `
+                                <div class="p-8 text-center">
+                                    <div class="text-4xl mb-4">💰</div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Платежи</h3>
+                                    <p class="text-gray-600">Раздел в разработке</p>
+                                </div>
+                            `; 
+                            break;
+                        case 'projects': 
+                            document.getElementById('content-area').innerHTML = `
+                                <div class="p-8 text-center">
+                                    <div class="text-4xl mb-4">📁</div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Проекты</h3>
+                                    <p class="text-gray-600">Раздел в разработке</p>
+                                </div>
+                            `; 
+                            break;
+                        case 'work-materials': 
+                            document.getElementById('content-area').innerHTML = `
+                                <div class="p-8 text-center">
+                                    <div class="text-4xl mb-4">⚙️</div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Рабочие материалы</h3>
+                                    <p class="text-gray-600">Раздел в разработке</p>
+                                </div>
+                            `; 
+                            break;
+                        case 'archive': 
+                            document.getElementById('content-area').innerHTML = `
+                                <div class="p-8 text-center">
+                                    <div class="text-4xl mb-4">📦</div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Архив</h3>
+                                    <p class="text-gray-600">Раздел в разработке</p>
+                                </div>
+                            `; 
+                            break;
                     }
                     
                     this.log(`✅ Вкладка "${tabName}" загружена`);
@@ -1286,6 +1337,8 @@
             if (window.innerWidth > 1024) {
                 document.getElementById('content-panel').classList.remove('active-panel');
                 document.getElementById('chat-panel').classList.remove('active-panel');
+                document.getElementById('content-panel').style.display = '';
+                document.getElementById('chat-panel').style.display = '';
             } else {
                 app.mobile.init();
             }
