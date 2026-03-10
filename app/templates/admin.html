@@ -617,11 +617,9 @@
                     document.getElementById('content-panel').classList.remove('active-panel');
                     document.getElementById('chat-panel').classList.remove('active-panel');
                     
-                    // Добавляем обработчики для всех кнопок навигации
+                    // Удаляем старые обработчики и добавляем новые для кнопок навигации
                     document.querySelectorAll('.tab-btn').forEach(btn => {
-                        // Убираем старые обработчики, чтобы не было дублирования
                         btn.removeEventListener('click', app.mobile.handleTabClick);
-                        // Добавляем новый обработчик
                         btn.addEventListener('click', app.mobile.handleTabClick);
                     });
                     
@@ -632,15 +630,27 @@
                         search.addEventListener('focus', app.mobile.handleSearchFocus);
                     }
                     
-                    // Показываем панель контента по умолчанию
-                    setTimeout(() => app.mobile.showPanel('content'), 100);
+                    app.log('📱 Мобильный режим активирован');
                 },
                 
                 handleTabClick: function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    // Показываем панель контента при клике на любую кнопку навигации
-                    app.mobile.showPanel('content');
+                    
+                    // Получаем название вкладки из атрибута onclick
+                    const onclickAttr = e.currentTarget.getAttribute('onclick');
+                    if (onclickAttr) {
+                        const match = onclickAttr.match(/app\.loadTab\(['"]([^'"]+)['"]\)/);
+                        if (match && match[1]) {
+                            const tabName = match[1];
+                            
+                            // Сначала загружаем вкладку
+                            app.loadTab(tabName).then(() => {
+                                // Потом показываем панель контента
+                                app.mobile.showPanel('content');
+                            });
+                        }
+                    }
                 },
                 
                 handleSearchFocus: function(e) {
