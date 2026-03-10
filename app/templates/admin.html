@@ -320,6 +320,62 @@
             .sidebar { display: block !important; }
         }
 
+        /* ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ МОБИЛЬНОЙ ВЕРСИИ */
+        @media (max-width: 1024px) {
+            .force-panel-active {
+                display: block !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 70px !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                width: auto !important;
+                height: 100vh !important;
+                z-index: 9999 !important;
+                background: white !important;
+                box-shadow: -2px 0 10px rgba(0,0,0,0.3) !important;
+                margin: 0 !important;
+                padding: 20px !important;
+                overflow-y: auto !important;
+            }
+            
+            .force-chat-active {
+                display: flex !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 70px !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                width: auto !important;
+                height: 100vh !important;
+                z-index: 9999 !important;
+                background: white !important;
+                box-shadow: -2px 0 10px rgba(0,0,0,0.3) !important;
+                margin: 0 !important;
+                padding: 20px !important;
+                flex-direction: column !important;
+            }
+            
+            .force-close-btn {
+                display: flex !important;
+                position: absolute !important;
+                top: 10px !important;
+                right: 10px !important;
+                background: #ef4444 !important;
+                color: white !important;
+                width: 40px !important;
+                height: 40px !important;
+                border-radius: 50% !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-size: 24px !important;
+                z-index: 10000 !important;
+                cursor: pointer !important;
+                border: none !important;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            }
+        }
+
         /* Дополнительные стили для маленьких экранов */
         @media (max-width: 480px) {
             .sidebar .tab-btn {
@@ -613,9 +669,18 @@
                 init: function() {
                     if (!app.state.isMobile()) return;
                     
-                    // Убираем все активные панели
-                    document.getElementById('content-panel').classList.remove('active-panel');
-                    document.getElementById('chat-panel').classList.remove('active-panel');
+                    console.log('📱 Мобильный режим активирован');
+                    
+                    // Убираем все активные панели и сбрасываем классы
+                    const contentPanel = document.getElementById('content-panel');
+                    const chatPanel = document.getElementById('chat-panel');
+                    
+                    contentPanel.classList.remove('active-panel', 'force-panel-active');
+                    chatPanel.classList.remove('active-panel', 'force-chat-active');
+                    
+                    // Сбрасываем inline стили
+                    contentPanel.style.cssText = '';
+                    chatPanel.style.cssText = '';
                     
                     // Удаляем старые обработчики и добавляем новые для кнопок навигации
                     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -629,13 +694,13 @@
                         search.removeEventListener('focus', app.mobile.handleSearchFocus);
                         search.addEventListener('focus', app.mobile.handleSearchFocus);
                     }
-                    
-                    app.log('📱 Мобильный режим активирован');
                 },
                 
                 handleTabClick: function(e) {
                     e.preventDefault();
                     e.stopPropagation();
+                    
+                    console.log('📱 Клик по вкладке');
                     
                     // Получаем название вкладки из атрибута onclick
                     const onclickAttr = e.currentTarget.getAttribute('onclick');
@@ -655,45 +720,75 @@
                 
                 handleSearchFocus: function(e) {
                     e.preventDefault();
+                    console.log('📱 Фокус на поиске чата');
                     setTimeout(() => app.mobile.showPanel('chat'), 100);
                 },
                 
                 showPanel: function(panel) {
                     if (!app.state.isMobile()) return;
                     
+                    console.log('📱 Показываем панель:', panel);
+                    
                     const contentPanel = document.getElementById('content-panel');
                     const chatPanel = document.getElementById('chat-panel');
                     
-                    // Скрываем все панели
-                    contentPanel.classList.remove('active-panel');
-                    chatPanel.classList.remove('active-panel');
+                    // Скрываем все панели - убираем классы и сбрасываем стили
+                    contentPanel.classList.remove('active-panel', 'force-panel-active');
+                    chatPanel.classList.remove('active-panel', 'force-chat-active');
                     
-                    // Принудительно устанавливаем display для мобильных
+                    contentPanel.style.cssText = '';
+                    chatPanel.style.cssText = '';
+                    
+                    // Показываем нужную панель с ПРИНУДИТЕЛЬНЫМИ стилями
                     if (panel === 'content') {
-                        contentPanel.style.display = 'block';
-                        contentPanel.classList.add('active-panel');
+                        contentPanel.classList.add('force-panel-active');
+                        // Дополнительные inline стили для гарантии
+                        contentPanel.style.cssText = `
+                            display: block !important;
+                            position: fixed !important;
+                            top: 0 !important;
+                            left: 70px !important;
+                            right: 0 !important;
+                            bottom: 0 !important;
+                            z-index: 9999 !important;
+                            background: white !important;
+                        `;
                         app.state.mobilePanelActive = 'content';
                         app.log('📱 Открыта панель контента');
                     } else {
-                        chatPanel.style.display = 'flex';
-                        chatPanel.classList.add('active-panel');
+                        chatPanel.classList.add('force-chat-active');
+                        // Дополнительные inline стили для гарантии
+                        chatPanel.style.cssText = `
+                            display: flex !important;
+                            position: fixed !important;
+                            top: 0 !important;
+                            left: 70px !important;
+                            right: 0 !important;
+                            bottom: 0 !important;
+                            z-index: 9999 !important;
+                            background: white !important;
+                            flex-direction: column !important;
+                        `;
                         app.state.mobilePanelActive = 'chat';
                         app.log('📱 Открыта панель чата');
                     }
+                    
+                    console.log('📱 Панель открыта');
                 },
                 
                 closeActivePanel: function() {
                     if (!app.state.isMobile()) return;
                     
+                    console.log('📱 Закрываем панель');
+                    
                     const contentPanel = document.getElementById('content-panel');
                     const chatPanel = document.getElementById('chat-panel');
                     
-                    contentPanel.classList.remove('active-panel');
-                    chatPanel.classList.remove('active-panel');
+                    contentPanel.classList.remove('active-panel', 'force-panel-active');
+                    chatPanel.classList.remove('active-panel', 'force-chat-active');
                     
-                    // Сбрасываем display
-                    contentPanel.style.display = '';
-                    chatPanel.style.display = '';
+                    contentPanel.style.cssText = '';
+                    chatPanel.style.cssText = '';
                     
                     app.state.mobilePanelActive = null;
                     app.log('📱 Панель закрыта');
@@ -1335,10 +1430,14 @@
         document.addEventListener('DOMContentLoaded', () => app.init());
         window.addEventListener('resize', () => {
             if (window.innerWidth > 1024) {
-                document.getElementById('content-panel').classList.remove('active-panel');
-                document.getElementById('chat-panel').classList.remove('active-panel');
-                document.getElementById('content-panel').style.display = '';
-                document.getElementById('chat-panel').style.display = '';
+                const contentPanel = document.getElementById('content-panel');
+                const chatPanel = document.getElementById('chat-panel');
+                
+                contentPanel.classList.remove('active-panel', 'force-panel-active');
+                chatPanel.classList.remove('active-panel', 'force-chat-active');
+                
+                contentPanel.style.cssText = '';
+                chatPanel.style.cssText = '';
             } else {
                 app.mobile.init();
             }
