@@ -419,6 +419,21 @@
         <div class="sidebar w-64 bg-white rounded-lg shadow-lg p-4 overflow-y-auto">
             <h2 class="text-lg font-bold mb-4 text-gray-700 border-b pb-2">📊 Навигация</h2>
             <div class="space-y-1">
+                <!-- Кнопка чата с прямым обработчиком -->
+                <button onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('chat-panel').classList.add('force-chat-active'); document.getElementById('chat-panel').style.cssText='display: flex !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; flex-direction: column !important;'; document.getElementById('content-panel').classList.remove('force-panel-active'); document.getElementById('content-panel').style.cssText=''; return false;" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium">
+                    <span class="mr-2 text-gray-700">💬</span> <span class="text-gray-800">Чат поддержки</span>
+                </button>
+                
+                <!-- Кнопка панели разработчика с прямым обработчиком -->
+                <button onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('content-panel').classList.add('force-panel-active'); document.getElementById('content-panel').style.cssText='display: block !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; overflow-y: auto !important;'; document.getElementById('chat-panel').classList.remove('force-chat-active'); document.getElementById('chat-panel').style.cssText=''; setTimeout(() => { const devPanel = document.querySelector('.p-5.bg-gradient-to-r'); if (devPanel) devPanel.scrollIntoView({ behavior: 'smooth' }); }, 200); return false;" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium">
+                    <span class="mr-2 text-gray-700">👨‍💻</span> <span class="text-gray-800">Панель разработчика</span>
+                </button>
+                
+                <!-- Кнопка навигации с прямым обработчиком -->
+                <button onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('content-panel').classList.add('force-panel-active'); document.getElementById('content-panel').style.cssText='display: block !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; overflow-y: auto !important;'; document.getElementById('chat-panel').classList.remove('force-chat-active'); document.getElementById('chat-panel').style.cssText=''; if (typeof app !== 'undefined' && app.loadTab) app.loadTab('users'); return false;" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium">
+                    <span class="mr-2 text-gray-700">📊</span> <span class="text-gray-800">Навигация</span>
+                </button>
+
                 <button onclick="app.loadTab('users')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-users">
                     <span class="mr-2 text-gray-700">👤</span> <span class="text-gray-800">Пользователи</span>
                 </button>
@@ -682,12 +697,6 @@
                     contentPanel.style.cssText = '';
                     chatPanel.style.cssText = '';
                     
-                    // Удаляем старые обработчики и добавляем новые для кнопок навигации
-                    document.querySelectorAll('.tab-btn').forEach(btn => {
-                        btn.removeEventListener('click', app.mobile.handleTabClick);
-                        btn.addEventListener('click', app.mobile.handleTabClick);
-                    });
-                    
                     // Обработчик для поиска в чате
                     const search = document.getElementById('chat-search');
                     if (search) {
@@ -698,116 +707,19 @@
                     app.log('📱 Мобильный режим готов');
                 },
                 
-                handleTabClick: function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const buttonHtml = e.currentTarget.innerHTML;
-                    console.log('📱 Клик по вкладке:', buttonHtml);
-                    
-                    // Определяем какая из трёх главных вкладок нажата
-                    if (buttonHtml.includes('💬') || buttonHtml.includes('Чат')) {
-                        // Вкладка 1: Чат поддержки
-                        console.log('📱 Открываем чат');
-                        app.mobile.showPanel('chat');
-                    } 
-                    else if (buttonHtml.includes('👨‍💻') || buttonHtml.includes('Панель разработчика')) {
-                        // Вкладка 2: Панель разработчика
-                        console.log('📱 Открываем панель разработчика');
-                        app.mobile.showPanel('developer');
-                        
-                        // Прокручиваем к панели разработчика
-                        setTimeout(() => {
-                            const devPanel = document.querySelector('.p-5.bg-gradient-to-r');
-                            if (devPanel) {
-                                devPanel.scrollIntoView({ behavior: 'smooth' });
-                            }
-                        }, 200);
-                    } 
-                    else if (buttonHtml.includes('📊') || buttonHtml.includes('Навигация')) {
-                        // Вкладка 3: Навигация (меню с иконками)
-                        console.log('📱 Открываем меню навигации');
-                        app.mobile.showPanel('navigation');
-                        
-                        // Загружаем вкладку пользователей по умолчанию
-                        app.loadTab('users');
-                    }
-                },
-                
                 handleSearchFocus: function(e) {
                     e.preventDefault();
                     console.log('📱 Фокус на поиске чата');
-                    setTimeout(() => app.mobile.showPanel('chat'), 100);
-                },
-                
-                showPanel: function(panel) {
-                    if (!app.state.isMobile()) return;
-                    
-                    console.log('📱 Показываем панель:', panel);
-                    
-                    const contentPanel = document.getElementById('content-panel');
-                    const chatPanel = document.getElementById('chat-panel');
-                    
-                    // Скрываем все панели
-                    contentPanel.classList.remove('active-panel', 'force-panel-active');
-                    chatPanel.classList.remove('active-panel', 'force-chat-active');
-                    contentPanel.style.cssText = '';
-                    chatPanel.style.cssText = '';
-                    
-                    if (panel === 'navigation') {
-                        // Панель навигации (меню с иконками)
-                        contentPanel.classList.add('force-panel-active');
-                        contentPanel.style.cssText = `
-                            display: block !important;
-                            position: fixed !important;
-                            top: 0 !important;
-                            left: 70px !important;
-                            right: 0 !important;
-                            bottom: 0 !important;
-                            z-index: 9999 !important;
-                            background: white !important;
-                            overflow-y: auto !important;
-                            padding: 20px !important;
-                        `;
-                        app.state.mobilePanelActive = 'navigation';
-                        app.log('📱 Открыта панель навигации');
-                    } 
-                    else if (panel === 'developer') {
-                        // Панель разработчика
-                        contentPanel.classList.add('force-panel-active');
-                        contentPanel.style.cssText = `
-                            display: block !important;
-                            position: fixed !important;
-                            top: 0 !important;
-                            left: 70px !important;
-                            right: 0 !important;
-                            bottom: 0 !important;
-                            z-index: 9999 !important;
-                            background: white !important;
-                            overflow-y: auto !important;
-                            padding: 20px !important;
-                        `;
-                        app.state.mobilePanelActive = 'developer';
-                        app.log('📱 Открыта панель разработчика');
-                    }
-                    else if (panel === 'chat') {
-                        // Панель чата
+                    setTimeout(() => {
+                        const chatPanel = document.getElementById('chat-panel');
+                        const contentPanel = document.getElementById('content-panel');
+                        
+                        contentPanel.classList.remove('force-panel-active');
                         chatPanel.classList.add('force-chat-active');
-                        chatPanel.style.cssText = `
-                            display: flex !important;
-                            position: fixed !important;
-                            top: 0 !important;
-                            left: 70px !important;
-                            right: 0 !important;
-                            bottom: 0 !important;
-                            z-index: 9999 !important;
-                            background: white !important;
-                            flex-direction: column !important;
-                            padding: 20px !important;
-                        `;
-                        app.state.mobilePanelActive = 'chat';
-                        app.log('📱 Открыта панель чата');
-                    }
+                        
+                        chatPanel.style.cssText = 'display: flex !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; flex-direction: column !important;';
+                        contentPanel.style.cssText = '';
+                    }, 100);
                 },
                 
                 closeActivePanel: function() {
@@ -1477,95 +1389,6 @@
                 app.mobile.init();
             }
         });
-    </script>
-    
-    <!-- ПРОСТОЕ РЕШЕНИЕ ДЛЯ МОБИЛЬНЫХ КНОПОК -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Ждём загрузки всех скриптов
-        setTimeout(function() {
-            console.log('🔧 Устанавливаем прямые обработчики для мобильных кнопок');
-            
-            // Находим все кнопки в левой панели
-            const allButtons = document.querySelectorAll('.sidebar .tab-btn');
-            
-            allButtons.forEach(btn => {
-                const text = btn.textContent || '';
-                
-                // Кнопка чата
-                if (text.includes('💬') || text.includes('Чат')) {
-                    console.log('🔧 Найдена кнопка чата');
-                    btn.onclick = function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('📱 Чат');
-                        
-                        const chatPanel = document.getElementById('chat-panel');
-                        const contentPanel = document.getElementById('content-panel');
-                        
-                        contentPanel.classList.remove('force-panel-active');
-                        chatPanel.classList.add('force-chat-active');
-                        
-                        chatPanel.style.cssText = 'display: flex !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; flex-direction: column !important;';
-                        contentPanel.style.cssText = '';
-                        
-                        return false;
-                    };
-                }
-                // Кнопка панели разработчика
-                else if (text.includes('👨‍💻') || text.includes('Панель разработчика')) {
-                    console.log('🔧 Найдена кнопка панели разработчика');
-                    btn.onclick = function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('📱 Панель разработчика');
-                        
-                        const chatPanel = document.getElementById('chat-panel');
-                        const contentPanel = document.getElementById('content-panel');
-                        
-                        chatPanel.classList.remove('force-chat-active');
-                        contentPanel.classList.add('force-panel-active');
-                        
-                        contentPanel.style.cssText = 'display: block !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; overflow-y: auto !important;';
-                        chatPanel.style.cssText = '';
-                        
-                        setTimeout(() => {
-                            const devPanel = document.querySelector('.p-5.bg-gradient-to-r');
-                            if (devPanel) devPanel.scrollIntoView({ behavior: 'smooth' });
-                        }, 200);
-                        
-                        return false;
-                    };
-                }
-                // Кнопка навигации
-                else if (text.includes('📊') || text.includes('Навигация')) {
-                    console.log('🔧 Найдена кнопка навигации');
-                    btn.onclick = function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('📱 Навигация');
-                        
-                        const chatPanel = document.getElementById('chat-panel');
-                        const contentPanel = document.getElementById('content-panel');
-                        
-                        chatPanel.classList.remove('force-chat-active');
-                        contentPanel.classList.add('force-panel-active');
-                        
-                        contentPanel.style.cssText = 'display: block !important; position: fixed !important; top: 0 !important; left: 70px !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; background: white !important; overflow-y: auto !important;';
-                        chatPanel.style.cssText = '';
-                        
-                        if (typeof app !== 'undefined' && app.loadTab) {
-                            app.loadTab('users');
-                        }
-                        
-                        return false;
-                    };
-                }
-            });
-            
-            console.log('📱 Мобильные кнопки настроены');
-        }, 1000);
-    });
     </script>
 </body>
 </html>
