@@ -2,7 +2,7 @@
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
-from jose import jwt
+import jwt
 from datetime import datetime, timedelta
 from app.database import get_db, create_tables, check_connection
 from app.models import User
