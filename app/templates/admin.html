@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="/static/css/chat-fix.css">
     <style>
         /* ===== ОСНОВНЫЕ СТИЛИ ===== */
-        .sidebar { transition: all 0.3s; }
-        .chat-panel { transition: all 0.3s; }
+        .sidebar { transition: all 0.3s ease; }
+        .chat-panel { transition: all 0.3s ease; }
         .active-tab { background-color: #3b82f6; color: white; }
         .active-tab span { color: white !important; }
         .message-admin { background-color: #3b82f6; color: white; margin-left: auto; }
@@ -213,7 +213,7 @@
                 width: 50px !important;
                 min-width: 50px !important;
                 max-width: 50px !important;
-                padding: 10px 0 !important;
+                padding: 0 !important;
                 margin: 0 !important;
                 border-radius: 0 !important;
                 height: 100%;
@@ -243,6 +243,7 @@
                 width: 50px !important;
                 min-width: 50px !important;
                 max-width: 50px !important;
+                padding: 0 !important;
                 margin: 0 !important;
                 height: 100% !important;
                 overflow: visible !important;
@@ -255,33 +256,35 @@
                 transition: all 0.3s ease;
             }
             
-            /* Верхние части колонок */
-            .sidebar::before {
-                content: "📊";
+            /* Верхние части колонок - теперь это отдельные элементы, а не псевдоэлементы */
+            .sidebar .column-header {
                 display: block;
                 text-align: center;
                 font-size: 20px;
                 padding: 10px 0;
                 background: #e5e7eb;
                 cursor: pointer;
+                width: 100%;
+                border-bottom: 1px solid #d1d5db;
             }
             
-            .chat-panel::before {
-                content: "👨‍💻";
+            .chat-panel .column-header {
                 display: block;
                 text-align: center;
                 font-size: 20px;
                 padding: 10px 0;
                 background: #e5e7eb;
                 cursor: pointer;
+                width: 100%;
+                border-bottom: 1px solid #d1d5db;
             }
             
-            /* Скрываем всё содержимое колонок кроме верхней части */
-            .sidebar > *:not(::before) {
+            /* Скрываем всё содержимое колонок кроме верхней части и кнопки закрытия */
+            .sidebar > *:not(.column-header):not(.close-column-btn) {
                 display: none !important;
             }
             
-            .chat-panel > *:not(::before) {
+            .chat-panel > *:not(.column-header):not(.close-column-btn) {
                 display: none !important;
             }
             
@@ -312,8 +315,8 @@
                 padding: 20px !important;
             }
             
-            .sidebar.expanded::before,
-            .chat-panel.expanded::before {
+            .sidebar.expanded .column-header,
+            .chat-panel.expanded .column-header {
                 display: none !important;
             }
             
@@ -339,6 +342,7 @@
                 z-index: 1001 !important;
                 cursor: pointer !important;
                 border: none !important;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
             }
             
             .sidebar.expanded .close-column-btn,
@@ -346,13 +350,14 @@
                 display: flex !important;
             }
             
+            /* Убираем старый неиспользуемый класс */
             .panel-close-btn { display: none !important; }
         }
 
         /* Дополнительные стили для маленьких экранов */
         @media (max-width: 480px) {
-            .sidebar::before,
-            .chat-panel::before {
+            .sidebar .column-header,
+            .chat-panel .column-header {
                 font-size: 18px !important;
                 padding: 8px 0 !important;
             }
@@ -388,7 +393,8 @@
     <div class="container mx-auto flex mt-4 gap-4" style="min-height: calc(100vh - 140px);">
         <!-- Колонка 2 (Навигация) - скрыта, видна только верхняя часть с 📊 -->
         <div class="sidebar w-64 bg-white rounded-lg shadow-lg p-4 overflow-y-auto" id="nav-column">
-            <button class="close-column-btn" onclick="app.closeColumn('nav')">✕</button>
+            <div class="column-header">📊</div>
+            <button class="close-column-btn" onclick="event.stopPropagation(); app.closeColumn('nav');">✕</button>
             <h2 class="text-lg font-bold mb-4 text-gray-700 border-b pb-2">📊 Навигация</h2>
             <div class="space-y-1">
                 <button onclick="app.loadTab('users')" class="tab-btn w-full text-left p-3 rounded hover:bg-blue-50 transition flex items-center text-gray-800 font-medium" id="tab-users">
@@ -442,7 +448,8 @@
         
         <!-- Колонка 3 (Панель разработчика) - скрыта, видна только верхняя часть с 👨‍💻 -->
         <div class="chat-panel w-80 bg-white rounded-lg shadow-lg flex flex-col" id="dev-column">
-            <button class="close-column-btn" onclick="app.closeColumn('dev')">✕</button>
+            <div class="column-header">👨‍💻</div>
+            <button class="close-column-btn" onclick="event.stopPropagation(); app.closeColumn('dev');">✕</button>
             <div class="p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
                 <div class="flex justify-between items-center mb-2">
                     <h2 class="text-lg font-bold text-gray-700">💬 Чат поддержки</h2>
@@ -580,7 +587,8 @@
                 currentClientEmail: '',
                 reconnectAttempts: 0,
                 expandedColumn: null,
-                isMobile: () => window.innerWidth <= 1024
+                isMobile: () => window.innerWidth <= 1024,
+                resizeTimer: null
             },
 
             // ===== ИНИЦИАЛИЗАЦИЯ =====
@@ -611,7 +619,11 @@
                     await this.loadTab('users');
                     await this.stats.load();
                     this.chat.connect();
-                    this.initMobileColumns();
+                    
+                    // Инициализируем мобильные колонки после небольшой задержки
+                    setTimeout(() => {
+                        this.initMobileColumns();
+                    }, 100);
                     
                     this.log('✅ Админ-панель инициализирована');
                 } catch (error) {
@@ -644,23 +656,29 @@
                 const navColumn = document.getElementById('nav-column');
                 const devColumn = document.getElementById('dev-column');
                 
-                // Добавляем обработчики клика на верхние части колонок
+                // Удаляем старые обработчики, чтобы не было дублирования
                 if (navColumn) {
-                    navColumn.addEventListener('click', (e) => {
-                        // Не срабатывать при клике на кнопку закрытия
-                        if (!e.target.classList.contains('close-column-btn')) {
+                    navColumn.removeEventListener('click', this._navClickHandler);
+                    this._navClickHandler = (e) => {
+                        // Кликаем по колонке, но не по кнопке закрытия
+                        if (!e.target.classList.contains('close-column-btn') && 
+                            !e.target.closest('.close-column-btn')) {
                             this.expandColumn('nav');
                         }
-                    });
+                    };
+                    navColumn.addEventListener('click', this._navClickHandler);
                 }
                 
                 if (devColumn) {
-                    devColumn.addEventListener('click', (e) => {
-                        // Не срабатывать при клике на кнопку закрытия
-                        if (!e.target.classList.contains('close-column-btn')) {
+                    devColumn.removeEventListener('click', this._devClickHandler);
+                    this._devClickHandler = (e) => {
+                        // Кликаем по колонке, но не по кнопке закрытия
+                        if (!e.target.classList.contains('close-column-btn') && 
+                            !e.target.closest('.close-column-btn')) {
                             this.expandColumn('dev');
                         }
-                    });
+                    };
+                    devColumn.addEventListener('click', this._devClickHandler);
                 }
                 
                 this.log('📱 Колонки инициализированы');
@@ -671,17 +689,18 @@
                 
                 console.log(`📱 Разворачиваем колонку: ${column}`);
                 
-                // Сначала закрываем все развёрнутые колонки
-                this.closeAllColumns();
-                
                 const navColumn = document.getElementById('nav-column');
                 const devColumn = document.getElementById('dev-column');
                 
                 if (column === 'nav') {
+                    // Закрываем правую, если открыта
+                    devColumn.classList.remove('expanded');
                     navColumn.classList.add('expanded');
                     this.state.expandedColumn = 'nav';
                     this.log('📱 Открыта колонка навигации');
                 } else if (column === 'dev') {
+                    // Закрываем левую, если открыта
+                    navColumn.classList.remove('expanded');
                     devColumn.classList.add('expanded');
                     this.state.expandedColumn = 'dev';
                     this.log('📱 Открыта колонка разработчика');
@@ -710,8 +729,8 @@
                 const navColumn = document.getElementById('nav-column');
                 const devColumn = document.getElementById('dev-column');
                 
-                navColumn.classList.remove('expanded');
-                devColumn.classList.remove('expanded');
+                if (navColumn) navColumn.classList.remove('expanded');
+                if (devColumn) devColumn.classList.remove('expanded');
                 
                 this.state.expandedColumn = null;
             },
@@ -1017,9 +1036,11 @@
                         
                         let html = '';
                         users.forEach(user => {
+                            const safeName = (user.name || 'Без имени').replace(/'/g, "\\'");
+                            const safeEmail = user.email.replace(/'/g, "\\'");
                             html += `
                                 <div class="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition"
-                                     onclick="app.clients.select(${user.id}, '${(user.name || 'Без имени').replace(/'/g, "\\'")}', '${user.email.replace(/'/g, "\\'")}')">
+                                     onclick="app.clients.select(${user.id}, '${safeName}', '${safeEmail}')">
                                     <div class="font-medium">${user.name || 'Без имени'}</div>
                                     <div class="text-sm text-gray-600">${user.email}</div>
                                 </div>
@@ -1190,9 +1211,11 @@
                         
                         let html = '';
                         users.forEach(user => {
+                            const safeName = (user.name || user.email).replace(/'/g, "\\'");
+                            const safeEmail = user.email.replace(/'/g, "\\'");
                             html += `
                                 <div class="p-2 hover:bg-blue-50 cursor-pointer border-b user-item"
-                                     onclick="app.chat.selectUser(${user.id}, '${(user.name || user.email).replace(/'/g, "\\'")}', '${user.email.replace(/'/g, "\\'")}')">
+                                     onclick="app.chat.selectUser(${user.id}, '${safeName}', '${safeEmail}')">
                                     <div class="font-medium">${user.name || user.email}</div>
                                     <div class="text-xs text-gray-500">${user.email}</div>
                                 </div>
@@ -1350,12 +1373,17 @@
 
         // Запуск при загрузке
         document.addEventListener('DOMContentLoaded', () => app.init());
+        
+        // Обработка ресайза с debounce
         window.addEventListener('resize', () => {
-            if (window.innerWidth > 1024) {
-                app.closeAllColumns();
-            } else {
-                app.initMobileColumns();
-            }
+            clearTimeout(app.state.resizeTimer);
+            app.state.resizeTimer = setTimeout(() => {
+                if (window.innerWidth > 1024) {
+                    app.closeAllColumns();
+                } else {
+                    app.initMobileColumns();
+                }
+            }, 150);
         });
     </script>
 </body>
